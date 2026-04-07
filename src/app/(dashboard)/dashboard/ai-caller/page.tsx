@@ -291,6 +291,12 @@ export default function AiCallerPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <a href="/dashboard/ai-caller/history">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Clock className="h-4 w-4" />
+              Call History
+            </Button>
+          </a>
           {isConvConfigured && (
             <Badge variant="default" className="bg-orange-500/10 text-orange-600 border-orange-500/30">
               <Zap className="h-3 w-3 mr-1" />
