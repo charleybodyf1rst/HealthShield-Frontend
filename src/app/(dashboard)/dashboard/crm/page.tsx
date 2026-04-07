@@ -16,17 +16,14 @@ import {
   WifiOff,
   AlertTriangle,
   DollarSign,
-  Ship,
   Clock,
   TrendingUp,
   TrendingDown,
   Shield,
   X,
-  FileSignature,
   UserPlus,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
-import { useBoatCrmRealtime } from '@/hooks/useBoatCrmRealtime';
 import { cn } from '@/lib/utils';
 
 // Tab components - inline for now, can be extracted later
@@ -35,12 +32,11 @@ import { CustomersTab } from '@/components/crm/CustomersTab';
 import { ApprovalsTab } from '@/components/crm/ApprovalsTab';
 import { AiCallerTab } from '@/components/crm/AiCallerTab';
 import { AnalyticsTab } from '@/components/crm/AnalyticsTab';
-// WaiversTab removed — not applicable to insurance CRM
 import { LeadsTab } from '@/components/crm/LeadsTab';
 
-export default function BoatCrmPage() {
+export default function InsuranceCrmPage() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { isConnected } = useBoatCrmRealtime();
+  const isConnected = false; // Realtime connection handled by polling
 
   const {
     kpis,
@@ -48,14 +44,12 @@ export default function BoatCrmPage() {
     activeCalls,
     connectionError,
     isPolling,
-    pendingWaiversCount,
     fetchDashboardData,
-    fetchTodayWaivers,
     startPolling,
     clearError,
   } = useHealthShieldCrmStore();
 
-  // Initial data fetch — waivers loaded lazily when Waivers tab is clicked
+  // Initial data fetch
   useEffect(() => {
     fetchDashboardData();
     // Start polling as fallback
@@ -73,8 +67,8 @@ export default function BoatCrmPage() {
       <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-white">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
-            <Ship className="w-7 h-7 text-yellow-500" />
-            Boat Rental CRM
+            <Shield className="w-7 h-7 text-blue-500" />
+            Insurance CRM
           </h1>
           <p className="text-slate-500 mt-1">
             AI-powered customer management and automation
@@ -145,11 +139,11 @@ export default function BoatCrmPage() {
         <Card className="bg-white shadow-sm">
           <CardContent className="p-4 flex items-center gap-4">
             <div className="p-3 bg-blue-100 rounded-xl">
-              <Ship className="w-6 h-6 text-blue-600" />
+              <Phone className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Today&apos;s Bookings</p>
-              <p className="text-2xl font-bold text-slate-900">{kpis?.todayBookings ?? '-'}</p>
+              <p className="text-sm text-slate-500">Today&apos;s Enrollments</p>
+              <p className="text-2xl font-bold text-slate-900">{kpis?.todayEnrollments ?? kpis?.todayBookings ?? '-'}</p>
             </div>
           </CardContent>
         </Card>
@@ -184,8 +178,8 @@ export default function BoatCrmPage() {
               )} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Active Trips</p>
-              <p className="text-2xl font-bold text-slate-900">{kpis?.activeTrips ?? '-'}</p>
+              <p className="text-sm text-slate-500">Active Calls</p>
+              <p className="text-2xl font-bold text-slate-900">{kpis?.activeCalls ?? kpis?.activeTrips ?? '-'}</p>
             </div>
           </CardContent>
         </Card>
@@ -252,18 +246,6 @@ export default function BoatCrmPage() {
                 <Phone className="w-4 h-4" />
                 AI Caller
               </TabsTrigger>
-              <TabsTrigger value="waivers" className="gap-2 relative">
-                <FileSignature className="w-4 h-4" />
-                Waivers
-                {pendingWaiversCount > 0 && (
-                  <Badge
-                    variant="destructive"
-                    className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs animate-pulse"
-                  >
-                    {pendingWaiversCount}
-                  </Badge>
-                )}
-              </TabsTrigger>
               <TabsTrigger value="analytics" className="gap-2">
                 <BarChart3 className="w-4 h-4" />
                 Analytics
@@ -291,8 +273,6 @@ export default function BoatCrmPage() {
             <TabsContent value="ai-caller" className="h-full m-0">
               <AiCallerTab />
             </TabsContent>
-
-            {/* Waivers tab removed — not applicable to insurance */}
 
             <TabsContent value="analytics" className="h-full m-0">
               <AnalyticsTab />

@@ -91,12 +91,12 @@ interface NotificationLog {
 }
 
 const TRIGGER_LABELS: Record<string, string> = {
-  booking_created: 'Booking Created',
-  booking_confirmed: 'Booking Confirmed',
-  before_rental: 'Before Rental',
-  rental_start: 'Rental Start (Check-in)',
-  after_rental: 'After Rental',
-  booking_cancelled: 'Booking Cancelled',
+  booking_created: 'Enrollment Created',
+  booking_confirmed: 'Enrollment Confirmed',
+  before_rental: 'Before Appointment',
+  rental_start: 'Appointment Start (Check-in)',
+  after_rental: 'After Appointment',
+  booking_cancelled: 'Enrollment Cancelled',
 };
 
 const CHANNEL_ICONS: Record<string, typeof Mail> = {
@@ -115,8 +115,8 @@ const CHANNEL_COLORS: Record<string, string> = {
 const DEFAULT_AUTOMATIONS: Automation[] = [
   {
     id: '1',
-    name: 'Booking Confirmation Email',
-    description: 'Send confirmation email with booking details, marina address, and what to bring',
+    name: 'Enrollment Confirmation Email',
+    description: 'Send confirmation email with enrollment details, plan information, and next steps',
     trigger: 'booking_created',
     channel: 'email',
     is_active: true,
@@ -125,8 +125,8 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   },
   {
     id: '2',
-    name: 'Booking Confirmation SMS',
-    description: 'Text confirmation with date, time, boat name, and confirmation code',
+    name: 'Enrollment Confirmation SMS',
+    description: 'Text confirmation with date, time, plan details, and confirmation code',
     trigger: 'booking_created',
     channel: 'sms',
     is_active: true,
@@ -135,8 +135,8 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   },
   {
     id: '3',
-    name: 'Waiver SMS',
-    description: 'Send digital waiver signing link to customer via SMS',
+    name: 'Consent Form SMS',
+    description: 'Send digital consent form signing link to customer via SMS',
     trigger: 'booking_confirmed',
     channel: 'sms',
     is_active: true,
@@ -146,7 +146,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   {
     id: '4',
     name: '3-Day Reminder',
-    description: 'Reminder SMS sent 3 days before the rental with marina directions and entry fee info',
+    description: 'Reminder SMS sent 3 days before the appointment with office directions and preparation info',
     trigger: 'before_rental',
     channel: 'sms',
     is_active: true,
@@ -156,7 +156,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   {
     id: '5',
     name: 'Day-Of Morning Reminder',
-    description: 'Good morning SMS on the day of the rental with marina directions and pickup info',
+    description: 'Good morning SMS on the day of the appointment with office directions and check-in info',
     trigger: 'before_rental',
     channel: 'sms',
     is_active: true,
@@ -165,8 +165,8 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   },
   {
     id: '6',
-    name: 'Captain Assignment SMS',
-    description: 'Notify customer when their captain has been assigned',
+    name: 'Agent Assignment SMS',
+    description: 'Notify customer when their insurance agent has been assigned',
     trigger: 'booking_confirmed',
     channel: 'sms',
     is_active: true,
@@ -175,8 +175,8 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   },
   {
     id: '7',
-    name: 'Post-Trip Review Request',
-    description: 'Send review request with Google Reviews link 2 hours after trip ends',
+    name: 'Post-Consultation Review Request',
+    description: 'Send review request with Google Reviews link 2 hours after consultation ends',
     trigger: 'after_rental',
     channel: 'sms',
     is_active: true,
@@ -185,8 +185,8 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   },
   {
     id: '8',
-    name: 'Post-Trip Follow-Up Email',
-    description: 'Thank you email with photos, review link, and $25 credit for next booking',
+    name: 'Post-Consultation Follow-Up Email',
+    description: 'Thank you email with plan summary, review link, and referral incentive',
     trigger: 'after_rental',
     channel: 'email',
     is_active: true,
@@ -196,7 +196,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   {
     id: '9',
     name: 'Lead Welcome SMS',
-    description: 'Auto-text new leads from website contact form with fleet overview',
+    description: 'Auto-text new leads from website contact form with plan overview',
     trigger: 'booking_created',
     channel: 'sms',
     is_active: false,
@@ -206,7 +206,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
   {
     id: '10',
     name: 'Lead Follow-Up Email (Day 1)',
-    description: 'Welcome email with full fleet photos and 10% discount code',
+    description: 'Welcome email with plan comparison guide and consultation scheduling link',
     trigger: 'booking_created',
     channel: 'email',
     is_active: false,
@@ -231,7 +231,7 @@ export default function AutomationsPage() {
   const fetchAutomations = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/v1/boat-rentals/automations`, { headers: authHeaders() });
+      const response = await fetch(`${API_URL}/api/v1/crm/automations`, { headers: authHeaders() });
       if (response.ok) {
         const data = await response.json();
         if (data.data && Array.isArray(data.data) && data.data.length > 0) {
@@ -247,7 +247,7 @@ export default function AutomationsPage() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/boat-rentals/automations/logs?limit=20`, { headers: authHeaders() });
+      const response = await fetch(`${API_URL}/api/v1/crm/automations/logs?limit=20`, { headers: authHeaders() });
       if (response.ok) {
         const data = await response.json();
         setLogs(Array.isArray(data.data) ? data.data : []);
@@ -263,7 +263,7 @@ export default function AutomationsPage() {
   const toggleAutomation = async (id: string) => {
     setAutomations((prev) => prev.map((a) => (a.id === id ? { ...a, is_active: !a.is_active } : a)));
     try {
-      await fetch(`${API_URL}/api/v1/boat-rentals/automations/${id}/toggle`, { method: 'POST', headers: authHeaders() });
+      await fetch(`${API_URL}/api/v1/crm/automations/${id}/toggle`, { method: 'POST', headers: authHeaders() });
     } catch {
       setAutomations((prev) => prev.map((a) => (a.id === id ? { ...a, is_active: !a.is_active } : a)));
     }
@@ -272,7 +272,7 @@ export default function AutomationsPage() {
   const initializeDefaults = async () => {
     setIsLoading(true);
     try {
-      await fetch(`${API_URL}/api/v1/boat-rentals/automations/initialize-defaults`, { method: 'POST', headers: authHeaders() });
+      await fetch(`${API_URL}/api/v1/crm/automations/initialize-defaults`, { method: 'POST', headers: authHeaders() });
       await fetchAutomations();
       toast.success('Default automations initialized');
     } catch {
@@ -287,8 +287,8 @@ export default function AutomationsPage() {
     setIsSaving(true);
     try {
       const url = editingAutomation
-        ? `${API_URL}/api/v1/boat-rentals/automations/${editingAutomation.id}`
-        : `${API_URL}/api/v1/boat-rentals/automations`;
+        ? `${API_URL}/api/v1/crm/automations/${editingAutomation.id}`
+        : `${API_URL}/api/v1/crm/automations`;
       const method = editingAutomation ? 'PUT' : 'POST';
       const response = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(formData) });
       if (response.ok) {
@@ -310,7 +310,7 @@ export default function AutomationsPage() {
   // CRUD: Delete
   const deleteAutomation = async (id: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/boat-rentals/automations/${id}`, { method: 'DELETE', headers: authHeaders() });
+      const response = await fetch(`${API_URL}/api/v1/crm/automations/${id}`, { method: 'DELETE', headers: authHeaders() });
       if (response.ok) {
         toast.success('Automation deleted');
         setAutomations((prev) => prev.filter((a) => a.id !== id));
@@ -358,7 +358,7 @@ export default function AutomationsPage() {
     try {
       const body: Record<string, string> = { channel: testChannel, to: testTo, message: testMessage };
       if (testChannel === 'email') body.subject = testSubject || 'HealthShield Test';
-      const response = await fetch(`${API_URL}/api/v1/boat-rentals/automations/send-test`, {
+      const response = await fetch(`${API_URL}/api/v1/crm/automations/send-test`, {
         method: 'POST',
         headers: authHeaders(),
         body: JSON.stringify(body),
@@ -387,7 +387,7 @@ export default function AutomationsPage() {
             Automations & Workflows
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage automated SMS, email, and voice notifications for bookings
+            Manage automated SMS, email, and voice notifications for enrollments
           </p>
         </div>
         <div className="flex gap-2">
@@ -646,7 +646,7 @@ export default function AutomationsPage() {
               <div className="text-center py-12 text-muted-foreground">
                 <Bell className="h-12 w-12 mx-auto mb-4 opacity-30" />
                 <p className="text-sm">No notifications sent yet.</p>
-                <p className="text-xs mt-1">Notifications will appear here once bookings start coming in.</p>
+                <p className="text-xs mt-1">Notifications will appear here once enrollments start coming in.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -695,7 +695,7 @@ export default function AutomationsPage() {
           <DialogHeader>
             <DialogTitle>{editingAutomation ? 'Edit Automation' : 'Create Automation'}</DialogTitle>
             <DialogDescription>
-              {editingAutomation ? 'Update this automation workflow.' : 'Set up a new automated notification for bookings.'}
+              {editingAutomation ? 'Update this automation workflow.' : 'Set up a new automated notification for enrollments.'}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -738,7 +738,7 @@ export default function AutomationsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="auto-template">Message Template</Label>
-              <Textarea id="auto-template" placeholder="Hi {customer_name}, your booking {booking_number} is confirmed..." value={formData.template_body} onChange={(e) => setFormData({ ...formData, template_body: e.target.value })} rows={4} />
+              <Textarea id="auto-template" placeholder="Hi {customer_name}, your enrollment {enrollment_number} is confirmed..." value={formData.template_body} onChange={(e) => setFormData({ ...formData, template_body: e.target.value })} rows={4} />
             </div>
           </div>
           <DialogFooter>

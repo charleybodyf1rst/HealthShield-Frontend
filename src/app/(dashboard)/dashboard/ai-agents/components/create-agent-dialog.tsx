@@ -41,7 +41,7 @@ const PERSONAS = [
   { value: 'sales', label: 'Sales-focused' },
   { value: 'follow_up', label: 'Follow-up Specialist' },
   { value: 'appointment', label: 'Appointment Setter' },
-  { value: 'boat_rental_receptionist', label: 'Boat Rental Receptionist' },
+  { value: 'insurance_receptionist', label: 'Insurance Receptionist' },
   { value: 'support', label: 'Support Agent' },
   { value: 'coach', label: 'Coach' },
   { value: 'win_back', label: 'Win-back Specialist' },

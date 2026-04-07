@@ -92,7 +92,7 @@ export default function FinanceDashboardPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Financial Dashboard</h1>
             <p className="text-muted-foreground mt-1">
-              Track revenue, expenses, and profitability for your boat rental business.
+              Track revenue, expenses, and profitability for your insurance call center.
             </p>
           </div>
           <div className="flex gap-2">
@@ -188,7 +188,7 @@ export default function FinanceDashboardPage() {
           <div>
             <CardTitle>Recent Transactions</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Latest financial activity across your fleet
+              Latest financial activity across your operations
             </p>
           </div>
           <Button variant="ghost" size="sm" asChild>

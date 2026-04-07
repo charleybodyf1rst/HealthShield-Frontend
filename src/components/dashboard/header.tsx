@@ -53,7 +53,7 @@ export function DashboardHeader() {
           <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search leads, customers, bookings..."
+            placeholder="Search leads, policyholders, enrollments..."
             className="pl-9 bg-muted/50 border-0 focus-visible:ring-1"
           />
         </div>

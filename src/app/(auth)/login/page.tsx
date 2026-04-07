@@ -43,12 +43,12 @@ export default function LoginPage() {
       {/* Mobile logo */}
       <div className="lg:hidden text-center">
         <Link href="/" className="inline-flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#C9A84C] to-[#D4B96A] flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <span className="font-bold text-xl tracking-tight font-[var(--font-space-grotesk)]">
+          <span className="font-bold text-xl tracking-tight font-[var(--font-dm-serif)]">
             <span className="text-foreground">Health</span>
-            <span className="text-blue-600">Shield</span>
+            <span className="text-[#C9A84C]">Shield</span>
           </span>
         </Link>
       </div>

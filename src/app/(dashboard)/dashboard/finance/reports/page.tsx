@@ -21,7 +21,6 @@ import {
   BarChart3,
   DollarSign,
   Receipt,
-  Ship,
   Eye,
   Download,
   X,
@@ -39,7 +38,7 @@ interface ReportDefinition {
 const reports: ReportDefinition[] = [
   {
     title: 'Revenue Report',
-    description: 'Total revenue breakdown by boat, booking type, and time period',
+    description: 'Total revenue breakdown by plan type, enrollment source, and time period',
     icon: TrendingUp,
     color: 'text-green-500',
     bg: 'bg-green-500/10',
@@ -47,7 +46,7 @@ const reports: ReportDefinition[] = [
   },
   {
     title: 'Expense Report',
-    description: 'Detailed expense tracking across fuel, maintenance, marina, and insurance',
+    description: 'Detailed expense tracking across staffing, technology, marketing, and operations',
     icon: TrendingDown,
     color: 'text-red-500',
     bg: 'bg-red-500/10',
@@ -78,9 +77,9 @@ const reports: ReportDefinition[] = [
     apiCall: null,
   },
   {
-    title: 'Fleet ROI',
-    description: 'Return on investment analysis for each boat in the rental fleet',
-    icon: Ship,
+    title: 'Program ROI',
+    description: 'Return on investment analysis for each insurance program',
+    icon: TrendingUp,
     color: 'text-cyan-500',
     bg: 'bg-cyan-500/10',
     apiCall: null,
@@ -228,7 +227,7 @@ export default function ReportsPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Financial Reports</h1>
-            <p className="text-muted-foreground">Generate and view financial reports for your fleet</p>
+            <p className="text-muted-foreground">Generate and view financial reports for your operations</p>
           </div>
         </div>
         <Button onClick={handleExport}>

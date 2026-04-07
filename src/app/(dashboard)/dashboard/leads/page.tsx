@@ -312,7 +312,7 @@ export default function LeadsPage() {
                   />
                 </TableHead>
                 <TableHead>Lead</TableHead>
-                <TableHead>Rental Type</TableHead>
+                <TableHead>Plan Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>

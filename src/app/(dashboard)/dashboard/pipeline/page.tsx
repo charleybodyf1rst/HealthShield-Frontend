@@ -80,12 +80,12 @@ const stageConfig: Record<string, { bg: string; gradient: string; text: string; 
 
 // Classification badge colors
 const classificationColors: Record<string, string> = {
-  pontoon_rental: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
-  jet_ski_rental: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300',
-  fishing_charter: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
-  party_boat: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
-  kayak_paddleboard: 'bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300',
-  boat_tour: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
+  individual_health: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+  family_health: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300',
+  medicare_advantage: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
+  medicare_supplement: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
+  dental_vision: 'bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300',
+  group_employer: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
   corporate_event: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300',
   other: 'bg-gray-100 text-gray-700 dark:bg-gray-900/50 dark:text-gray-300',
 };

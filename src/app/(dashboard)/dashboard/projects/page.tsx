@@ -59,7 +59,7 @@ import {
   Settings,
   UserPlus,
   DollarSign,
-  Sailboat,
+  ShieldCheck,
   GripVertical,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -77,8 +77,8 @@ import {
 const demoProjects: Project[] = [
   {
     id: 'proj-1',
-    name: 'Summer Fleet Maintenance',
-    description: 'Prepare all boats for peak summer season',
+    name: 'Q2 Enrollment Campaign',
+    description: 'Drive enrollment numbers for Q2 open enrollment period',
     category: 'maintenance',
     status: 'active',
     color: '#f59e0b',
@@ -102,13 +102,13 @@ const demoProjects: Project[] = [
             id: 'card-1',
             columnId: 'col-1',
             projectId: 'proj-1',
-            title: 'King Kong engine inspection',
-            description: 'Annual engine inspection and tune-up',
+            title: 'Medicare Advantage plan review',
+            description: 'Annual plan benefit review and updates',
             order: 0,
             priority: 'high',
             dueDate: '2026-01-20',
-            boatId: 'boat-king-kong',
-            assignees: [{ id: 'emp-2', name: 'Jake Thompson', email: 'jake@banana.boat' }],
+            programId: 'prog-medicare-adv',
+            assignees: [{ id: 'emp-2', name: 'Jake Thompson', email: 'jake@healthshield.ai' }],
             checklistProgress: { completed: 2, total: 5 },
             commentCount: 3,
             createdAt: '2026-01-05T10:00:00Z',
@@ -118,13 +118,13 @@ const demoProjects: Project[] = [
             id: 'card-2',
             columnId: 'col-1',
             projectId: 'proj-1',
-            title: 'Barbie hull cleaning',
-            description: 'Deep clean and polish new boat',
+            title: 'Family Health plan compliance update',
+            description: 'Update compliance documentation for new regulations',
             order: 1,
             priority: 'medium',
             dueDate: '2026-01-25',
-            boatId: 'boat-barbie',
-            assignees: [{ id: 'emp-3', name: 'Sarah Chen', email: 'sarah@banana.boat' }],
+            programId: 'prog-family-health',
+            assignees: [{ id: 'emp-3', name: 'Sarah Chen', email: 'sarah@healthshield.ai' }],
             createdAt: '2026-01-06T09:00:00Z',
             updatedAt: '2026-01-06T09:00:00Z',
           },
@@ -145,14 +145,14 @@ const demoProjects: Project[] = [
             columnId: 'col-2',
             projectId: 'proj-1',
             title: 'Safety equipment audit',
-            description: 'Verify all safety equipment across fleet',
+            description: 'Verify all compliance documentation across programs',
             order: 0,
             priority: 'urgent',
             estimatedHours: 8,
             actualHours: 4,
             assignees: [
-              { id: 'emp-1', name: 'Marcus Rivera', email: 'marcus@banana.boat' },
-              { id: 'emp-2', name: 'Jake Thompson', email: 'jake@banana.boat' },
+              { id: 'emp-1', name: 'Marcus Rivera', email: 'marcus@healthshield.ai' },
+              { id: 'emp-2', name: 'Jake Thompson', email: 'jake@healthshield.ai' },
             ],
             checklistProgress: { completed: 8, total: 15 },
             attachmentCount: 2,
@@ -175,8 +175,8 @@ const demoProjects: Project[] = [
             id: 'card-4',
             columnId: 'col-3',
             projectId: 'proj-1',
-            title: 'Update insurance documents',
-            description: 'Renew and file 2026 insurance policies',
+            title: 'Update policy documents',
+            description: 'Renew and file 2026 policy documentation',
             order: 0,
             priority: 'high',
             dueDate: '2026-01-15',
@@ -200,7 +200,7 @@ const demoProjects: Project[] = [
             id: 'card-5',
             columnId: 'col-4',
             projectId: 'proj-1',
-            title: 'Order replacement life jackets',
+            title: 'Order updated compliance materials',
             order: 0,
             priority: 'medium',
             completedAt: '2026-01-08T15:00:00Z',
@@ -236,8 +236,8 @@ const demoProjects: Project[] = [
   },
   {
     id: 'proj-3',
-    name: 'New Captain Onboarding',
-    description: 'Onboard 3 new captains for summer season',
+    name: 'New Agent Onboarding',
+    description: 'Onboard 3 new insurance agents for enrollment season',
     category: 'hr',
     status: 'active',
     color: '#06b6d4',
@@ -388,7 +388,7 @@ export default function ProjectsPage() {
                   <Label htmlFor="project-name">Project Name *</Label>
                   <Input
                     id="project-name"
-                    placeholder="e.g., Summer Fleet Maintenance"
+                    placeholder="e.g., Q2 Enrollment Campaign"
                     value={projectForm.name}
                     onChange={(e) => setProjectForm((f) => ({ ...f, name: e.target.value }))}
                   />
@@ -729,11 +729,11 @@ export default function ProjectsPage() {
                               </p>
                             )}
 
-                            {/* Boat reference */}
-                            {card.boatId && (
+                            {/* Program reference */}
+                            {card.programId && (
                               <Badge variant="outline" className="text-xs">
-                                <Sailboat className="h-3 w-3 mr-1" />
-                                {card.boatId.replace('boat-', '').replace(/-/g, ' ')}
+                                <ShieldCheck className="h-3 w-3 mr-1" />
+                                {card.programId.replace('prog-', '').replace(/-/g, ' ')}
                               </Badge>
                             )}
 

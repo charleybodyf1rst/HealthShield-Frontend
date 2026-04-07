@@ -20,7 +20,7 @@ import { LEAD_SOURCES } from '@/lib/constants';
 import { useLeadsStore } from '@/stores/leads-store';
 import { toast } from 'sonner';
 // Insurance plan options for lead creation
-const fleetBoats = [
+const insurancePlans = [
   { id: '1', name: 'Individual Health', slug: 'individual' },
   { id: '2', name: 'Family Health', slug: 'family' },
   { id: '3', name: 'Medicare Advantage', slug: 'medicare-advantage' },
@@ -134,8 +134,8 @@ export default function NewLeadPage() {
             <div className="flex items-start gap-2 pt-2">
               <Checkbox id="sms_consent" className="mt-0.5" />
               <label htmlFor="sms_consent" className="text-sm text-muted-foreground leading-snug">
-                I agree to receive SMS text messages from HealthShield including booking
-                confirmations, reminders, and service updates. Message and data rates may apply.
+                I agree to receive SMS text messages from HealthShield including enrollment
+                confirmations, policy updates, reminders, and service updates. Message and data rates may apply.
                 Message frequency varies. Reply STOP to cancel, HELP for help. View our{' '}
                 <a href="/privacy" target="_blank" className="text-blue-600 hover:underline">Privacy Policy</a>{' '}
                 and{' '}
@@ -171,22 +171,19 @@ export default function NewLeadPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="boat">Boat</Label>
+                <Label htmlFor="planType">Insurance Plan</Label>
                 <Select
                   value={formData.boatName || 'none'}
                   onValueChange={(value) => updateField('boatName', value === 'none' ? undefined : value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select boat..." />
+                    <SelectValue placeholder="Select plan..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">No boat selected</SelectItem>
-                    {fleetBoats.map((boat) => (
-                      <SelectItem key={boat.slug} value={boat.name}>
-                        <div className="flex items-center gap-2">
-                          <span>{boat.emoji}</span>
-                          {boat.name} ({boat.capacity} guests)
-                        </div>
+                    <SelectItem value="none">No plan selected</SelectItem>
+                    {insurancePlans.map((plan) => (
+                      <SelectItem key={plan.slug} value={plan.name}>
+                        {plan.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -196,7 +193,7 @@ export default function NewLeadPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="rental_date">Rental Date</Label>
+                <Label htmlFor="rental_date">Consultation Date</Label>
                 <Input
                   id="rental_date"
                   type="date"
@@ -205,7 +202,7 @@ export default function NewLeadPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="rental_time">Rental Time Slot</Label>
+                <Label htmlFor="rental_time">Consultation Time Slot</Label>
                 <Select
                   value={formData.rental_time || 'none'}
                   onValueChange={(value) => updateField('rental_time', value === 'none' ? undefined : value)}

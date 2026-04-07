@@ -59,7 +59,7 @@ import {
 } from '@/lib/api';
 import { cn } from '@/lib/utils';
 // Insurance plan types used as dropdown options
-const fleetBoats = [
+const insurancePlanTypes = [
   { id: '1', name: 'Individual Health' },
   { id: '2', name: 'Family Health' },
   { id: '3', name: 'Medicare Advantage' },
@@ -95,13 +95,13 @@ const toLocalDateStr = (d: Date) => {
 };
 
 const appointmentTypes = [
-  { value: 'discovery_call', label: 'Booking Inquiry', color: '#3B82F6' },
-  { value: 'demo', label: 'Boat Tour / Viewing', color: '#8B5CF6' },
+  { value: 'discovery_call', label: 'Initial Consultation', color: '#3B82F6' },
+  { value: 'demo', label: 'Policy Consultation', color: '#8B5CF6' },
   { value: 'follow_up', label: 'Follow Up', color: '#10B981' },
   { value: 'proposal_review', label: 'Quote Review', color: '#F59E0B' },
-  { value: 'closing_call', label: 'Booking Confirmation', color: '#EF4444' },
+  { value: 'closing_call', label: 'Enrollment Confirmation', color: '#EF4444' },
   { value: 'onboarding', label: 'Customer Check-in', color: '#06B6D4' },
-  { value: 'check_in', label: 'Captain Briefing', color: '#EC4899' },
+  { value: 'check_in', label: 'Agent Briefing', color: '#EC4899' },
   { value: 'ai_scheduled', label: 'AI Scheduled', color: '#6366F1' },
 ];
 
@@ -163,7 +163,7 @@ const DEMO_APPOINTMENTS: SalesAppointment[] = [
     lead: { id: '1', first_name: 'John', last_name: 'Smith', email: 'john@example.com', phone: '+1234567890' },
     type: 'discovery_call',
     title: 'Booking Inquiry - John Smith',
-    description: 'Initial call about pontoon rental for birthday party',
+    description: 'Initial call about family health insurance options',
     start_time: new Date().toISOString(),
     end_time: new Date(Date.now() + 30 * 60000).toISOString(),
     duration: 30,
@@ -179,7 +179,7 @@ const DEMO_APPOINTMENTS: SalesAppointment[] = [
     lead_id: '2',
     lead: { id: '2', first_name: 'Sarah', last_name: 'Johnson', email: 'sarah@example.com' },
     type: 'demo',
-    title: 'Boat Tour - Sarah Johnson',
+    title: 'Policy Review - Sarah Johnson',
     start_time: new Date(Date.now() + 2 * 60 * 60000).toISOString(),
     end_time: new Date(Date.now() + 3 * 60 * 60000).toISOString(),
     duration: 60,
@@ -220,7 +220,6 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [appointments, setAppointments] = useState<SalesAppointment[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
-  const boats = fleetBoats;
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<SalesAppointment | null>(null);
@@ -240,8 +239,8 @@ export default function CalendarPage() {
     notes: '',
     location: '',
     meeting_link: '',
-    captain_name: '',
-    boat_id: undefined,
+    agent_name: '',
+    plan_type: undefined,
   });
 
   const fetchData = useCallback(async () => {
@@ -307,7 +306,7 @@ export default function CalendarPage() {
     fetchData();
   }, [fetchData]);
 
-  // Boats are loaded from hardcoded fleet data (src/lib/boats.ts)
+  // Plan types are loaded from hardcoded list above
 
   // Auto-scroll time grid to 8 AM on mount and view change
   useEffect(() => {
@@ -432,8 +431,8 @@ export default function CalendarPage() {
       notes: appointment.notes || '',
       location: appointment.location || '',
       meeting_link: appointment.meeting_link || '',
-      captain_name: appointment.captain_name || '',
-      boat_id: appointment.boat_id || undefined,
+      agent_name: appointment.captain_name || '',
+      plan_type: appointment.boat_id || undefined,
     });
     setIsDialogOpen(true);
   };
@@ -468,8 +467,8 @@ export default function CalendarPage() {
       location: formData.location || null,
       meeting_link: formData.meeting_link || null,
       notes: formData.notes || null,
-      captain_name: formData.captain_name || null,
-      boat_id: formData.boat_id ? Number(formData.boat_id) : null,
+      captain_name: formData.agent_name || null,
+      boat_id: formData.plan_type ? Number(formData.plan_type) : null,
     };
 
     setIsSubmitting(true);
@@ -1257,32 +1256,29 @@ export default function CalendarPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="captain_name">Captain Name</Label>
+                <Label htmlFor="agent_name">Agent Name</Label>
                 <Input
-                  id="captain_name"
-                  value={formData.captain_name || ''}
-                  onChange={(e) => setFormData({ ...formData, captain_name: e.target.value })}
-                  placeholder="e.g., Captain Mike"
+                  id="agent_name"
+                  value={formData.agent_name || ''}
+                  onChange={(e) => setFormData({ ...formData, agent_name: e.target.value })}
+                  placeholder="e.g., Sarah Johnson"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="boat_id">Boat</Label>
+                <Label htmlFor="plan_type">Plan Type</Label>
                 <Select
-                  value={formData.boat_id ? String(formData.boat_id) : 'none'}
-                  onValueChange={(value) => setFormData({ ...formData, boat_id: value === 'none' ? undefined : value as unknown as number })}
+                  value={formData.plan_type ? String(formData.plan_type) : 'none'}
+                  onValueChange={(value) => setFormData({ ...formData, plan_type: value === 'none' ? undefined : value as unknown as number })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select boat" />
+                    <SelectValue placeholder="Select plan type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">No boat selected</SelectItem>
-                    {boats.map(boat => (
-                      <SelectItem key={boat.slug} value={boat.name}>
-                        <div className="flex items-center gap-2">
-                          <span>{boat.emoji}</span>
-                          {boat.name} ({boat.capacity} guests)
-                        </div>
+                    <SelectItem value="none">No plan selected</SelectItem>
+                    {insurancePlanTypes.map(plan => (
+                      <SelectItem key={plan.id} value={plan.name}>
+                        {plan.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

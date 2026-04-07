@@ -154,8 +154,8 @@ export default function DashboardPage() {
     },
     {
       title: 'AI Calls Today',
-      value: (kpis?.todayBookings ?? 0).toLocaleString(),
-      change: kpis?.upcomingBookings ? `${kpis.upcomingBookings} scheduled` : '-',
+      value: (kpis?.aiCallsToday ?? kpis?.todayBookings ?? 0).toLocaleString(),
+      change: kpis?.scheduledCalls ? `${kpis.scheduledCalls} scheduled` : '-',
       trend: 'up' as 'up' | 'down',
       icon: Phone,
       color: 'text-purple-500',
@@ -239,7 +239,7 @@ export default function DashboardPage() {
               {getGreeting()}, {user?.firstName || 'User'}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Here&apos;s what&apos;s happening with your insurance operations today.
+              Here&apos;s what&apos;s happening with your call center today.
             </p>
           </div>
           <div className="flex gap-2">

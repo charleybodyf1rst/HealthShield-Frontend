@@ -73,7 +73,7 @@ interface MeetingNote {
 const sampleMeetings: MeetingNote[] = [
   {
     id: '1',
-    title: 'Q2 Fleet Expansion Planning',
+    title: 'Q2 Medicare Advantage Expansion Planning',
     date: '2026-03-20',
     duration: '45 min',
     type: 'Meeting',
@@ -81,11 +81,11 @@ const sampleMeetings: MeetingNote[] = [
     actionItemsCount: 6,
     completedItemsCount: 4,
     summary:
-      'Discussed adding 3 new pontoon boats for summer season. Reviewed vendor quotes and insurance requirements. Agreed on timeline for procurement and staff training.',
+      'Discussed adding 3 new Medicare Advantage plans for enrollment season. Reviewed carrier quotes and compliance requirements. Agreed on timeline for onboarding and agent training.',
   },
   {
     id: '2',
-    title: 'Marina Partnership Call',
+    title: 'Carrier Partnership Call',
     date: '2026-03-19',
     duration: '22 min',
     type: 'Call',
@@ -93,23 +93,23 @@ const sampleMeetings: MeetingNote[] = [
     actionItemsCount: 4,
     completedItemsCount: 2,
     summary:
-      'Negotiated docking rates for the upcoming season. Tom offered a 15% discount for long-term commitment. Need to review contract terms before signing.',
+      'Negotiated commission rates for the upcoming enrollment period. Tom offered a 15% increase for volume commitment. Need to review contract terms before signing.',
   },
   {
     id: '3',
-    title: 'Safety Protocol Update',
+    title: 'Compliance Protocol Update',
     date: '2026-03-18',
     duration: '1h 10 min',
     type: 'Meeting',
-    participants: ['Ken B.', 'Sarah M.', 'Capt. Dan', 'Mike L.', 'Amy W.'],
+    participants: ['Ken B.', 'Sarah M.', 'Dan R.', 'Mike L.', 'Amy W.'],
     actionItemsCount: 8,
     completedItemsCount: 6,
     summary:
-      'Reviewed Coast Guard compliance updates. Updated emergency procedures for all vessel types. Scheduled mandatory crew refresher training for April.',
+      'Reviewed CMS compliance updates. Updated documentation procedures for all plan types. Scheduled mandatory agent refresher training for April.',
   },
   {
     id: '4',
-    title: 'Insurance Renewal Discussion',
+    title: 'Policy Portfolio Review',
     date: '2026-03-17',
     duration: '18 min',
     type: 'Call',
@@ -117,7 +117,7 @@ const sampleMeetings: MeetingNote[] = [
     actionItemsCount: 3,
     completedItemsCount: 2,
     summary:
-      'Annual policy renewal with updated fleet valuations. New liability coverage options presented. Waiting on final premium quotes by end of week.',
+      'Annual policy portfolio review with updated program metrics. New coverage tier options presented. Waiting on final premium quotes by end of week.',
   },
   {
     id: '5',
@@ -129,14 +129,14 @@ const sampleMeetings: MeetingNote[] = [
     actionItemsCount: 7,
     completedItemsCount: 5,
     summary:
-      'Brainstormed social media campaign ideas for summer launch. Key themes: family experiences, sunset cruises, corporate events. Consider influencer partnerships.',
+      'Brainstormed social media campaign ideas for open enrollment launch. Key themes: family coverage, preventive care, employer plans. Consider influencer partnerships.',
   },
 ];
 
 const sampleActionItems: ActionItem[] = [
   {
     id: 'a1',
-    description: 'Get final quotes from Sweetwater and Bennington dealers',
+    description: 'Get final quotes from Aetna and Blue Cross carriers',
     assignee: 'Ken B.',
     priority: 'High',
     dueDate: '2026-03-25',
@@ -145,7 +145,7 @@ const sampleActionItems: ActionItem[] = [
   },
   {
     id: 'a2',
-    description: 'Review marina partnership contract with legal',
+    description: 'Review carrier partnership contract with legal',
     assignee: 'Ken B.',
     priority: 'High',
     dueDate: '2026-03-24',
@@ -154,7 +154,7 @@ const sampleActionItems: ActionItem[] = [
   },
   {
     id: 'a3',
-    description: 'Schedule crew safety refresher training for April',
+    description: 'Schedule agent compliance refresher training for April',
     assignee: 'Sarah M.',
     priority: 'Medium',
     dueDate: '2026-03-28',
@@ -163,8 +163,8 @@ const sampleActionItems: ActionItem[] = [
   },
   {
     id: 'a4',
-    description: 'Upload updated emergency procedure docs to shared drive',
-    assignee: 'Capt. Dan',
+    description: 'Upload updated compliance procedure docs to shared drive',
+    assignee: 'Dan R.',
     priority: 'Medium',
     dueDate: '2026-03-22',
     completed: true,
@@ -172,7 +172,7 @@ const sampleActionItems: ActionItem[] = [
   },
   {
     id: 'a5',
-    description: 'Send fleet valuation spreadsheet to insurance agent',
+    description: 'Send policy portfolio review spreadsheet to compliance team',
     assignee: 'Ken B.',
     priority: 'High',
     dueDate: '2026-03-21',
@@ -190,7 +190,7 @@ const sampleActionItems: ActionItem[] = [
   },
   {
     id: 'a7',
-    description: 'Contact 3 local influencers for summer boat rental promotions',
+    description: 'Contact 3 local influencers for health insurance outreach campaigns',
     assignee: 'Jake T.',
     priority: 'Low',
     dueDate: '2026-04-05',
@@ -199,7 +199,7 @@ const sampleActionItems: ActionItem[] = [
   },
   {
     id: 'a8',
-    description: 'Order new life jackets for expanded fleet',
+    description: 'Order updated compliance documentation for expanded programs',
     assignee: 'Mike L.',
     priority: 'High',
     dueDate: '2026-03-26',

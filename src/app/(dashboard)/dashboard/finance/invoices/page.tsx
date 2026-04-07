@@ -61,7 +61,7 @@ export default function InvoicesPage() {
   const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
     customer_name: '',
-    boat_name: '',
+    plan_name: '',
     amount: '',
     due_date: '',
     description: '',
@@ -80,7 +80,7 @@ export default function InvoicesPage() {
     try {
       await createInvoice({
         client_name: form.customer_name,
-        project_name: form.boat_name,
+        project_name: form.plan_name,
         amount: parseFloat(form.amount),
         due_date: form.due_date,
         notes: form.description,
@@ -88,7 +88,7 @@ export default function InvoicesPage() {
       });
       toast.success('Invoice created successfully');
       setDialogOpen(false);
-      setForm({ customer_name: '', boat_name: '', amount: '', due_date: '', description: '' });
+      setForm({ customer_name: '', plan_name: '', amount: '', due_date: '', description: '' });
       fetchInvoices();
     } catch (err: any) {
       toast.error(err?.message || 'Failed to create invoice');
@@ -136,7 +136,7 @@ export default function InvoicesPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
-            <p className="text-muted-foreground">Manage and track all rental invoices</p>
+            <p className="text-muted-foreground">Manage and track all invoices</p>
           </div>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -161,12 +161,12 @@ export default function InvoicesPage() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="boat_name">Boat Name</Label>
+                <Label htmlFor="plan_name">Plan Name</Label>
                 <Input
-                  id="boat_name"
-                  value={form.boat_name}
-                  onChange={(e) => setForm({ ...form, boat_name: e.target.value })}
-                  placeholder="e.g., King Kong"
+                  id="plan_name"
+                  value={form.plan_name}
+                  onChange={(e) => setForm({ ...form, plan_name: e.target.value })}
+                  placeholder="e.g., Medicare Advantage"
                 />
               </div>
               <div className="grid gap-2">
@@ -272,7 +272,7 @@ export default function InvoicesPage() {
                   <tr className="border-b text-left text-sm text-muted-foreground">
                     <th className="pb-3 font-medium">Invoice #</th>
                     <th className="pb-3 font-medium">Customer</th>
-                    <th className="pb-3 font-medium">Boat</th>
+                    <th className="pb-3 font-medium">Plan</th>
                     <th className="pb-3 font-medium">Date</th>
                     <th className="pb-3 font-medium">Amount</th>
                     <th className="pb-3 font-medium">Status</th>
@@ -284,7 +284,7 @@ export default function InvoicesPage() {
                     <tr key={inv.id} className="border-b last:border-0 hover:bg-muted/50">
                       <td className="py-3 font-medium">{inv.invoice_number || `INV-${inv.id}`}</td>
                       <td className="py-3">{inv.customer_name || '--'}</td>
-                      <td className="py-3">{inv.boat_name || '--'}</td>
+                      <td className="py-3">{inv.plan_name || inv.boat_name || '--'}</td>
                       <td className="py-3 text-muted-foreground">{inv.due_date || inv.created_at?.slice(0, 10) || '--'}</td>
                       <td className="py-3 font-semibold">{formatCurrency(inv.amount)}</td>
                       <td className="py-3">

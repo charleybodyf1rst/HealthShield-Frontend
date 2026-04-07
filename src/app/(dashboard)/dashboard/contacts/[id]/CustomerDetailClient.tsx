@@ -30,7 +30,7 @@ import {
   Phone,
   Mail,
   Calendar,
-  Sailboat,
+  ShieldCheck,
   DollarSign,
   MessageSquare,
   PhoneCall,
@@ -43,7 +43,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
-import type { BoatCustomer, BoatInteraction, InteractionType } from '@/types/boat-crm';
+import type { BoatCustomer as InsuranceCustomer, BoatInteraction as CustomerInteraction, InteractionType } from '@/types/boat-crm';
 
 const interactionTypeIcons: Record<string, typeof Phone> = {
   call: PhoneCall,
@@ -74,7 +74,7 @@ export default function CustomerDetailClient() {
     interactionsLoading,
   } = useHealthShieldCrmStore();
 
-  const [customer, setCustomer] = useState<BoatCustomer | null>(null);
+  const [customer, setCustomer] = useState<InsuranceCustomer | null>(null);
   const [loading, setLoading] = useState(true);
   const [interactionDialogOpen, setInteractionDialogOpen] = useState(false);
   const [savingInteraction, setSavingInteraction] = useState(false);
@@ -209,7 +209,7 @@ export default function CustomerDetailClient() {
             <div className="border-t pt-4 mt-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Sailboat className="h-4 w-4" /> Total Bookings
+                  <ShieldCheck className="h-4 w-4" /> Total Enrollments
                 </span>
                 <span className="font-semibold">{customer.totalBookings}</span>
               </div>
@@ -222,7 +222,7 @@ export default function CustomerDetailClient() {
               {customer.lastBookingDate && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
-                    <Clock className="h-4 w-4" /> Last Booking
+                    <Clock className="h-4 w-4" /> Last Enrollment
                   </span>
                   <span className="text-sm">{new Date(customer.lastBookingDate).toLocaleDateString()}</span>
                 </div>
@@ -231,10 +231,10 @@ export default function CustomerDetailClient() {
 
             {customer.preferredBoats && customer.preferredBoats.length > 0 && (
               <div className="border-t pt-4 mt-4">
-                <p className="text-sm text-muted-foreground mb-2">Preferred Boats</p>
+                <p className="text-sm text-muted-foreground mb-2">Insurance Plans</p>
                 <div className="flex flex-wrap gap-1">
-                  {customer.preferredBoats.map((boat) => (
-                    <Badge key={boat} variant="outline" className="text-xs">{boat}</Badge>
+                  {customer.preferredBoats.map((plan) => (
+                    <Badge key={plan} variant="outline" className="text-xs">{plan}</Badge>
                   ))}
                 </div>
               </div>
@@ -281,7 +281,7 @@ export default function CustomerDetailClient() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {interactions.map((interaction: BoatInteraction) => {
+                  {interactions.map((interaction: CustomerInteraction) => {
                     const TypeIcon = interactionTypeIcons[interaction.type] || FileText;
                     const colorClass = interactionTypeColors[interaction.type] || 'bg-gray-100 text-gray-800';
 

@@ -49,7 +49,7 @@ function getQuickActions(selectedLead?: Lead): QuickAction[] {
       icon: Mail,
       prompt: selectedLead
         ? `Draft a follow-up email for ${name} (${selectedLead.email || 'no email on file'})`
-        : 'Draft a follow-up email for a lead who inquired about boat rentals',
+        : 'Draft a follow-up email for a lead who inquired about health insurance plans',
     },
     {
       id: '2',

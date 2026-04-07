@@ -331,8 +331,8 @@ function ContactDialog({
                     <SelectItem value="social_media">Social Media</SelectItem>
                     <SelectItem value="google">Google / Maps</SelectItem>
                     <SelectItem value="yelp">Yelp</SelectItem>
-                    <SelectItem value="boat_show">Boat Show</SelectItem>
-                    <SelectItem value="marina">Marina</SelectItem>
+                    <SelectItem value="health_fair">Health Fair</SelectItem>
+                    <SelectItem value="community_event">Community Event</SelectItem>
                     <SelectItem value="repeat_customer">Repeat Customer</SelectItem>
                     <SelectItem value="advertisement">Advertisement</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
@@ -741,7 +741,7 @@ export default function ContactsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
           <p className="text-muted-foreground">
-            Manage your customers and rental contacts
+            Manage your customers and insurance contacts
           </p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)}>

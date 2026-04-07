@@ -2,35 +2,30 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   BarChart3,
   Bot,
-  Building2,
-  CalendarDays,
+  Calendar,
+  CheckSquare,
   ChevronDown,
+  ClipboardList,
+  FileText,
+  GitBranch,
+  Heart,
   Inbox,
-  Kanban,
   LayoutDashboard,
   LogOut,
   Mail,
   MessageSquare,
   Phone,
   Settings,
-  User,
-  Users,
-  Ship,
-  FileText,
+  Shield,
+  ShieldCheck,
   StickyNote,
-  ClipboardList,
-  BookOpen,
-  Lock,
-  DollarSign,
-  GraduationCap,
-  Anchor,
-  Zap,
-  Activity,
+  User,
+  UserPlus,
+  Users,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -65,75 +60,52 @@ const mainNavItems = [
     icon: LayoutDashboard,
   },
   {
-    title: 'Bookings',
-    href: '/dashboard/bookings',
-    icon: Ship,
-  },
-  {
     title: 'Leads',
     href: '/dashboard/leads',
-    icon: Users,
+    icon: UserPlus,
   },
   {
     title: 'Pipeline',
     href: '/dashboard/pipeline',
-    icon: Kanban,
+    icon: GitBranch,
+  },
+  {
+    title: 'Policyholders',
+    href: '/dashboard/contacts',
+    icon: Users,
   },
   {
     title: 'Calendar',
     href: '/dashboard/calendar',
-    icon: CalendarDays,
-  },
-  {
-    title: 'Customers',
-    href: '/dashboard/contacts',
-    icon: Building2,
+    icon: Calendar,
   },
   {
     title: 'Tasks',
     href: '/dashboard/tasks',
-    icon: ClipboardList,
+    icon: CheckSquare,
   },
 ];
 
-const boatOpsItems = [
+const insuranceItems = [
   {
-    title: 'Boat CRM',
-    href: '/dashboard/crm',
-    icon: Anchor,
+    title: 'Programs',
+    href: '/dashboard/programs',
+    icon: ShieldCheck,
   },
   {
-    title: 'Fleet',
-    href: '/dashboard/fleet',
-    icon: Ship,
-  },
-  {
-    title: 'Boat Analytics',
-    href: '/dashboard/boat-analytics',
-    icon: BarChart3,
-  },
-  {
-    title: 'Waivers',
-    href: '/dashboard/captain-waivers',
+    title: 'Enrollments',
+    href: '/dashboard/enrollments',
     icon: ClipboardList,
   },
   {
-    title: 'Operations',
-    href: '/dashboard/operations',
-    icon: Activity,
+    title: 'Proposals',
+    href: '/dashboard/proposals',
+    icon: FileText,
   },
   {
-    title: 'Automations',
-    href: '/dashboard/automations',
-    icon: Zap,
-  },
-];
-
-const financeItems = [
-  {
-    title: 'Financial Dashboard',
-    href: '/dashboard/finance',
-    icon: DollarSign,
+    title: 'Wellness',
+    href: '/dashboard/wellness',
+    icon: Heart,
   },
 ];
 
@@ -149,11 +121,6 @@ const baseCommunicationItems = [
     title: 'Messages',
     href: '/dashboard/messages',
     icon: MessageSquare,
-  },
-  {
-    title: 'Emails',
-    href: '/dashboard/emails',
-    icon: Mail,
   },
   {
     title: 'Campaigns',
@@ -178,15 +145,21 @@ const aiItems = [
     href: '/dashboard/ai-notes',
     icon: StickyNote,
   },
+];
+
+const reportItems = [
   {
     title: 'Analytics',
     href: '/dashboard/analytics',
     icon: BarChart3,
   },
+];
+
+const adminItems = [
   {
-    title: 'Best Practices',
-    href: '/dashboard/best-practices',
-    icon: BookOpen,
+    title: 'Settings',
+    href: '/dashboard/settings',
+    icon: Settings,
   },
 ];
 
@@ -263,13 +236,13 @@ export function AppSidebar() {
                 isCollapsed && 'justify-center'
               )}
             >
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
-                <Anchor className="h-5 w-5 text-white" />
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-lg shadow-slate-500/25">
+                <Shield className="h-5 w-5 text-amber-400" />
               </div>
               {!isCollapsed && (
                 <span className="font-bold text-lg tracking-tight">
-                  <span className="text-orange-500">Banana</span>
-                  <span className="text-orange-700">Boat</span>
+                  <span className="text-foreground">Health</span>
+                  <span className="text-foreground">Shield</span>
                 </span>
               )}
             </Link>
@@ -288,28 +261,10 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Boat Operations</SidebarGroupLabel>
+          <SidebarGroupLabel>Insurance</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {boatOpsItems.map(renderNavItem)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Finance</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {financeItems.map(renderNavItem)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>AI & Training</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {aiItems.map(renderNavItem)}
+              {insuranceItems.map(renderNavItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -319,6 +274,33 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {communicationItems.map(renderNavItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>AI Tools</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {aiItems.map(renderNavItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Reports</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {reportItems.map(renderNavItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Admin</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminItems.map(renderNavItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
