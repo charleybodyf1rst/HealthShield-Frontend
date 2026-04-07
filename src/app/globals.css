@@ -51,6 +51,16 @@
    ============================================== */
 
 :root {
+  /* ========== Premium Palette ========== */
+  --navy: #0A1628;
+  --navy-light: #0F1D32;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --ivory: #F5F0E8;
+  --ivory-muted: #F5F0E880;
+  --slate: #64748B;
+  --emerald: #059669;
+
   /* ========== Glass Effects ========== */
   --glass-white: rgba(255, 255, 255, 0.15);
   --glass-dark: rgba(15, 23, 42, 0.8);
@@ -299,4 +309,9 @@ body {
 @keyframes typing-dots {
   0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
   30% { opacity: 1; transform: translateY(-4px); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }

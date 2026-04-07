@@ -4,10 +4,9 @@ import Link from 'next/link';
 import { Shield, Phone, Mail, MapPin } from 'lucide-react';
 
 const footerLinks = {
-  quickLinks: [
+  company: [
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
-    { name: 'Services', href: '/services' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'FAQ', href: '/faq' },
     { name: 'Contact', href: '/contact' },
@@ -19,6 +18,12 @@ const footerLinks = {
     { name: 'Smart Lead Management', href: '/services#crm' },
     { name: 'Savings Calculator', href: '/savings-calculator' },
     { name: 'Get a Quote', href: '/quote' },
+  ],
+  insurance: [
+    { name: 'Medicare Plans', href: '/services#medicare' },
+    { name: 'ACA Marketplace', href: '/services#aca' },
+    { name: 'Group Benefits', href: '/services#group' },
+    { name: 'Supplemental', href: '/services#supplemental' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },
@@ -50,45 +55,45 @@ const socialLinks = [
 
 export function MarketingFooter() {
   return (
-    <footer className="bg-black border-t border-white/10">
+    <footer className="bg-[#060E1A] border-t border-[#C9A84C]/20">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-4 xl:gap-8">
           {/* Brand section */}
           <div className="space-y-6 xl:col-span-1">
             <Link href="/" className="flex items-center gap-2">
-              <Shield className="h-8 w-8 text-blue-400" />
-              <span className="font-['Space_Grotesk'] font-bold text-xl text-white">
-                Health<span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Shield</span>
+              <Shield className="h-8 w-8 text-[#C9A84C]" />
+              <span className="font-[var(--font-dm-serif)] text-xl text-[#F5F0E8]">
+                HealthShield
               </span>
             </Link>
-            <p className="text-sm text-white/50 max-w-xs leading-relaxed">
+            <p className="text-sm text-[#F5F0E8]/60 max-w-xs leading-relaxed">
               AI-powered health insurance call center technology. Streamlining enrollment, claims, and customer service with intelligent automation.
             </p>
 
             {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-white/50">
-                <Phone className="h-4 w-4 text-blue-400" />
-                <a href="tel:+18005551234" className="text-sm hover:text-white transition-colors">
+              <div className="flex items-center gap-3 text-[#F5F0E8]/60">
+                <Phone className="h-4 w-4 text-[#C9A84C]" />
+                <a href="tel:+18005551234" className="text-sm hover:text-[#F5F0E8] transition-colors">
                   1-800-555-1234
                 </a>
               </div>
-              <div className="flex items-center gap-3 text-white/50">
-                <Mail className="h-4 w-4 text-blue-400" />
-                <a href="mailto:info@healthshield.ai" className="text-sm hover:text-white transition-colors">
+              <div className="flex items-center gap-3 text-[#F5F0E8]/60">
+                <Mail className="h-4 w-4 text-[#C9A84C]" />
+                <a href="mailto:info@healthshield.ai" className="text-sm hover:text-[#F5F0E8] transition-colors">
                   info@healthshield.ai
                 </a>
               </div>
-              <div className="flex items-center gap-3 text-white/50">
-                <MapPin className="h-4 w-4 text-blue-400" />
+              <div className="flex items-center gap-3 text-[#F5F0E8]/60">
+                <MapPin className="h-4 w-4 text-[#C9A84C]" />
                 <span className="text-sm">Austin, TX</span>
               </div>
             </div>
 
             {/* HIPAA Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg px-3 py-2">
-              <Shield className="h-4 w-4 text-green-400" />
-              <span className="text-xs font-medium text-green-400">HIPAA Compliant</span>
+            <div className="inline-flex items-center gap-2 bg-[#C9A84C]/5 backdrop-blur-xl border border-[#C9A84C]/20 rounded-lg px-3 py-2">
+              <Shield className="h-4 w-4 text-[#C9A84C]" />
+              <span className="text-xs font-medium text-[#C9A84C]">HIPAA Compliant</span>
             </div>
 
             {/* Social Links */}
@@ -99,7 +104,7 @@ export function MarketingFooter() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/30 hover:text-white/70 transition-colors"
+                  className="text-[#F5F0E8]/30 hover:text-[#C9A84C] transition-colors"
                 >
                   <span className="sr-only">{item.name}</span>
                   <item.icon className="h-5 w-5" aria-hidden="true" />
@@ -108,18 +113,18 @@ export function MarketingFooter() {
             </div>
           </div>
 
-          {/* Links sections */}
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-3 xl:mt-0 lg:grid-cols-3">
+          {/* Links sections — 4 columns: Company, Services, Insurance, Legal */}
+          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-3 xl:mt-0 lg:grid-cols-4">
             <div>
-              <h3 className="text-sm font-semibold text-white font-['Space_Grotesk'] uppercase tracking-wider">
-                Quick Links
+              <h3 className="text-sm font-semibold text-[#C9A84C] uppercase tracking-wider">
+                Company
               </h3>
               <ul role="list" className="mt-4 space-y-3">
-                {footerLinks.quickLinks.map((item) => (
+                {footerLinks.company.map((item) => (
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-sm text-white/50 hover:text-white transition-colors"
+                      className="text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -128,7 +133,7 @@ export function MarketingFooter() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white font-['Space_Grotesk'] uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-[#C9A84C] uppercase tracking-wider">
                 Services
               </h3>
               <ul role="list" className="mt-4 space-y-3">
@@ -136,7 +141,7 @@ export function MarketingFooter() {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-sm text-white/50 hover:text-white transition-colors"
+                      className="text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -145,7 +150,24 @@ export function MarketingFooter() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white font-['Space_Grotesk'] uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-[#C9A84C] uppercase tracking-wider">
+                Insurance
+              </h3>
+              <ul role="list" className="mt-4 space-y-3">
+                {footerLinks.insurance.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-[#C9A84C] uppercase tracking-wider">
                 Legal
               </h3>
               <ul role="list" className="mt-4 space-y-3">
@@ -153,7 +175,7 @@ export function MarketingFooter() {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-sm text-white/50 hover:text-white transition-colors"
+                      className="text-sm text-[#F5F0E8]/60 hover:text-[#F5F0E8] transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -165,8 +187,8 @@ export function MarketingFooter() {
         </div>
 
         {/* Bottom section */}
-        <div className="mt-12 border-t border-white/10 pt-8">
-          <p className="text-xs text-white/30 text-center">
+        <div className="mt-12 border-t border-[#C9A84C]/10 pt-8">
+          <p className="text-xs text-[#F5F0E8]/40 text-center">
             &copy; {new Date().getFullYear()} HealthShield AI. All rights reserved. | Powered by SystemsF1RST LLC
           </p>
         </div>
