@@ -22,8 +22,7 @@ import {
   Anchor,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { generateRAGResponse, recommendBoats, type RAGResponse } from '@/lib/ai/vector-store';
-import type { Boat } from '@/lib/boats';
+import { generateRAGResponse, type RAGResponse } from '@/lib/ai/vector-store';
 import Link from 'next/link';
 
 interface Message {
@@ -31,7 +30,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
-  suggestedBoats?: Boat[];
+  suggestedBoats?: any[];
   confidence?: number;
 }
 

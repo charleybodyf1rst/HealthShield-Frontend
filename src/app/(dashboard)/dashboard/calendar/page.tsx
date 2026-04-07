@@ -58,7 +58,15 @@ import {
   type CreateSalesAppointmentData,
 } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { boats as fleetBoats } from '@/lib/boats';
+// Insurance plan types used as dropdown options
+const fleetBoats = [
+  { id: '1', name: 'Individual Health' },
+  { id: '2', name: 'Family Health' },
+  { id: '3', name: 'Medicare Advantage' },
+  { id: '4', name: 'Medicare Supplement' },
+  { id: '5', name: 'Dental & Vision' },
+  { id: '6', name: 'Group / Employer' },
+];
 
 type ViewMode = 'month' | 'week' | 'day';
 

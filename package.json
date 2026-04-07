@@ -55,7 +55,8 @@
     "zod": "^4.1.13",
     "zustand": "^5.0.9",
     "@sentry/nextjs": "^9.16.0",
-    "axios": "^1.7.0"
+    "axios": "^1.7.0",
+    "react-is": "^19.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",

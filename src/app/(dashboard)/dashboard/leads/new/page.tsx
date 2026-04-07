@@ -19,7 +19,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { LEAD_SOURCES } from '@/lib/constants';
 import { useLeadsStore } from '@/stores/leads-store';
 import { toast } from 'sonner';
-import { boats as fleetBoats } from '@/lib/boats';
+// Insurance plan options for lead creation
+const fleetBoats = [
+  { id: '1', name: 'Individual Health', slug: 'individual' },
+  { id: '2', name: 'Family Health', slug: 'family' },
+  { id: '3', name: 'Medicare Advantage', slug: 'medicare-advantage' },
+  { id: '4', name: 'Medicare Supplement', slug: 'medicare-supplement' },
+  { id: '5', name: 'Dental & Vision', slug: 'dental-vision' },
+  { id: '6', name: 'Group / Employer', slug: 'group' },
+];
 import type { CreateLeadData } from '@/types/lead';
 
 export default function NewLeadPage() {

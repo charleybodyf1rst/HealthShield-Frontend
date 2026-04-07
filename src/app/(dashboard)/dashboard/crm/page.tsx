@@ -35,7 +35,7 @@ import { CustomersTab } from '@/components/crm/CustomersTab';
 import { ApprovalsTab } from '@/components/crm/ApprovalsTab';
 import { AiCallerTab } from '@/components/crm/AiCallerTab';
 import { AnalyticsTab } from '@/components/crm/AnalyticsTab';
-import { WaiversTab } from '@/components/crm/WaiversTab';
+// WaiversTab removed — not applicable to insurance CRM
 import { LeadsTab } from '@/components/crm/LeadsTab';
 
 export default function BoatCrmPage() {
@@ -292,9 +292,7 @@ export default function BoatCrmPage() {
               <AiCallerTab />
             </TabsContent>
 
-            <TabsContent value="waivers" className="h-full m-0">
-              {activeTab === 'waivers' && <WaiversTab />}
-            </TabsContent>
+            {/* Waivers tab removed — not applicable to insurance */}
 
             <TabsContent value="analytics" className="h-full m-0">
               <AnalyticsTab />
