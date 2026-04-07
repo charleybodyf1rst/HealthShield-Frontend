@@ -30,7 +30,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
-  suggestedBoats?: any[];
+  suggestedPlans?: any[];
   confidence?: number;
 }
 
@@ -38,9 +38,9 @@ const quickQuestions = [
   "What should I bring?",
   "How much does it cost?",
   "Can I bring alcohol?",
-  "Which boat is best for a bachelorette party?",
+  "Which health insurance plan is best for families?",
   "What's your cancellation policy?",
-  "Do you provide a captain?",
+  "What AI agents do you offer?",
 ];
 
 export function AIChatWidget() {
@@ -49,7 +49,7 @@ export function AIChatWidget() {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Ahoy! I'm your HealthShield AI assistant. I can help you choose the perfect boat, answer questions about pricing, policies, or anything else about your upcoming adventure. What can I help you with today?",
+      content: "Hello! I'm the HealthShield AI assistant. I can help you find the right health insurance plan, answer coverage questions, or guide you through enrollment. How can I help you today?",
       timestamp: new Date(),
     },
   ]);
@@ -95,7 +95,7 @@ export function AIChatWidget() {
         role: 'assistant',
         content: ragResponse.answer,
         timestamp: new Date(),
-        suggestedBoats: ragResponse.suggestedBoats,
+        suggestedPlans: ragResponse.suggestedPlans,
         confidence: ragResponse.confidence,
       };
 
@@ -216,21 +216,21 @@ export function AIChatWidget() {
                       <p className="whitespace-pre-wrap">{message.content}</p>
 
                       {/* Suggested Boats */}
-                      {message.suggestedBoats && message.suggestedBoats.length > 0 && (
+                      {message.suggestedPlans && message.suggestedPlans.length > 0 && (
                         <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
                           <p className="text-xs font-medium text-gray-500 flex items-center gap-1">
                             <Sparkles className="w-3 h-3" />
                             Recommended for you:
                           </p>
-                          {message.suggestedBoats.map((boat) => (
+                          {message.suggestedPlans.map((plan) => (
                             <Link
-                              key={boat.slug}
-                              href={`/boats/${boat.slug}`}
+                              key={plan.slug}
+                              href={`/plans/${plan.slug}`}
                               className="flex items-center gap-2 p-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors group"
                             >
                               <Ship className="w-4 h-4 text-blue-600" />
                               <span className="flex-1 text-xs font-medium text-blue-800">
-                                {boat.emoji} {boat.name}
+                                {plan.icon} {plan.name}
                               </span>
                               <ChevronRight className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform" />
                             </Link>
@@ -292,7 +292,7 @@ export function AIChatWidget() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask me anything about boat rentals..."
+                  placeholder="Ask about health insurance..."
                   className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none text-sm transition-all"
                   disabled={isTyping}
                 />

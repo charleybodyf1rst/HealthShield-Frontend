@@ -2,7 +2,7 @@
 
 /**
  * Employee/Staff Management Dashboard
- * Manage captains, crew, and staff with certification tracking
+ * Manage agents, representatives, and staff with licensing tracking
  */
 
 import { useState } from 'react';
@@ -60,7 +60,6 @@ import {
   Calendar,
   Star,
   Users,
-  Anchor,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { teamApi } from '@/lib/api';
@@ -76,7 +75,7 @@ const demoEmployees = [
     email: 'marcus@healthshield.com',
     phone: '(512) 555-0101',
     photo: null,
-    role: 'captain' as EmployeeRole,
+    role: 'agent' as EmployeeRole,
     type: 'employee' as const,
     status: 'active' as EmployeeStatus,
     hireDate: '2022-03-15',
@@ -96,7 +95,7 @@ const demoEmployees = [
     email: 'jessica@healthshield.com',
     phone: '(512) 555-0102',
     photo: null,
-    role: 'captain' as EmployeeRole,
+    role: 'agent' as EmployeeRole,
     type: 'employee' as const,
     status: 'active' as EmployeeStatus,
     hireDate: '2021-08-20',
@@ -135,7 +134,7 @@ const demoEmployees = [
     email: 'amanda@healthshield.com',
     phone: '(512) 555-0104',
     photo: null,
-    role: 'captain' as EmployeeRole,
+    role: 'agent' as EmployeeRole,
     type: 'employee' as const,
     status: 'on-leave' as EmployeeStatus,
     hireDate: '2022-11-10',
@@ -155,7 +154,7 @@ const demoEmployees = [
     email: 'derek@healthshield.com',
     phone: '(512) 555-0105',
     photo: null,
-    role: 'captain' as EmployeeRole,
+    role: 'agent' as EmployeeRole,
     type: 'subcontractor' as const,
     status: 'training' as EmployeeStatus,
     hireDate: '2024-01-08',
@@ -170,7 +169,7 @@ const demoEmployees = [
 ];
 
 const roleConfig: Record<EmployeeRole, { label: string; color: string }> = {
-  captain: { label: 'Captain', color: 'bg-blue-500' },
+  agent: { label: 'Agent', color: 'bg-blue-500' },
   crew: { label: 'Crew', color: 'bg-green-500' },
   admin: { label: 'Admin', color: 'bg-purple-500' },
   manager: { label: 'Manager', color: 'bg-orange-500' },
@@ -198,7 +197,7 @@ export default function EmployeesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newEmployee, setNewEmployee] = useState({ firstName: '', lastName: '', email: '', phone: '', role: 'captain', hourlyRate: '' });
+  const [newEmployee, setNewEmployee] = useState({ firstName: '', lastName: '', email: '', phone: '', role: 'agent', hourlyRate: '' });
   const [creating, setCreating] = useState(false);
 
   // Filter employees
@@ -216,7 +215,7 @@ export default function EmployeesPage() {
   const stats = {
     total: demoEmployees.length,
     active: demoEmployees.filter(e => e.status === 'active').length,
-    captains: demoEmployees.filter(e => e.role === 'captain').length,
+    agents: demoEmployees.filter(e => e.role === 'agent').length,
     expiringCerts: demoEmployees.reduce(
       (acc, e) => acc + e.certifications.filter(c => c.status === 'expiring-soon' || c.status === 'expired').length,
       0
@@ -235,10 +234,10 @@ export default function EmployeesPage() {
     if (!newEmployee.firstName || !newEmployee.email) { toast.error('Name and email required'); return; }
     setCreating(true);
     try {
-      await teamApi.invite({ email: newEmployee.email, firstName: newEmployee.firstName, lastName: newEmployee.lastName, role: newEmployee.role || 'captain' });
+      await teamApi.invite({ email: newEmployee.email, firstName: newEmployee.firstName, lastName: newEmployee.lastName, role: newEmployee.role || 'agent' });
       toast.success('Employee invited successfully');
       setShowAddDialog(false);
-      setNewEmployee({ firstName: '', lastName: '', email: '', phone: '', role: 'captain', hourlyRate: '' });
+      setNewEmployee({ firstName: '', lastName: '', email: '', phone: '', role: 'agent', hourlyRate: '' });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to invite employee';
       toast.error(message);
@@ -255,7 +254,7 @@ export default function EmployeesPage() {
             Employee Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage your captains, crew, and staff certifications
+            Manage your agents, representatives, and staff licensing
           </p>
         </div>
         <div className="flex gap-2">
@@ -308,7 +307,7 @@ export default function EmployeesPage() {
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="captain">Captain</SelectItem>
+                        <SelectItem value="agent">Agent</SelectItem>
                         <SelectItem value="crew">Crew</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
                       </SelectContent>
@@ -344,7 +343,7 @@ export default function EmployeesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground">{stats.captains} captains</p>
+            <p className="text-xs text-muted-foreground">{stats.agents} agents</p>
           </CardContent>
         </Card>
 
@@ -397,12 +396,12 @@ export default function EmployeesPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Captains
+              Agents
             </CardTitle>
-            <Anchor className="h-4 w-4 text-blue-500" />
+            <Shield className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.captains}</div>
+            <div className="text-2xl font-bold text-blue-600">{stats.agents}</div>
             <p className="text-xs text-muted-foreground">Licensed operators</p>
           </CardContent>
         </Card>
@@ -425,7 +424,7 @@ export default function EmployeesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="captain">Captain</SelectItem>
+            <SelectItem value="agent">Agent</SelectItem>
             <SelectItem value="crew">Crew</SelectItem>
             <SelectItem value="admin">Admin</SelectItem>
           </SelectContent>

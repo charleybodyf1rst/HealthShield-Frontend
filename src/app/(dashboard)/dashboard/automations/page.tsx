@@ -383,7 +383,7 @@ export default function AutomationsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Zap className="h-6 w-6 text-orange-500" />
+            <Zap className="h-6 w-6 text-blue-500" />
             Automations & Workflows
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -465,10 +465,10 @@ export default function AutomationsPage() {
 
       {/* Test Send Panel */}
       {showTestPanel && (
-        <Card className="border-orange-500/30 bg-orange-500/5">
+        <Card className="border-blue-500/30 bg-blue-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Send className="h-4 w-4 text-orange-500" />
+              <Send className="h-4 w-4 text-blue-500" />
               Send Test Notification
             </CardTitle>
           </CardHeader>
@@ -531,7 +531,7 @@ export default function AutomationsPage() {
           onClick={() => setActiveTab('automations')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'automations'
-              ? 'border-orange-500 text-orange-500'
+              ? 'border-blue-500 text-blue-500'
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -541,7 +541,7 @@ export default function AutomationsPage() {
           onClick={() => setActiveTab('logs')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'logs'
-              ? 'border-orange-500 text-orange-500'
+              ? 'border-blue-500 text-blue-500'
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -576,7 +576,7 @@ export default function AutomationsPage() {
                         <Clock className="h-3.5 w-3.5" />
                         <span>{TRIGGER_LABELS[automation.trigger] || automation.trigger}</span>
                         {automation.offset_minutes && automation.offset_minutes !== 0 && (
-                          <span className="text-orange-500">
+                          <span className="text-blue-500">
                             ({automation.offset_minutes > 0 ? '+' : ''}{automation.offset_minutes >= 60 || automation.offset_minutes <= -60
                               ? `${Math.round(automation.offset_minutes / 60)}h`
                               : `${automation.offset_minutes}m`})
@@ -656,7 +656,7 @@ export default function AutomationsPage() {
                       {log.status === 'delivered' && <CheckCircle2 className="h-4 w-4 text-green-500" />}
                       {log.status === 'sent' && <Send className="h-4 w-4 text-blue-500" />}
                       {log.status === 'failed' && <XCircle className="h-4 w-4 text-red-500" />}
-                      {log.status === 'pending' && <AlertTriangle className="h-4 w-4 text-orange-500" />}
+                      {log.status === 'pending' && <AlertTriangle className="h-4 w-4 text-blue-500" />}
                       <div>
                         <p className="text-sm font-medium">{log.automation_name}</p>
                         <p className="text-xs text-muted-foreground">

@@ -6,7 +6,7 @@
  * - Insurance documents
  * - Boat maintenance records
  * - Customer contracts
- * - Captain certifications
+ * - Agent certifications
  * - Business licenses
  */
 
@@ -52,7 +52,7 @@ export interface DocumentMetadata {
   amount?: number;
   vendor?: string;
   boatSlug?: string;
-  captainId?: string;
+  agentId?: string;
   taxYear?: number;
   taxCategory?: TaxCategory;
   notes?: string;
@@ -132,11 +132,11 @@ export const documentFolders: DocumentFolder[] = [
     totalSize: 0,
   },
   {
-    id: 'captain-records',
-    name: 'Captain Records',
+    id: 'agent-records',
+    name: 'Agent Records',
     category: 'hr',
     icon: '👨‍✈️',
-    description: 'Captain certifications, licenses, and employment docs',
+    description: 'Agent certifications, licenses, and employment docs',
     documentCount: 0,
     totalSize: 0,
   },
@@ -227,9 +227,9 @@ export const taxCategories: {
   {
     category: 'wages',
     name: 'Wages & Contractors',
-    description: 'Captain wages and contractor payments',
+    description: 'Agent wages and contractor payments',
     deductionRate: 100,
-    examples: ['Captain pay', 'Cleaning crew', 'Photographer'],
+    examples: ['Agent pay', 'Cleaning crew', 'Photographer'],
   },
   {
     category: 'utilities',
@@ -303,18 +303,18 @@ export const sampleDocuments: Document[] = [
   },
   {
     id: 'doc-004',
-    name: 'Captain Jason License',
+    name: 'Agent Jason License',
     type: 'certification',
     category: 'hr',
-    fileUrl: '/documents/captain-jason-license.pdf',
+    fileUrl: '/documents/agent-jason-license.pdf',
     fileSize: 180000,
     mimeType: 'application/pdf',
     uploadedAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-01'),
     expiresAt: new Date('2026-02-01'),
-    tags: ['license', 'captain', 'uscg'],
+    tags: ['license', 'agent', 'uscg'],
     metadata: {
-      captainId: 'captain-jason',
+      agentId: 'agent-jason',
       notes: 'USCG Master License - 100 Ton',
     },
     isArchived: false,

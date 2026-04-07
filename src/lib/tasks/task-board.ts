@@ -203,7 +203,7 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
   },
   {
     title: 'Review Week\'s Bookings',
-    description: 'Prepare for upcoming week - confirm all bookings and assign captains',
+    description: 'Prepare for upcoming week - confirm all bookings and assign agents',
     status: 'todo',
     priority: 'high',
     category: 'operations',
@@ -211,7 +211,7 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
     checklist: [
       { id: 'c1', text: 'Review all upcoming bookings', completed: false },
       { id: 'c2', text: 'Send confirmation to customers', completed: false },
-      { id: 'c3', text: 'Assign captains to each trip', completed: false },
+      { id: 'c3', text: 'Assign agents to each trip', completed: false },
       { id: 'c4', text: 'Check for special requests', completed: false },
       { id: 'c5', text: 'Verify payment status', completed: false },
     ],
@@ -326,8 +326,8 @@ export const sampleTasks: Task[] = [
     status: 'in_progress',
     priority: 'high',
     category: 'customer',
-    assigneeId: 'captain-jason',
-    assigneeName: 'Captain Jason',
+    assigneeId: 'agent-jason',
+    assigneeName: 'Agent Jason',
     dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
     createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
     updatedAt: new Date(),
@@ -335,8 +335,8 @@ export const sampleTasks: Task[] = [
     comments: [
       {
         id: 'com-1',
-        authorId: 'captain-jason',
-        authorName: 'Captain Jason',
+        authorId: 'agent-jason',
+        authorName: 'Agent Jason',
         content: 'Called and left voicemail. Will try again tomorrow.',
         createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
       },

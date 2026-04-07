@@ -41,7 +41,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { BoatLead, LeadStatus } from '@/types/boat-crm';
+import type { BoatLead, LeadStatus } from '@/types/plan-crm';
 import { InteractionTimeline } from './InteractionTimeline';
 
 const statusColors: Record<LeadStatus, string> = {
@@ -450,7 +450,7 @@ function LeadDetailPanel({
           <div className="grid grid-cols-2 gap-3 text-sm">
             {lead.boatTypeInterested && (
               <div>
-                <span className="text-slate-500">Boat Type:</span>
+                <span className="text-slate-500">Plan Type:</span>
                 <p className="font-medium">
                   {boatTypeEmojis[lead.boatTypeInterested]}{' '}
                   {lead.specificBoatName || lead.boatTypeInterested.replace('_', ' ')}
@@ -702,7 +702,7 @@ function NewLeadForm({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="double_decker">Double Decker</SelectItem>
-              <SelectItem value="pink">Pink Party Boat</SelectItem>
+              <SelectItem value="pink">Medicare Advantage</SelectItem>
               <SelectItem value="pontoon">Pontoon</SelectItem>
               <SelectItem value="wakesurfing">Wakesurfing</SelectItem>
               <SelectItem value="any">Any / Not Sure</SelectItem>

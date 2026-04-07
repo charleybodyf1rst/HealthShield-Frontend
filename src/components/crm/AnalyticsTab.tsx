@@ -111,7 +111,7 @@ function BoatPerformanceRow({ name, bookings, revenue }: {
   );
 }
 
-function CaptainRow({ name, trips, rating }: {
+function AgentRow({ name, trips, rating }: {
   name: string;
   trips: number;
   rating: number;
@@ -155,7 +155,7 @@ export function AnalyticsTab() {
 
   const bookings = analytics?.bookings;
   const calls = analytics?.calls;
-  const captains = analytics?.captains;
+  const agents = analytics?.agents;
 
   return (
     <div className="space-y-6">
@@ -216,9 +216,9 @@ export function AnalyticsTab() {
               color="purple"
             />
             <StatCard
-              title="Active Captains"
-              value={`${captains?.availableCaptains || 0}/${captains?.totalCaptains || 0}`}
-              subtitle={`${captains?.tripsToday || 0} trips today`}
+              title="Active Agents"
+              value={`${agents?.availableAgents || 0}/${agents?.totalAgents || 0}`}
+              subtitle={`${agents?.tripsToday || 0} trips today`}
               icon={Users}
               color="orange"
             />
@@ -245,8 +245,8 @@ export function AnalyticsTab() {
               color="red"
             />
             <StatCard
-              title="Captain Rating"
-              value={captains?.avgRating?.toFixed(1) || '0.0'}
+              title="Agent Rating"
+              value={agents?.avgRating?.toFixed(1) || '0.0'}
               subtitle="Average"
               icon={Star}
               color="orange"
@@ -255,12 +255,12 @@ export function AnalyticsTab() {
 
           {/* Detail Cards */}
           <div className="grid grid-cols-2 gap-6">
-            {/* Boat Performance */}
+            {/* Plan Performance */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Ship className="w-5 h-5 text-yellow-500" />
-                  Boat Performance
+                  Plan Performance
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -269,10 +269,10 @@ export function AnalyticsTab() {
                     {Object.entries(bookings.bookingsByBoat)
                       .sort(([, a], [, b]) => b - a)
                       .slice(0, 5)
-                      .map(([boat, count]) => (
+                      .map(([plan, count]) => (
                         <BoatPerformanceRow
-                          key={boat}
-                          name={boat}
+                          key={plan}
+                          name={plan}
                           bookings={count}
                           revenue={count * (bookings.avgBookingValue || 600)}
                         />
@@ -280,35 +280,35 @@ export function AnalyticsTab() {
                   </div>
                 ) : (
                   <div className="text-center py-8 text-slate-500">
-                    No boat data available
+                    No plan data available
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Top Captains */}
+            {/* Top Agents */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-blue-500" />
-                  Top Captains
+                  Top Agents
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {captains?.topCaptains && captains.topCaptains.length > 0 ? (
+                {agents?.topAgents && agents.topAgents.length > 0 ? (
                   <div className="space-y-1">
-                    {captains.topCaptains.map((captain) => (
-                      <CaptainRow
-                        key={captain.id}
-                        name={captain.name}
-                        trips={captain.trips}
-                        rating={captain.rating}
+                    {agents.topAgents.map((agent) => (
+                      <AgentRow
+                        key={agent.id}
+                        name={agent.name}
+                        trips={agent.trips}
+                        rating={agent.rating}
                       />
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-8 text-slate-500">
-                    No captain data available
+                    No agent data available
                   </div>
                 )}
               </CardContent>

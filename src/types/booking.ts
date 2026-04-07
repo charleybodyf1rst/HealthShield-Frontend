@@ -20,8 +20,8 @@ export interface Booking {
   // Boat & Crew
   boatId: string;
   boatName?: string;
-  captainId?: string;
-  captainName?: string;
+  agentId?: string;
+  agentName?: string;
   crewIds?: string[];
 
   // Schedule
@@ -112,8 +112,8 @@ export interface BookingCalendarEvent {
   boatId: string;
   boatName: string;
   boatColor: 'yellow' | 'pink' | 'blue';
-  captainId?: string;
-  captainName?: string;
+  agentId?: string;
+  agentName?: string;
   status: BookingStatus;
   partySize: number;
   customerName: string;
@@ -186,7 +186,7 @@ export interface BookingFilters {
   status?: BookingStatus;
   paymentStatus?: PaymentStatus;
   boatId?: string;
-  captainId?: string;
+  agentId?: string;
   location?: 'lake-travis';
   partyType?: PartyType;
   source?: BookingSource;
@@ -220,7 +220,7 @@ export interface CreateBookingData {
 
 export interface UpdateBookingData {
   boatId?: string;
-  captainId?: string;
+  agentId?: string;
   date?: string;
   startTime?: string;
   duration?: number;
@@ -232,10 +232,10 @@ export interface UpdateBookingData {
   internalNotes?: string;
 }
 
-export interface AssignCaptainData {
-  captainId: string;
+export interface AssignAgentData {
+  agentId: string;
   notifyCustomer?: boolean;
-  notifyCaptain?: boolean;
+  notifyAgent?: boolean;
 }
 
 export interface CancelBookingData {
@@ -248,7 +248,7 @@ export interface CalendarQuery {
   startDate: string;
   endDate: string;
   boatIds?: string[];
-  captainIds?: string[];
+  agentIds?: string[];
   location?: 'lake-travis';
   status?: BookingStatus[];
 }

@@ -19,7 +19,7 @@ import {
   User,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
-import type { BoatCustomer } from '@/types/boat-crm';
+import type { BoatCustomer } from '@/types/plan-crm';
 
 function CustomerCard({ customer, onSelect }: {
   customer: BoatCustomer;

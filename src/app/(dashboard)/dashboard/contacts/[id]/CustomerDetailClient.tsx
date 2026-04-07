@@ -229,11 +229,11 @@ export default function CustomerDetailClient() {
               )}
             </div>
 
-            {customer.preferredBoats && customer.preferredBoats.length > 0 && (
+            {customer.insurancePlans && customer.insurancePlans.length > 0 && (
               <div className="border-t pt-4 mt-4">
                 <p className="text-sm text-muted-foreground mb-2">Insurance Plans</p>
                 <div className="flex flex-wrap gap-1">
-                  {customer.preferredBoats.map((plan) => (
+                  {customer.insurancePlans?.map((plan) => (
                     <Badge key={plan} variant="outline" className="text-xs">{plan}</Badge>
                   ))}
                 </div>

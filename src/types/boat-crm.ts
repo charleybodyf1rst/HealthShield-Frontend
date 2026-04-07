@@ -35,13 +35,13 @@ export interface BoatCustomer {
   totalBookings: number;
   totalSpent: number;
   lastBookingDate?: string;
-  preferredBoats?: string[];
+  insurancePlans?: string[];
   notes?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Captain {
+export interface Agent {
   id: number;
   user_id: number;
   user_account_id?: number;
@@ -53,7 +53,7 @@ export interface Captain {
   phone?: string;
   address?: string;
   date_of_birth?: string;
-  captains_license_number?: string;
+  agents_license_number?: string;
   license_type?: 'six_pack' | 'master' | 'oupv' | '100_ton' | '200_ton';
   license_expires?: string;
   endorsements?: string[];
@@ -78,14 +78,14 @@ export interface Captain {
   rating: number;
   totalTrips: number;
   bookings_count?: number;
-  schedules?: CaptainScheduleEntry[];
+  schedules?: AgentScheduleEntry[];
   created_at?: string;
   updated_at?: string;
 }
 
-export interface CaptainScheduleEntry {
+export interface AgentScheduleEntry {
   id: number;
-  captain_id: number;
+  agent_id: number;
   booking_id?: number;
   schedule_date: string;
   start_time?: string;
@@ -95,12 +95,12 @@ export interface CaptainScheduleEntry {
   notes?: string;
 }
 
-export interface CreateCaptainData {
+export interface CreateAgentData {
   first_name: string;
   last_name: string;
   email?: string;
   phone?: string;
-  captains_license_number?: string;
+  agents_license_number?: string;
   license_type?: string;
   license_expires?: string;
   hourly_rate?: number;
@@ -120,8 +120,8 @@ export interface BoatBooking {
   customer?: BoatCustomer;
   boatId: string;
   boatName: string;
-  captainId?: string;
-  captain?: Captain;
+  agentId?: string;
+  agent?: Agent;
   date: string;
   startTime: string;
   endTime: string;
@@ -188,7 +188,7 @@ export type ApprovalActionType =
   | 'cancel_booking'
   | 'process_refund'
   | 'reschedule_booking'
-  | 'assign_captain'
+  | 'assign_agent'
   | 'send_reminder'
   | 'send_weather_alert'
   | 'update_customer'
@@ -288,7 +288,7 @@ export type ActivityType =
   | 'call_scheduled'
   | 'payment_received'
   | 'refund_processed'
-  | 'captain_assigned'
+  | 'agent_assigned'
   | 'approval_requested'
   | 'approval_handled'
   | 'weather_alert'
@@ -305,7 +305,7 @@ export interface BoatActivity {
   color?: 'green' | 'blue' | 'yellow' | 'red' | 'gray' | 'orange';
   metadata?: Record<string, unknown>;
   relatedId?: string;
-  relatedType?: 'booking' | 'customer' | 'call' | 'approval' | 'captain';
+  relatedType?: 'booking' | 'customer' | 'call' | 'approval' | 'agent';
 }
 
 // =============================================================================
@@ -337,18 +337,18 @@ export interface CallAnalytics {
   callsThisWeek: number;
 }
 
-export interface CaptainAnalytics {
-  totalCaptains: number;
-  availableCaptains: number;
+export interface AgentAnalytics {
+  totalAgents: number;
+  availableAgents: number;
   tripsToday: number;
   avgRating: number;
-  topCaptains: { id: string; name: string; trips: number; rating: number }[];
+  topAgents: { id: string; name: string; trips: number; rating: number }[];
 }
 
 export interface BoatCrmAnalytics {
   bookings: BookingAnalytics;
   calls: CallAnalytics;
-  captains: CaptainAnalytics;
+  agents: AgentAnalytics;
   period: 'day' | 'week' | 'month' | 'year';
   generatedAt: string;
 }
@@ -374,7 +374,7 @@ export interface TodaySchedule {
   time: string;
   boatName: string;
   boatEmoji: string;
-  captainName: string;
+  agentName: string;
   customerName: string;
   partySize: number;
   status: 'upcoming' | 'in_progress' | 'completed';
@@ -467,8 +467,8 @@ export interface PassengerWaiverStatus {
   isMinor: boolean;
   waiverSigned: boolean;
   signedAt?: string;
-  collectionMethod?: 'online' | 'captain_device' | 'in_person';
-  captainVerified?: boolean;
+  collectionMethod?: 'online' | 'agent_device' | 'in_person';
+  agentVerified?: boolean;
 }
 
 export interface BookingWaiverStatus {
@@ -519,7 +519,7 @@ export interface WaiverTemplate {
 export interface HeadCountRecord {
   id: number;
   bookingId: number;
-  captainId: number;
+  agentId: number;
   expectedCount: number;
   waiversSignedCount: number;
   actualCount: number;
@@ -714,8 +714,8 @@ export interface InteractionOptions {
 // Waiver Administration Types
 // =============================================================================
 
-export interface CaptainContext {
-  captain: {
+export interface AgentContext {
+  agent: {
     id: number;
     firstName: string;
     lastName: string;
@@ -743,9 +743,9 @@ export interface ArchivedWaiver {
   phone?: string;
   isMinor: boolean;
   boatName: string;
-  captainName?: string;
+  agentName?: string;
   signedAt: string;
-  collectionMethod: 'online' | 'captain_device' | 'in_person';
+  collectionMethod: 'online' | 'agent_device' | 'in_person';
   status: 'valid' | 'expired' | 'revoked';
   pdfUrl?: string;
 }
@@ -756,7 +756,7 @@ export interface WaiverArchiveFilters {
   bookingNumber: string;
   customerSearch: string;
   boatId: number | null;
-  captainId: number | null;
+  agentId: number | null;
   status: 'all' | 'valid' | 'expired' | 'revoked';
   sortBy: 'signed_at' | 'full_name' | 'booking_number';
   sortDir: 'asc' | 'desc';

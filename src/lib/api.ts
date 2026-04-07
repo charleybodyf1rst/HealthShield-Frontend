@@ -1904,7 +1904,7 @@ export interface SalesAppointment {
   notes?: string;
   outcome?: string;
   next_steps?: string;
-  captain_name?: string;
+  agent_name?: string;
   boat_id?: number;
   boat_name?: string;
   created_at: string;
@@ -1923,7 +1923,7 @@ export interface CreateSalesAppointmentData {
   location?: string;
   meeting_link?: string;
   notes?: string;
-  captain_name?: string;
+  agent_name?: string;
   boat_id?: number;
 }
 
@@ -1942,7 +1942,7 @@ export interface UpdateSalesAppointmentData {
   notes?: string;
   outcome?: string;
   next_steps?: string;
-  captain_name?: string;
+  agent_name?: string;
   boat_id?: number;
 }
 

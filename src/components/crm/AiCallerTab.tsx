@@ -40,7 +40,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { BoatCall, BoatCallType } from '@/types/boat-crm';
+import type { BoatCall, BoatCallType } from '@/types/plan-crm';
 import { toast } from 'sonner';
 
 const callTypeLabels: Record<BoatCallType, string> = {
@@ -90,7 +90,7 @@ function ActiveCallCard({ call }: { call: BoatCall }) {
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full animate-pulse shadow-lg shadow-orange-500/25">
+            <div className="p-3 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full animate-pulse shadow-lg shadow-blue-600/25">
               <PhoneCall className="w-6 h-6 text-white" />
             </div>
             <div>

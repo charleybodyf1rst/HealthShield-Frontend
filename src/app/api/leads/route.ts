@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Forward to SystemsF1RST backend CRM
-    const response = await fetch(getApiUrl('/api/boat-rentals/crm/leads'), {
+    const response = await fetch(getApiUrl('/api/v1/crm/leads'), {
       method: 'POST',
       headers: getServerHeaders(),
       body: JSON.stringify({

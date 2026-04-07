@@ -1,6 +1,6 @@
-// Employee/Staff Management Types for Boat Rental CRM
+// Employee/Staff Management Types for HealthShield CRM
 
-export type EmployeeRole = 'captain' | 'crew' | 'admin' | 'manager' | 'dispatcher';
+export type EmployeeRole = 'agent' | 'crew' | 'admin' | 'manager' | 'dispatcher';
 export type EmployeeType = 'employee' | 'subcontractor';
 export type EmployeeStatus = 'active' | 'on-leave' | 'training' | 'inactive' | 'terminated';
 export type CertificationType = 'USCG-OUPV' | 'USCG-Master' | 'CPR-FirstAid' | 'Water-Safety' | 'Boat-Specific' | 'Drug-Test' | 'Background-Check';
@@ -141,7 +141,7 @@ export interface EmployeeStats {
   trainingEmployees: number;
 
   byRole: {
-    captains: number;
+    agents: number;
     crew: number;
     admin: number;
     managers: number;

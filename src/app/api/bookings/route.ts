@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Forward to SystemsF1RST backend
-    const response = await fetch(getApiUrl('/api/boat-rentals/bookings'), {
+    const response = await fetch(getApiUrl('/api/v1/crm/enrollments'), {
       method: 'POST',
       headers: getServerHeaders(),
       body: JSON.stringify({
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         emergency_contact_name: body.emergency_name || null,
         emergency_contact_phone: body.emergency_phone || null,
         base_rate: body.base_price || 0,
-        captain_fee: body.captain_fee || 0,
+        agent_fee: body.agent_fee || 0,
         equipment_fees: body.add_ons_total || 0,
         tax_amount: body.tax || 0,
         total_amount: body.total || 0,

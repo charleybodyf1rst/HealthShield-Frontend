@@ -56,7 +56,7 @@ export interface FinancialSummary {
   netRevenue: number;
   expenses: {
     fuel: number;
-    captainWages: number;
+    agentWages: number;
     insurance: number;
     maintenance: number;
     marketing: number;
@@ -291,7 +291,7 @@ export function getFinancialSummary(): FinancialSummary {
   const grossRevenue = 193000;
   const expenses = {
     fuel: 12000,
-    captainWages: 45000,
+    agentWages: 45000,
     insurance: 18000,
     maintenance: 8500,
     marketing: 6500,

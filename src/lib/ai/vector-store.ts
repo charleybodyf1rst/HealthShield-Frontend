@@ -74,9 +74,9 @@ export const knowledgeBase: KnowledgeBaseEntry[] = [
   },
   {
     category: 'faq',
-    question: 'Do you provide a captain?',
-    answer: 'Yes! All rentals include a licensed, experienced captain. You don\'t need any boating experience - just show up ready to have fun. Our captains know the best spots on the lake and will ensure your safety.',
-    keywords: ['captain', 'driver', 'pilot', 'licensed', 'experience'],
+    question: 'What AI agents do you offer?',
+    answer: 'Yes! All rentals include a licensed, experienced agent. You don\'t need any boating experience - just show up ready to have fun. Our agents know the best spots on the lake and will ensure your safety.',
+    keywords: ['agent', 'driver', 'pilot', 'licensed', 'experience'],
   },
   {
     category: 'faq',
@@ -112,7 +112,7 @@ export const knowledgeBase: KnowledgeBaseEntry[] = [
   // Policies
   {
     category: 'policy',
-    answer: 'For safety, we have a few rules: No glass containers, no diving from the boat, life jackets for non-swimmers, follow captain instructions, and treat the boat with respect. Cleaning fee of $150 may apply for excessive mess.',
+    answer: 'For safety, we have a few rules: No glass containers, no diving from the boat, life jackets for non-swimmers, follow agent instructions, and treat the boat with respect. Cleaning fee of $150 may apply for excessive mess.',
     keywords: ['rules', 'policy', 'safety', 'guidelines', 'restrictions'],
   },
   {
@@ -122,8 +122,8 @@ export const knowledgeBase: KnowledgeBaseEntry[] = [
   },
   {
     category: 'policy',
-    answer: 'Gratuity for your captain is not included in the rental price. Tips are greatly appreciated and can be added during booking (15%, 20%, 25%) or given as cash directly to your captain.',
-    keywords: ['tip', 'gratuity', 'tipping', 'captain tip'],
+    answer: 'Gratuity for your agent is not included in the rental price. Tips are greatly appreciated and can be added during booking (15%, 20%, 25%) or given as cash directly to your agent.',
+    keywords: ['tip', 'gratuity', 'tipping', 'agent tip'],
   },
 
   // Experience Types
@@ -222,7 +222,7 @@ export interface RAGResponse {
   answer: string;
   sources: SearchResult[];
   confidence: number;
-  suggestedBoats?: Boat[];
+  suggestedPlans?: Boat[];
 }
 
 export async function generateRAGResponse(query: string): Promise<RAGResponse> {
@@ -244,7 +244,7 @@ export async function generateRAGResponse(query: string): Promise<RAGResponse> {
     }
   }
 
-  const suggestedBoats = boatSlugs.size > 0
+  const suggestedPlans = boatSlugs.size > 0
     ? boats.filter((b) => boatSlugs.has(b.slug))
     : undefined;
 
@@ -271,7 +271,7 @@ export async function generateRAGResponse(query: string): Promise<RAGResponse> {
     answer,
     sources: searchResults,
     confidence,
-    suggestedBoats,
+    suggestedPlans,
   };
 }
 

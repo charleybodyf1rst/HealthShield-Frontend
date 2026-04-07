@@ -72,8 +72,8 @@ Best,
 
 As requested, here's an overview of our rental options:
 
-- Hourly Rental: Flexible boat rentals by the hour
-- Half-Day Package: 4-hour rental with captain included
+- Individual Plan: Flexible health coverage for individuals
+- Standard Plan: AI calling with dedicated agent included
 - Full-Day Adventure: All-day rental with gear and refreshments
 
 I'd be happy to discuss which option would be the best fit for your group.

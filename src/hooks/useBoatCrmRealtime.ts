@@ -46,8 +46,8 @@ export function useBoatCrmRealtime() {
       case 'call.status.updated':
         fetchActiveCalls();
         break;
-      case 'captain.assigned':
-      case 'captain.status':
+      case 'agent.assigned':
+      case 'agent.status':
         fetchTodaySchedule();
         break;
       case 'trip.started':
@@ -115,12 +115,12 @@ export function useBoatCrmRealtime() {
         .listen('.call.status.updated', (data: Record<string, unknown>) => {
           handleBoatCrmEvent({ type: 'call.status.updated', data });
         })
-        // Captain events
-        .listen('.captain.assigned', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'captain.assigned', data });
+        // Agent events
+        .listen('.agent.assigned', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'agent.assigned', data });
         })
-        .listen('.captain.status', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'captain.status', data });
+        .listen('.agent.status', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'agent.status', data });
         })
         // Trip events
         .listen('.trip.started', (data: Record<string, unknown>) => {

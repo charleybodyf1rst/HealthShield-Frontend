@@ -24,7 +24,7 @@ import {
   DollarSign,
   Fuel,
   Wrench,
-  Anchor,
+  Building2,
   Shield,
   Trash2,
   Receipt,
@@ -34,8 +34,8 @@ const categoryStyles: Record<string, string> = {
   fuel: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
   maintenance: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
   insurance: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
-  marina: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20',
-  captain_pay: 'bg-green-500/10 text-green-600 border-green-500/20',
+  facilities: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20',
+  agent_commission: 'bg-green-500/10 text-green-600 border-green-500/20',
   registration: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20',
   equipment: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
   marketing: 'bg-pink-500/10 text-pink-600 border-pink-500/20',
@@ -123,14 +123,14 @@ export default function ExpensesPage() {
     return acc;
   }, {});
 
-  const statIcons: Record<string, any> = { Fuel: Fuel, fuel: Fuel, Maintenance: Wrench, maintenance: Wrench, Marina: Anchor, marina: Anchor, Insurance: Shield, insurance: Shield };
+  const statIcons: Record<string, any> = { Fuel: Fuel, fuel: Fuel, Maintenance: Wrench, maintenance: Wrench, Facilities: Building2, facilities: Building2, Insurance: Shield, insurance: Shield };
   const statColors: Record<string, { color: string; bg: string }> = {
     Fuel: { color: 'text-orange-500', bg: 'bg-orange-500/10' },
     fuel: { color: 'text-orange-500', bg: 'bg-orange-500/10' },
     Maintenance: { color: 'text-blue-500', bg: 'bg-blue-500/10' },
     maintenance: { color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    Marina: { color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
-    marina: { color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+    Facilities: { color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+    facilities: { color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
     Insurance: { color: 'text-purple-500', bg: 'bg-purple-500/10' },
     insurance: { color: 'text-purple-500', bg: 'bg-purple-500/10' },
   };
@@ -158,7 +158,7 @@ export default function ExpensesPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Expenses</h1>
-            <p className="text-muted-foreground">Track all fleet and business expenses</p>
+            <p className="text-muted-foreground">Track all operations and business expenses</p>
           </div>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -195,8 +195,8 @@ export default function ExpensesPage() {
                   <option value="fuel">Fuel</option>
                   <option value="maintenance">Maintenance & Repairs</option>
                   <option value="insurance">Insurance</option>
-                  <option value="marina">Marina / Dock Fees</option>
-                  <option value="captain_pay">Captain Pay</option>
+                  <option value="facilities">Office / Facilities</option>
+                  <option value="agent_commission">Agent Commission</option>
                   <option value="registration">Registration / Licensing</option>
                   <option value="equipment">Equipment / Safety Gear</option>
                   <option value="marketing">Marketing & Advertising</option>
@@ -224,7 +224,7 @@ export default function ExpensesPage() {
                   id="exp-vendor"
                   value={form.vendor}
                   onChange={(e) => setForm({ ...form, vendor: e.target.value })}
-                  placeholder="e.g., Shell Marina"
+                  placeholder="e.g., Acme Insurance"
                 />
               </div>
               <div className="grid gap-2">

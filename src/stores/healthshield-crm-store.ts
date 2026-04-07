@@ -3,8 +3,8 @@ import axios from 'axios';
 import type {
   AgentStatus,
   BoatCustomer,
-  Captain,
-  CreateCaptainData,
+  Agent,
+  CreateAgentData,
   BoatBooking,
   PendingApproval,
   BoatCall,
@@ -29,7 +29,7 @@ import type {
   InteractionOutcome,
   LeadOptions,
   InteractionOptions,
-  CaptainContext,
+  AgentContext,
   ArchivedWaiver,
   WaiverArchiveFilters,
   WaiverArchivePagination,
@@ -110,9 +110,9 @@ interface BoatCrmState {
   todayBookings: BoatBooking[];
   bookingsLoading: boolean;
 
-  // Captains
-  captains: Captain[];
-  captainsLoading: boolean;
+  // Agents
+  agents: Agent[];
+  agentsLoading: boolean;
 
   // Approvals
   pendingApprovals: PendingApproval[];
@@ -138,11 +138,11 @@ interface BoatCrmState {
   waiversLoading: boolean;
   selectedBookingWaiver: BookingWaiverStatus | null;
   pendingWaiversCount: number;
-  isNotCaptain: boolean; // Set to true after first 404 on waivers — skips future calls
+  isNotAgent: boolean; // Set to true after first 404 on waivers — skips future calls
 
   // Waiver Administration
-  captainContext: CaptainContext | null;
-  captainContextLoading: boolean;
+  agentContext: AgentContext | null;
+  agentContextLoading: boolean;
   archivedWaivers: ArchivedWaiver[];
   archiveLoading: boolean;
   archiveFilters: WaiverArchiveFilters;
@@ -194,12 +194,12 @@ interface BoatCrmState {
   fetchBookings: (filters?: Partial<BoatCrmFilters['bookings']>) => Promise<void>;
   fetchTodayBookings: () => Promise<void>;
 
-  // Actions - Captains
-  fetchCaptains: () => Promise<void>;
-  fetchCaptainDetail: (id: number) => Promise<Captain | null>;
-  createCaptain: (data: CreateCaptainData) => Promise<Captain | null>;
-  updateCaptain: (id: number, data: Partial<CreateCaptainData>) => Promise<Captain | null>;
-  deleteCaptain: (id: number) => Promise<boolean>;
+  // Actions - Agents
+  fetchAgents: () => Promise<void>;
+  fetchAgentDetail: (id: number) => Promise<Agent | null>;
+  createAgent: (data: CreateAgentData) => Promise<Agent | null>;
+  updateAgent: (id: number, data: Partial<CreateAgentData>) => Promise<Agent | null>;
+  deleteAgent: (id: number) => Promise<boolean>;
 
   // Actions - Approvals
   fetchPendingApprovals: () => Promise<void>;
@@ -300,8 +300,8 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
   todayBookings: [],
   bookingsLoading: false,
 
-  captains: [],
-  captainsLoading: false,
+  agents: [],
+  agentsLoading: false,
 
   pendingApprovals: [],
   approvalsLoading: false,
@@ -322,7 +322,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
   waiversLoading: false,
   selectedBookingWaiver: null,
   pendingWaiversCount: 0,
-  isNotCaptain: false,
+  isNotAgent: false,
 
   leads: [],
   leadsLoading: false,
@@ -432,9 +432,9 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
       // Use mock data if API not ready
       set({
         todaySchedule: [
-          { id: '1', time: '10:00 AM', boatName: 'King Kong', boatEmoji: '🦍', captainName: 'Captain Mike', customerName: 'Johnson Party', partySize: 18, status: 'upcoming' },
-          { id: '2', time: '12:00 PM', boatName: 'The Swiftie', boatEmoji: '💖', captainName: 'Captain Sarah', customerName: 'Bachelorette Group', partySize: 14, status: 'upcoming' },
-          { id: '3', time: '2:00 PM', boatName: 'Bananarama', boatEmoji: '🍌', captainName: 'Captain Jake', customerName: 'Birthday Party', partySize: 20, status: 'upcoming' },
+          { id: '1', time: '10:00 AM', boatName: 'King Kong', boatEmoji: '🦍', agentName: 'Agent Mike', customerName: 'Johnson Party', partySize: 18, status: 'upcoming' },
+          { id: '2', time: '12:00 PM', boatName: 'The Swiftie', boatEmoji: '💖', agentName: 'Agent Sarah', customerName: 'Bachelorette Group', partySize: 14, status: 'upcoming' },
+          { id: '3', time: '2:00 PM', boatName: 'Bananarama', boatEmoji: '🍌', agentName: 'Agent Jake', customerName: 'Birthday Party', partySize: 20, status: 'upcoming' },
         ],
       });
     }
@@ -519,65 +519,65 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
   },
 
   // ============================================================================
-  // Captain Actions
+  // Agent Actions
   // ============================================================================
 
-  fetchCaptains: async () => {
-    set({ captainsLoading: true, error: null });
+  fetchAgents: async () => {
+    set({ agentsLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/boat-rentals/captains`);
+      const response = await api.get(`${API_URL}/api/v1/boat-rentals/agents`);
       set({
-        captains: toArray(response.data.data || response.data),
-        captainsLoading: false,
+        agents: toArray(response.data.data || response.data),
+        agentsLoading: false,
       });
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? error.response?.data?.message || 'Failed to fetch captains'
-        : 'Failed to fetch captains';
-      set({ error: message, captainsLoading: false });
+        ? error.response?.data?.message || 'Failed to fetch agents'
+        : 'Failed to fetch agents';
+      set({ error: message, agentsLoading: false });
     }
   },
 
-  fetchCaptainDetail: async (id: number) => {
+  fetchAgentDetail: async (id: number) => {
     try {
-      const response = await api.get(`${API_URL}/api/v1/boat-rentals/captains/${id}`);
-      return response.data.captain || null;
+      const response = await api.get(`${API_URL}/api/v1/boat-rentals/agents/${id}`);
+      return response.data.agent || null;
     } catch {
       return null;
     }
   },
 
-  createCaptain: async (data: CreateCaptainData) => {
+  createAgent: async (data: CreateAgentData) => {
     try {
-      const response = await api.post(`${API_URL}/api/v1/boat-rentals/captains`, data);
-      const captain = response.data.captain;
-      if (captain) {
-        get().fetchCaptains();
+      const response = await api.post(`${API_URL}/api/v1/boat-rentals/agents`, data);
+      const agent = response.data.agent;
+      if (agent) {
+        get().fetchAgents();
       }
-      return captain || null;
+      return agent || null;
     } catch {
       return null;
     }
   },
 
-  updateCaptain: async (id: number, data: Partial<CreateCaptainData>) => {
+  updateAgent: async (id: number, data: Partial<CreateAgentData>) => {
     try {
-      const response = await api.put(`${API_URL}/api/v1/boat-rentals/captains/${id}`, data);
-      const captain = response.data.captain;
-      if (captain) {
-        get().fetchCaptains();
+      const response = await api.put(`${API_URL}/api/v1/boat-rentals/agents/${id}`, data);
+      const agent = response.data.agent;
+      if (agent) {
+        get().fetchAgents();
       }
-      return captain || null;
+      return agent || null;
     } catch {
       return null;
     }
   },
 
-  deleteCaptain: async (id: number) => {
+  deleteAgent: async (id: number) => {
     try {
-      await api.delete(`${API_URL}/api/v1/boat-rentals/captains/${id}`);
-      get().fetchCaptains();
+      await api.delete(`${API_URL}/api/v1/boat-rentals/agents/${id}`);
+      get().fetchAgents();
       return true;
     } catch {
       return false;
@@ -825,14 +825,14 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
             callsToday: 6,
             callsThisWeek: 28,
           },
-          captains: {
-            totalCaptains: 12,
-            availableCaptains: 8,
+          agents: {
+            totalAgents: 12,
+            availableAgents: 8,
             tripsToday: 8,
             avgRating: 4.8,
-            topCaptains: [
-              { id: 'cap-1', name: 'Captain Mike', trips: 42, rating: 4.9 },
-              { id: 'cap-2', name: 'Captain Sarah', trips: 38, rating: 4.9 },
+            topAgents: [
+              { id: 'cap-1', name: 'Agent Mike', trips: 42, rating: 4.9 },
+              { id: 'cap-2', name: 'Agent Sarah', trips: 38, rating: 4.9 },
             ],
           },
           period: p,
@@ -854,8 +854,8 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
   // ============================================================================
 
   fetchTodayWaivers: async () => {
-    // Skip API call if we already know user is not a captain (got 404 before)
-    if (get().isNotCaptain) {
+    // Skip API call if we already know user is not a agent (got 404 before)
+    if (get().isNotAgent) {
       set({ todayWaiverStatus: [], pendingWaiversCount: 0, waiversLoading: false });
       return;
     }
@@ -863,7 +863,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
     set({ waiversLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/boat-rentals/captain/waivers/today`);
+      const response = await api.get(`${API_URL}/api/v1/boat-rentals/agent/waivers/today`);
       const bookings = response.data.bookings || response.data || [];
 
       // Calculate pending waivers count
@@ -877,9 +877,9 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
         waiversLoading: false,
       });
     } catch (error) {
-      // 404 = user is not a captain — cache this to skip future API calls
+      // 404 = user is not a agent — cache this to skip future API calls
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        set({ todayWaiverStatus: [], pendingWaiversCount: 0, waiversLoading: false, isNotCaptain: true });
+        set({ todayWaiverStatus: [], pendingWaiversCount: 0, waiversLoading: false, isNotAgent: true });
         return;
       }
 
@@ -895,7 +895,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
     set({ waiversLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/boat-rentals/captain/waivers/booking/${bookingId}`);
+      const response = await api.get(`${API_URL}/api/v1/boat-rentals/agent/waivers/booking/${bookingId}`);
       const booking = response.data.booking ? {
         ...response.data.booking,
         passengers: response.data.passengers || [],
@@ -925,7 +925,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
 
   sendWaiverReminder: async (bookingId: number, passengerId: number) => {
     try {
-      await api.post(`${API_URL}/api/v1/boat-rentals/captain/waivers/booking/${bookingId}/passenger/${passengerId}/remind`);
+      await api.post(`${API_URL}/api/v1/boat-rentals/agent/waivers/booking/${bookingId}/passenger/${passengerId}/remind`);
       // Refresh the booking waivers
       await get().fetchBookingWaivers(bookingId);
     } catch (error) {
@@ -939,7 +939,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
 
   addWalkupPassenger: async (bookingId: number, data) => {
     try {
-      await api.post(`${API_URL}/api/v1/boat-rentals/captain/waivers/booking/${bookingId}/passenger`, data);
+      await api.post(`${API_URL}/api/v1/boat-rentals/agent/waivers/booking/${bookingId}/passenger`, data);
       // Refresh the booking waivers
       await get().fetchBookingWaivers(bookingId);
       await get().fetchTodayWaivers();
@@ -954,7 +954,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
 
   collectSignature: async (bookingId: number, passengerId: number, data: WaiverSignatureData) => {
     try {
-      await api.post(`${API_URL}/api/v1/boat-rentals/captain/waivers/booking/${bookingId}/passenger/${passengerId}/sign`, {
+      await api.post(`${API_URL}/api/v1/boat-rentals/agent/waivers/booking/${bookingId}/passenger/${passengerId}/sign`, {
         full_name: data.fullName,
         email: data.email,
         phone: data.phone,
@@ -984,7 +984,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
 
   recordHeadCount: async (bookingId: number, actualCount: number, notes?: string): Promise<HeadCountRecord> => {
     try {
-      const response = await api.post(`${API_URL}/api/v1/boat-rentals/captain/waivers/booking/${bookingId}/head-count`, {
+      const response = await api.post(`${API_URL}/api/v1/boat-rentals/agent/waivers/booking/${bookingId}/head-count`, {
         actual_count: actualCount,
         notes,
       });
@@ -1000,7 +1000,7 @@ export const useHealthShieldCrmStore = create<BoatCrmState>((set, get) => ({
 
   approveDeparture: async (bookingId: number, forceDepart = false) => {
     try {
-      await api.post(`${API_URL}/api/v1/boat-rentals/captain/waivers/booking/${bookingId}/depart`, {
+      await api.post(`${API_URL}/api/v1/boat-rentals/agent/waivers/booking/${bookingId}/depart`, {
         force_depart: forceDepart,
       });
       // Refresh data

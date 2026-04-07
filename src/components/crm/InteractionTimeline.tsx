@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { BoatInteraction, InteractionType, InteractionOutcome } from '@/types/boat-crm';
+import type { BoatInteraction, InteractionType, InteractionOutcome } from '@/types/plan-crm';
 
 const typeIcons: Record<InteractionType, React.ReactNode> = {
   sms: <MessageSquare className="w-4 h-4" />,

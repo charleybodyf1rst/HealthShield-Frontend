@@ -23,8 +23,8 @@ export interface BookingSlot {
   customerEmail?: string;
   customerPhone?: string;
   partySize?: number;
-  captainId?: string;
-  captainName?: string;
+  agentId?: string;
+  agentName?: string;
   totalPrice?: number;
   depositPaid?: boolean;
   notes?: string;
@@ -34,7 +34,7 @@ export interface BookingSlot {
   updatedAt: Date;
 }
 
-export interface Captain {
+export interface Agent {
   id: string;
   name: string;
   email: string;
@@ -42,13 +42,13 @@ export interface Captain {
   avatar?: string;
   certifications: string[];
   assignedBoats: string[];
-  availability: CaptainAvailability[];
+  availability: AgentAvailability[];
   rating: number;
   totalTrips: number;
   status: 'active' | 'on-trip' | 'off-duty' | 'vacation';
 }
 
-export interface CaptainAvailability {
+export interface AgentAvailability {
   dayOfWeek: number; // 0-6, Sunday-Saturday
   startTime: string;
   endTime: string;
@@ -64,7 +64,7 @@ export interface CalendarEvent {
   allDay: boolean;
   type: 'booking' | 'maintenance' | 'weather-hold' | 'private-event' | 'blocked';
   boatId?: string;
-  captainId?: string;
+  agentId?: string;
   color: string;
   metadata?: Record<string, unknown>;
 }
@@ -87,10 +87,10 @@ export const defaultTimeSlots: TimeSlot[] = [
 // CAPTAIN DATA
 // =============================================================================
 
-export const captains: Captain[] = [
+export const agents: Agent[] = [
   {
-    id: 'captain-jason',
-    name: 'Captain Jason',
+    id: 'agent-jason',
+    name: 'Agent Jason',
     email: 'jason@healthshieldrentals.com',
     phone: '512-705-7758',
     certifications: ['USCG Licensed', 'CPR/First Aid', 'Water Safety'],
@@ -109,8 +109,8 @@ export const captains: Captain[] = [
     status: 'active',
   },
   {
-    id: 'captain-mike',
-    name: 'Captain Mike',
+    id: 'agent-mike',
+    name: 'Agent Mike',
     email: 'mike@healthshieldrentals.com',
     phone: '(512) 555-0102',
     certifications: ['USCG Licensed', 'CPR/First Aid'],
@@ -129,8 +129,8 @@ export const captains: Captain[] = [
     status: 'active',
   },
   {
-    id: 'captain-sarah',
-    name: 'Captain Sarah',
+    id: 'agent-sarah',
+    name: 'Agent Sarah',
     email: 'sarah@healthshieldrentals.com',
     phone: '(512) 555-0103',
     certifications: ['USCG Licensed', 'CPR/First Aid', 'Water Safety', 'Party Host Certified'],
@@ -182,36 +182,36 @@ export function getAvailableSlots(
 }
 
 /**
- * Check if a captain is available for a specific time slot
+ * Check if a agent is available for a specific time slot
  */
-export function isCaptainAvailable(
-  captainId: string,
+export function isAgentAvailable(
+  agentId: string,
   date: string,
   timeSlot: TimeSlot,
   existingBookings: BookingSlot[]
 ): boolean {
-  const captain = captains.find(c => c.id === captainId);
-  if (!captain || captain.status !== 'active') return false;
+  const agent = agents.find(c => c.id === agentId);
+  if (!agent || agent.status !== 'active') return false;
 
   const dayOfWeek = new Date(date).getDay();
-  const dayAvailability = captain.availability.find(a => a.dayOfWeek === dayOfWeek);
+  const dayAvailability = agent.availability.find(a => a.dayOfWeek === dayOfWeek);
 
   if (!dayAvailability || !dayAvailability.isAvailable) return false;
 
-  // Check if time slot falls within captain's hours
+  // Check if time slot falls within agent's hours
   if (timeSlot.startTime < dayAvailability.startTime ||
       timeSlot.endTime > dayAvailability.endTime) {
     return false;
   }
 
-  // Check if captain already has a booking
-  const captainBookings = existingBookings.filter(
-    b => b.captainId === captainId &&
+  // Check if agent already has a booking
+  const agentBookings = existingBookings.filter(
+    b => b.agentId === agentId &&
          b.date === date &&
          b.status !== 'cancelled'
   );
 
-  for (const booking of captainBookings) {
+  for (const booking of agentBookings) {
     // Check for time overlap
     if (timeSlotsOverlap(timeSlot, booking.timeSlot)) {
       return false;
@@ -229,23 +229,23 @@ function timeSlotsOverlap(slot1: TimeSlot, slot2: TimeSlot): boolean {
 }
 
 /**
- * Auto-assign best available captain for a booking
+ * Auto-assign best available agent for a booking
  */
-export function autoAssignCaptain(
+export function autoAssignAgent(
   boatId: string,
   date: string,
   timeSlot: TimeSlot,
   existingBookings: BookingSlot[]
-): Captain | null {
-  // Find captains assigned to this boat
-  const eligibleCaptains = captains.filter(c => c.assignedBoats.includes(boatId));
+): Agent | null {
+  // Find agents assigned to this boat
+  const eligibleAgents = agents.filter(c => c.assignedBoats.includes(boatId));
 
   // Check availability and sort by rating
-  const availableCaptains = eligibleCaptains
-    .filter(c => isCaptainAvailable(c.id, date, timeSlot, existingBookings))
+  const availableAgents = eligibleAgents
+    .filter(c => isAgentAvailable(c.id, date, timeSlot, existingBookings))
     .sort((a, b) => b.rating - a.rating);
 
-  return availableCaptains[0] || null;
+  return availableAgents[0] || null;
 }
 
 /**
@@ -272,13 +272,13 @@ export function generateCalendarEvents(bookings: BookingSlot[]): CalendarEvent[]
     return {
       id: booking.id,
       title: `${booking.boatName} - ${booking.customerName || 'Pending'}`,
-      description: `Party size: ${booking.partySize || 'TBD'}\nCaptain: ${booking.captainName || 'TBD'}`,
+      description: `Party size: ${booking.partySize || 'TBD'}\nAgent: ${booking.agentName || 'TBD'}`,
       start,
       end,
       allDay: false,
       type: 'booking',
       boatId: booking.boatId,
-      captainId: booking.captainId,
+      agentId: booking.agentId,
       color: statusColors[booking.status] || '#6b7280',
       metadata: {
         status: booking.status,
@@ -298,7 +298,7 @@ export function getDailySchedule(date: string, bookings: BookingSlot[]): {
   pendingBookings: number;
   revenue: number;
   boatUtilization: Record<string, number>;
-  captainSchedule: { captain: Captain; bookings: BookingSlot[] }[];
+  agentSchedule: { agent: Agent; bookings: BookingSlot[] }[];
 } {
   const dayBookings = bookings.filter(b => b.date === date && b.status !== 'cancelled');
 
@@ -317,10 +317,10 @@ export function getDailySchedule(date: string, bookings: BookingSlot[]): {
     boatUtilization[boatId] = Math.round((hoursBooked / 12) * 100); // 12 hours max per day
   }
 
-  // Captain schedule
-  const captainSchedule = captains.map(captain => ({
-    captain,
-    bookings: dayBookings.filter(b => b.captainId === captain.id),
+  // Agent schedule
+  const agentSchedule = agents.map(agent => ({
+    agent,
+    bookings: dayBookings.filter(b => b.agentId === agent.id),
   }));
 
   return {
@@ -329,7 +329,7 @@ export function getDailySchedule(date: string, bookings: BookingSlot[]): {
     pendingBookings: pendingBookings.length,
     revenue,
     boatUtilization,
-    captainSchedule,
+    agentSchedule,
   };
 }
 
@@ -416,7 +416,7 @@ export async function syncToGoogleCalendar(
     description: `
 Party Size: ${booking.partySize}
 Phone: ${booking.customerPhone}
-Captain: ${booking.captainName}
+Agent: ${booking.agentName}
 Total: $${booking.totalPrice}
 Notes: ${booking.notes || 'None'}
 Special Requests: ${booking.specialRequests?.join(', ') || 'None'}
@@ -464,7 +464,7 @@ DTSTAMP:${now}
 DTSTART;TZID=America/Chicago:${dtstart}
 DTEND;TZID=America/Chicago:${dtend}
 SUMMARY:${booking.boatName} - ${booking.customerName || 'Booking'}
-DESCRIPTION:Party Size: ${booking.partySize || 'TBD'}\\nCaptain: ${booking.captainName || 'TBD'}\\nPhone: ${booking.customerPhone || 'TBD'}
+DESCRIPTION:Party Size: ${booking.partySize || 'TBD'}\\nAgent: ${booking.agentName || 'TBD'}\\nPhone: ${booking.customerPhone || 'TBD'}
 LOCATION:Lake Travis, TX
 STATUS:${booking.status === 'confirmed' ? 'CONFIRMED' : 'TENTATIVE'}
 END:VEVENT

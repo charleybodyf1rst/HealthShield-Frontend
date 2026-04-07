@@ -14,7 +14,7 @@ import {
   PenTool,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { PassengerWaiverStatus } from '@/types/boat-crm';
+import type { PassengerWaiverStatus } from '@/types/plan-crm';
 
 interface PassengerWaiverCardProps {
   passenger: PassengerWaiverStatus;

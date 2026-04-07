@@ -57,16 +57,16 @@ import { SignaturePad } from './SignaturePad';
 import { PassengerWaiverCard } from './PassengerWaiverCard';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { BookingWaiverStatus, PassengerWaiverStatus, WaiverSignatureData } from '@/types/boat-crm';
+import type { BookingWaiverStatus, PassengerWaiverStatus, WaiverSignatureData } from '@/types/plan-crm';
 
-interface CaptainCheckinProps {
+interface AgentCheckinProps {
   initialBooking?: BookingWaiverStatus | null;
   onBack: () => void;
 }
 
 type Step = 'select' | 'passengers' | 'headcount' | 'depart';
 
-export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) {
+export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
   const [currentStep, setCurrentStep] = useState<Step>(initialBooking ? 'passengers' : 'select');
   const [selectedBooking, setSelectedBooking] = useState<BookingWaiverStatus | null>(initialBooking || null);
   const [headCount, setHeadCount] = useState<number>(0);
@@ -77,7 +77,7 @@ export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) 
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForceDialog, setShowForceDialog] = useState(false);
-  const [captainVerified, setCaptainVerified] = useState<Record<number, boolean>>({});
+  const [agentVerified, setAgentVerified] = useState<Record<number, boolean>>({});
 
   // Form state for signature collection
   const [signatureForm, setSignatureForm] = useState<Partial<WaiverSignatureData>>({
@@ -274,8 +274,8 @@ export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) 
     }
   };
 
-  const toggleCaptainVerified = (passengerId: number) => {
-    setCaptainVerified(prev => ({
+  const toggleAgentVerified = (passengerId: number) => {
+    setAgentVerified(prev => ({
       ...prev,
       [passengerId]: !prev[passengerId],
     }));
@@ -298,7 +298,7 @@ export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) 
             Back
           </Button>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Captain Check-in</h2>
+            <h2 className="text-2xl font-bold text-slate-900">Agent Check-in</h2>
             <p className="text-slate-500">Select a booking to begin waiver verification</p>
           </div>
         </div>
@@ -470,7 +470,7 @@ export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) 
             <ScrollArea className="h-[500px]">
               <div className="space-y-3 pr-4">
                 {selectedBooking.passengers.map((passenger) => {
-                  const isVerified = captainVerified[passenger.id] || false;
+                  const isVerified = agentVerified[passenger.id] || false;
                   return (
                     <div
                       key={passenger.id}
@@ -539,11 +539,11 @@ export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) 
                         )}
                       </div>
 
-                      {/* Captain Check-off Button */}
+                      {/* Agent Check-off Button */}
                       <Button
                         variant={isVerified ? 'default' : 'outline'}
                         size="lg"
-                        onClick={() => toggleCaptainVerified(passenger.id)}
+                        onClick={() => toggleAgentVerified(passenger.id)}
                         className={cn(
                           'w-20 h-20 flex-shrink-0 p-0',
                           isVerified && 'bg-emerald-600 hover:bg-emerald-700'
@@ -752,7 +752,7 @@ export function CaptainCheckin({ initialBooking, onBack }: CaptainCheckinProps) 
               Collect Waiver Signature
             </DialogTitle>
             <DialogDescription>
-              {signingPassenger?.fullName} - Sign waiver on captain&apos;s device
+              {signingPassenger?.fullName} - Sign waiver on agent&apos;s device
             </DialogDescription>
           </DialogHeader>
 

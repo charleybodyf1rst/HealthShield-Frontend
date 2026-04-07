@@ -1,6 +1,6 @@
 // =============================================================================
 // BANANA BOAT RENTALS - SMS NOTIFICATIONS (TWILIO)
-// Automated SMS for bookings, reminders, and captain communication
+// Automated SMS for bookings, reminders, and agent communication
 // =============================================================================
 
 export interface SMSConfig {
@@ -28,8 +28,8 @@ export type SMSType =
   | 'booking-reminder-2h'
   | 'booking-reminder-3d'
   | 'booking-reminder-dayof'
-  | 'captain-assignment'
-  | 'captain-on-way'
+  | 'agent-assignment'
+  | 'agent-on-way'
   | 'trip-started'
   | 'trip-completed'
   | 'review-request'
@@ -83,7 +83,7 @@ Don't forget:
 ✅ Cooler with drinks
 ✅ Good vibes!
 
-Captain ${data.captainName} is excited to see you!
+Agent ${data.agentName} is excited to see you!
 
 Questions? 512-705-7758
   `.trim(),
@@ -95,7 +95,7 @@ ${data.customerName}, it's almost time!
 ⏰ ${data.timeSlot}
 📍 Meet at: ${data.meetingPoint}
 
-Your captain ${data.captainName} is prepping ${data.boatName} for you now!
+Your agent ${data.agentName} is prepping ${data.boatName} for you now!
 
 Running late? Text us back or call 512-705-7758
   `.trim(),
@@ -144,10 +144,10 @@ If you have any issues finding the marina, call or text 512-705-7758.
 See you on the lake! ☀️
   `.trim(),
 
-  'captain-assignment': (data) => `
+  'agent-assignment': (data) => `
 🚤 CAPTAIN ASSIGNMENT
 
-Hey Captain ${data.captainName}!
+Hey Agent ${data.agentName}!
 
 New trip assigned:
 📅 ${data.date} at ${data.timeSlot}
@@ -160,10 +160,10 @@ Special requests: ${data.specialRequests || 'None'}
 Confirm receipt by replying YES
   `.trim(),
 
-  'captain-on-way': (data) => `
-🍌 Captain ${data.captainName} is on the way!
+  'agent-on-way': (data) => `
+🍌 Agent ${data.agentName} is on the way!
 
-${data.customerName}, your captain is heading to ${data.meetingPoint} now and will arrive in about ${data.eta} minutes.
+${data.customerName}, your agent is heading to ${data.meetingPoint} now and will arrive in about ${data.eta} minutes.
 
 Look for ${data.boatName} 🚤
 
@@ -177,7 +177,7 @@ Have an amazing time, ${data.customerName}!
 
 Trip ends at: ${data.endTime}
 
-Need assistance during your trip? Captain ${data.captainName} is there for you, or call base: 512-705-7758
+Need assistance during your trip? Agent ${data.agentName} is there for you, or call base: 512-705-7758
 
 #HealthShieldLife 🍌🌊
   `.trim(),
@@ -205,7 +205,7 @@ How was your trip on ${data.boatName}? We'd love a Google review!
 As thanks, here's $25 off your next booking: ${data.discountCode}
 
 Thanks for being awesome!
-- Captain Jason & Crew
+- Agent Jason & Crew
   `.trim(),
 
   'payment-confirmation': (data) => `
@@ -467,33 +467,33 @@ export function scheduleBookingSMS(
 // =============================================================================
 
 /**
- * Notify captain of new assignment
+ * Notify agent of new assignment
  */
-export async function notifyCaptainAssignment(
-  captainPhone: string,
-  captainName: string,
+export async function notifyAgentAssignment(
+  agentPhone: string,
+  agentName: string,
   bookingData: Record<string, string>
 ): Promise<SMSMessage> {
-  return sendSMS(captainPhone, 'captain-assignment', {
+  return sendSMS(agentPhone, 'agent-assignment', {
     ...bookingData,
-    captainName,
+    agentName,
   });
 }
 
 /**
- * Notify customer that captain is on the way
+ * Notify customer that agent is on the way
  */
-export async function notifyCaptainEnRoute(
+export async function notifyAgentEnRoute(
   customerPhone: string,
   customerName: string,
-  captainName: string,
+  agentName: string,
   boatName: string,
   meetingPoint: string,
   eta: number
 ): Promise<SMSMessage> {
-  return sendSMS(customerPhone, 'captain-on-way', {
+  return sendSMS(customerPhone, 'agent-on-way', {
     customerName,
-    captainName,
+    agentName,
     boatName,
     meetingPoint,
     eta: String(eta),

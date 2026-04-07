@@ -38,6 +38,8 @@ export interface SalesAppointment {
   notes?: string;
   outcome?: string;
   nextSteps?: string;
+  agent_name?: string;
+  plan_type?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -54,8 +56,8 @@ export interface CreateSalesAppointmentData {
   location?: string;
   meeting_link?: string;
   notes?: string;
-  captain_name?: string;
-  boat_id?: number;
+  agent_name?: string;
+  plan_type?: string;
 }
 
 export interface UpdateSalesAppointmentData {
@@ -73,8 +75,8 @@ export interface UpdateSalesAppointmentData {
   notes?: string;
   outcome?: string;
   next_steps?: string;
-  captain_name?: string;
-  boat_id?: number;
+  agent_name?: string;
+  plan_type?: string;
 }
 
 export interface CalendarEvent {

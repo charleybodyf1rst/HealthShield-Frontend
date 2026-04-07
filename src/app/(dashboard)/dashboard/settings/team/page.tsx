@@ -24,14 +24,14 @@ const teamMembers = [
   {
     name: 'Jake Torres',
     email: 'jake@healthshieldrentals.com',
-    role: 'Captain',
+    role: 'Agent',
     initials: 'JT',
     status: 'Active',
   },
   {
     name: 'Maria Santos',
     email: 'maria@healthshieldrentals.com',
-    role: 'Captain',
+    role: 'Agent',
     initials: 'MS',
     status: 'Active',
   },
@@ -48,7 +48,7 @@ const roleBadgeVariant = (role: string) => {
   switch (role) {
     case 'Owner':
       return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-    case 'Captain':
+    case 'Agent':
       return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
     case 'Sales':
       return 'bg-green-500/10 text-green-600 border-green-500/20';

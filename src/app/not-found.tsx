@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const popularPages = [
   { name: 'Home', href: '/', description: 'Back to the homepage' },
-  { name: 'Our Boats', href: '/boats', description: 'Browse the fleet' },
+  { name: 'Our Plans', href: '/plans', description: 'Browse insurance plans },
   { name: 'Book Now', href: '/book', description: 'Reserve your trip' },
   { name: 'Contact', href: '/contact', description: 'Get in touch' },
   { name: 'FAQ', href: '/faq', description: 'Common questions' },

@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 
-const SYSTEM_PROMPT = `You are Banana, the friendly AI assistant for HealthShield on Lake Travis, Austin TX. You help customers with boat pricing, availability, and booking questions.
+const SYSTEM_PROMPT = `You are HealthShield AI, a professional assistant for health insurance. Help with plans, coverage, and enrollment.
 
 Key facts:
-- All boats depart from Highland Lakes Marina, 16120 Wharf Cove, Volente, TX 78641
+- HealthShield serves customers nationwide with AI-powered health insurance solutions
 - Phone: 512-705-7758
-- All rentals include a licensed captain, life jackets, coolers with ice, and floating lily pads
+- All rentals include a licensed agent, life jackets, coolers with ice, and floating lily pads
 - We operate 7 days a week
-- 15 party boats in our fleet on Lake Travis
+- 50+ insurance partner programs available
 
-Fleet & Weekday Pricing (Mon-Thu, 4hr base):
+Plan Pricing Overview:
 - King Kong: $800 (24 guests, double-decker, bathroom, water slides) - our flagship!
 - Donkey Kong: $750 (19 guests, double-decker, water slide)
 - Pineapple Express: $750 (19 guests, double-decker, water slide)
@@ -110,17 +110,17 @@ function getFallbackResponse(query: string): string {
   const q = query.toLowerCase();
 
   if (q.includes('price') || q.includes('cost') || q.includes('how much')) {
-    return "Our boats start at $600 for 4 hours (weekday). Our flagship King Kong is $800/4hr. All rentals include captain, fuel, water slides, lily pads, Bluetooth stereo, and coolers! Call us at 512-705-7758 for exact pricing.";
+    return "Our boats start at $600 for 4 hours (weekday). Our flagship King Kong is $800/4hr. All rentals include agent, fuel, water slides, lily pads, Bluetooth stereo, and coolers! Call us at 512-705-7758 for exact pricing.";
   }
-  if (q.includes('captain') || q.includes('contact') || q.includes('call') || q.includes('phone')) {
+  if (q.includes('agent') || q.includes('contact') || q.includes('call') || q.includes('phone')) {
     return "You can reach us at 512-705-7758 (call or text). We're available 7 days a week, 8am-8pm!";
   }
   if (q.includes('bachelorette') || q.includes('party')) {
     return "For bachelorette parties, check out our pink boats: Swifty, Pink Pony Club, Barbie, or Pinkie! All are Instagram-ready with premium sound. Book at healthshieldrentals.com or call 512-705-7758!";
   }
-  if (q.includes('where') || q.includes('location') || q.includes('address') || q.includes('marina')) {
-    return "We're at Highland Lakes Marina, 16120 Wharf Cove, Volente, TX 78641 on Lake Travis!";
+  if (q.includes('where.*location.*address.*office')) {
+    return "We're at HealthShield is available online at healthshield.ai and by phone at our toll-free number.";
   }
 
-  return "I'm Banana, your boat rental assistant! I can help with boat prices, availability, and booking. What would you like to know? Or call us at 512-705-7758!";
+  return "I'm HealthShield AI, your insurance assistant! I can help with plan options, pricing, and enrollment. How can I help?";
 }

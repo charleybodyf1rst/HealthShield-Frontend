@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { PendingApproval } from '@/types/boat-crm';
+import type { PendingApproval } from '@/types/plan-crm';
 import { toast } from 'sonner';
 
 const actionTypeIcons: Record<string, React.ReactNode> = {
@@ -26,7 +26,7 @@ const actionTypeIcons: Record<string, React.ReactNode> = {
   reschedule_booking: <Calendar className="w-5 h-5" />,
   cancel_booking: <XCircle className="w-5 h-5" />,
   confirm_booking: <CheckCircle className="w-5 h-5" />,
-  assign_captain: <User className="w-5 h-5" />,
+  assign_agent: <User className="w-5 h-5" />,
   send_reminder: <Clock className="w-5 h-5" />,
   send_weather_alert: <AlertTriangle className="w-5 h-5" />,
   schedule_maintenance: <Ship className="w-5 h-5" />,
@@ -38,7 +38,7 @@ const actionTypeLabels: Record<string, string> = {
   reschedule_booking: 'Reschedule',
   cancel_booking: 'Cancellation',
   confirm_booking: 'Confirmation',
-  assign_captain: 'Captain Assignment',
+  assign_agent: 'Agent Assignment',
   send_reminder: 'Reminder',
   send_weather_alert: 'Weather Alert',
   schedule_maintenance: 'Maintenance',

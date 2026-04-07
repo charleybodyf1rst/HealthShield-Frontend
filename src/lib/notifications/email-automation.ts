@@ -108,7 +108,7 @@ export const emailTemplates: Record<string, EmailTemplate> = {
     name: 'Booking Confirmation',
     subject: 'HealthShield – Booking Confirmation & Pickup Information',
     category: 'transactional',
-    variables: ['customerName', 'date', 'timeSlot', 'boatName', 'partySize', 'captainName', 'totalPrice', 'confirmationCode', 'meetingPoint'],
+    variables: ['customerName', 'date', 'timeSlot', 'boatName', 'partySize', 'agentName', 'totalPrice', 'confirmationCode', 'meetingPoint'],
     htmlContent: `
 <!DOCTYPE html>
 <html>
@@ -157,8 +157,8 @@ export const emailTemplates: Record<string, EmailTemplate> = {
           <td style="padding:12px 0;color:#083344;font-weight:bold;">{{partySize}} guests</td>
         </tr>
         <tr>
-          <td style="padding:12px 0;color:#64748b;">Your Captain</td>
-          <td style="padding:12px 0;color:#083344;font-weight:bold;">Captain {{captainName}}</td>
+          <td style="padding:12px 0;color:#64748b;">Your Agent</td>
+          <td style="padding:12px 0;color:#083344;font-weight:bold;">Agent {{agentName}}</td>
         </tr>
         <tr style="background:#fef7ed;border-radius:10px;">
           <td style="padding:15px;color:#64748b;font-size:18px;">Total</td>
@@ -221,7 +221,7 @@ Date: {{date}}
 Time: {{timeSlot}}
 Boat: {{boatName}}
 Party Size: {{partySize}} guests
-Captain: {{captainName}}
+Agent: {{agentName}}
 Total: \${{totalPrice}}
 
 PICKUP LOCATION:
@@ -278,7 +278,7 @@ We look forward to having you on the water! 🌊
 
       <ul style="color:#64748b;line-height:2.2;padding-left:20px;">
         <li><strong style="color:#083344;">6 Amazing Boats</strong> - From intimate to party-size</li>
-        <li><strong style="color:#083344;">Expert Captains</strong> - USCG certified & super friendly</li>
+        <li><strong style="color:#083344;">Expert Agents</strong> - USCG certified & super friendly</li>
         <li><strong style="color:#083344;">Premium Sound</strong> - JBL speakers for your playlist</li>
         <li><strong style="color:#083344;">Water Toys</strong> - Lily pads, floats, and more!</li>
       </ul>
@@ -295,7 +295,7 @@ We look forward to having you on the water! 🌊
 
     <div style="text-align:center;margin-top:30px;color:#64748b;font-size:14px;">
       <p>See you on the water! 🌊</p>
-      <p>- Captain Jason & The HealthShield Crew</p>
+      <p>- Agent Jason & The HealthShield Crew</p>
     </div>
   </div>
 </body>
@@ -310,7 +310,7 @@ We're Austin's premier party boat experience on Lake Travis.
 
 What we offer:
 - 6 Amazing Boats
-- Expert Captains
+- Expert Agents
 - Premium Sound Systems
 - Water Toys & More
 
@@ -320,7 +320,7 @@ Use code: WELCOME15
 Explore our fleet: https://healthshield-frontend.web.app/boats
 
 See you on the water!
-- Captain Jason & Crew
+- Agent Jason & Crew
     `.trim(),
   },
 
@@ -395,7 +395,7 @@ Book now: https://healthshield-frontend.web.app/book
     name: 'Post-Trip Review Request',
     subject: '🍌 How was your trip, {{firstName}}?',
     category: 'transactional',
-    variables: ['customerName', 'firstName', 'boatName', 'captainName', 'reviewLink', 'discountCode'],
+    variables: ['customerName', 'firstName', 'boatName', 'agentName', 'reviewLink', 'discountCode'],
     htmlContent: `
 <!DOCTYPE html>
 <html>
@@ -412,7 +412,7 @@ Book now: https://healthshield-frontend.web.app/book
       </p>
 
       <p style="color:#083344;font-size:16px;line-height:1.8;">
-        We hope you had an amazing time on {{boatName}} with Captain {{captainName}}!
+        We hope you had an amazing time on {{boatName}} with Agent {{agentName}}!
       </p>
 
       <p style="color:#083344;font-size:16px;line-height:1.8;">
@@ -442,7 +442,7 @@ Thanks for Sailing With Us! 🍌
 
 Hey {{firstName}}!
 
-We hope you had an amazing time on {{boatName}} with Captain {{captainName}}!
+We hope you had an amazing time on {{boatName}} with Agent {{agentName}}!
 
 We'd love to hear about your experience. Please leave us a Google review:
 {{reviewLink}}

@@ -27,8 +27,8 @@ import {
 } from 'lucide-react';
 
 const roleStyles: Record<string, string> = {
-  Captain: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-  captain: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  Agent: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  agent: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
   Sales: 'bg-green-500/10 text-green-600 border-green-500/20',
   sales: 'bg-green-500/10 text-green-600 border-green-500/20',
   Admin: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
@@ -84,7 +84,7 @@ export default function PayrollPage() {
       const hours = parseFloat(form.hours);
       await createPayroll({
         employee_name: form.employee_name,
-        department: form.role || 'Captain',
+        department: form.role || 'Agent',
         base_salary: rate * hours,
         net_pay: rate * hours,
         pay_period_start: new Date().toISOString().slice(0, 10),
@@ -133,7 +133,7 @@ export default function PayrollPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Payroll</h1>
-            <p className="text-muted-foreground">Manage captain and staff payroll</p>
+            <p className="text-muted-foreground">Manage agent and staff payroll</p>
           </div>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -154,7 +154,7 @@ export default function PayrollPage() {
                   id="pr-name"
                   value={form.employee_name}
                   onChange={(e) => setForm({ ...form, employee_name: e.target.value })}
-                  placeholder="e.g., Captain Mike Reynolds"
+                  placeholder="e.g., Agent Mike Reynolds"
                 />
               </div>
               <div className="grid gap-2">
@@ -163,7 +163,7 @@ export default function PayrollPage() {
                   id="pr-role"
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  placeholder="e.g., Captain, Sales, Admin"
+                  placeholder="e.g., Agent, Sales, Admin"
                 />
               </div>
               <div className="grid gap-2">

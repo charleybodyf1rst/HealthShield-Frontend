@@ -431,8 +431,8 @@ export default function CalendarPage() {
       notes: appointment.notes || '',
       location: appointment.location || '',
       meeting_link: appointment.meeting_link || '',
-      agent_name: appointment.captain_name || '',
-      plan_type: appointment.boat_id || undefined,
+      agent_name: appointment.agent_name || '',
+      plan_type: appointment.plan_type || undefined,
     });
     setIsDialogOpen(true);
   };
@@ -467,8 +467,8 @@ export default function CalendarPage() {
       location: formData.location || null,
       meeting_link: formData.meeting_link || null,
       notes: formData.notes || null,
-      captain_name: formData.agent_name || null,
-      boat_id: formData.plan_type ? Number(formData.plan_type) : null,
+      agent_name: formData.agent_name || null,
+      plan_type: formData.plan_type || null,
     };
 
     setIsSubmitting(true);

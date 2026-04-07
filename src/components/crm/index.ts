@@ -7,6 +7,6 @@ export { AnalyticsTab } from './AnalyticsTab';
 export { WaiversTab } from './WaiversTab';
 export { LeadsTab } from './LeadsTab';
 export { InteractionTimeline } from './InteractionTimeline';
-export { CaptainCheckin } from './CaptainCheckin';
+export { AgentCheckin } from './AgentCheckin';
 export { SignaturePad } from './SignaturePad';
 export { PassengerWaiverCard } from './PassengerWaiverCard';

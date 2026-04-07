@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { TodaySchedule, PendingApproval, BoatActivity } from '@/types/boat-crm';
+import type { TodaySchedule, PendingApproval, BoatActivity } from '@/types/plan-crm';
 
 function ScheduleCard({ schedule }: { schedule: TodaySchedule }) {
   const waiversComplete = schedule.waiversRequired > 0

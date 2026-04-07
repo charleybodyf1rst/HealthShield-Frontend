@@ -29,7 +29,7 @@ export interface FleetBoat {
   maintenanceNotes?: string;
 
   // Assignment
-  currentCaptainId?: string;
+  currentAgentId?: string;
   currentBookingId?: string;
 
   // Documents

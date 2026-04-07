@@ -281,10 +281,10 @@ export default function AiCallerPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-600/25">
               <Bot className="h-5 w-5 text-white" />
             </div>
-            <span className="text-gradient-orange">AI Caller</span>
+            <span className="text-foreground font-bold">AI Caller</span>
           </h1>
           <p className="text-muted-foreground mt-1">
             AI-powered outbound calling with premium ElevenLabs voices
@@ -298,7 +298,7 @@ export default function AiCallerPage() {
             </Button>
           </a>
           {isConvConfigured && (
-            <Badge variant="default" className="bg-orange-500/10 text-orange-600 border-orange-500/30">
+            <Badge variant="default" className="bg-blue-500/10 text-blue-600 border-blue-500/30">
               <Zap className="h-3 w-3 mr-1" />
               Real-Time AI Active
             </Badge>
@@ -339,7 +339,7 @@ export default function AiCallerPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-orange-500" />
+                    <MessageSquare className="h-5 w-5 text-blue-500" />
                     <span className="text-2xl font-bold">{convStats?.total_calls || 0}</span>
                   </div>
                 </CardContent>
@@ -385,7 +385,7 @@ export default function AiCallerPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-orange-400" />
+                    <Sparkles className="h-5 w-5 text-blue-400" />
                     <span className="text-2xl font-bold">{convStats?.positive_sentiment || 0}%</span>
                   </div>
                 </CardContent>
@@ -401,7 +401,7 @@ export default function AiCallerPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-orange-500" />
+                    <Phone className="h-5 w-5 text-blue-500" />
                     <span className="text-2xl font-bold">{stats?.total_calls || 0}</span>
                   </div>
                 </CardContent>
@@ -443,7 +443,7 @@ export default function AiCallerPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Volume2 className="h-5 w-5 text-orange-400" />
+                    <Volume2 className="h-5 w-5 text-blue-400" />
                     <span className="text-2xl font-bold">
                       {usageInfo ? Math.round(100 - usageInfo.usage_percentage) : 0}%
                     </span>

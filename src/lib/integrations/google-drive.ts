@@ -5,7 +5,7 @@
  * - Document backup and storage
  * - Photo gallery sync
  * - Receipt organization
- * - Shared captain files
+ * - Shared agent files
  * - Automatic backup
  */
 
@@ -68,7 +68,7 @@ export const bananBoatFolderStructure = {
       ],
     },
     {
-      name: 'Captain Files',
+      name: 'Agent Files',
       subfolders: ['Licenses', 'Certifications', 'Training'],
     },
     {

@@ -217,7 +217,7 @@ export default function EmailsPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Email Management</h1>
             <p className="text-muted-foreground mt-1">
-              Manage customer communications and follow-ups for your boat rental business.
+              Manage customer communications and follow-ups for your insurance call center.
             </p>
           </div>
           <Dialog open={composeOpen} onOpenChange={setComposeOpen}>
