@@ -1,7 +1,7 @@
 substitutions:
   _APP_NAME: 'healthshield-frontend'
   _REGION: 'us-central1'
-  _HEALTHSHIELD_ORG_ID: '11'
+  _HEALTHSHIELD_ORG_ID: '12'
 
 steps:
   # Log build info
