@@ -2,11 +2,11 @@ import Link from 'next/link';
 
 const popularPages = [
   { name: 'Home', href: '/', description: 'Back to the homepage' },
-  { name: 'Our Plans', href: '/plans', description: 'Browse insurance plans },
-  { name: 'Book Now', href: '/book', description: 'Reserve your trip' },
+  { name: 'Our Plans', href: '/plans', description: 'Browse insurance plans' },
+  { name: 'Get a Quote', href: '/quote', description: 'Request a quote' },
   { name: 'Contact', href: '/contact', description: 'Get in touch' },
   { name: 'FAQ', href: '/faq', description: 'Common questions' },
-  { name: 'Dashboard', href: '/dashboard', description: 'Manage bookings' },
+  { name: 'Dashboard', href: '/dashboard', description: 'Manage your account' },
 ];
 
 export default function NotFound() {
