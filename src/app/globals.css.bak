@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
+
+:root {
+  --banana-500: #FFEB3B;
+  --banana-600: #FDD835;
+  --ocean-500: #2196F3;
+  --ocean-700: #1976D2;
+  --palm-500: #4CAF50;
+  --sunset-500: #FF9800;
+  --coral-500: #FF5722;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes ripple {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.animate-fadeIn { animation: fadeIn 0.8s ease-out; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+
+@layer components {
+  .btn-banana {
+    @apply bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500;
+    @apply text-gray-900 font-bold rounded-full px-8 py-4;
+    @apply shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  .btn-ocean {
+    @apply bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700;
+    @apply text-white font-bold rounded-full px-8 py-4;
+    @apply shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  .card-boat {
+    @apply border-2 border-yellow-500/20 hover:border-yellow-500/50;
+    @apply bg-gradient-to-br from-blue-900/50 via-blue-800/30 to-blue-900/50;
+    @apply shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1;
+    @apply rounded-2xl overflow-hidden;
+  }
+
+  .text-gradient-banana {
+    @apply bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 bg-clip-text text-transparent;
+  }
+}
+
+.dj-banana {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.dj-banana:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.banana-video-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}

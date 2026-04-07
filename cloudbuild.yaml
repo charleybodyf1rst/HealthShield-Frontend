@@ -1,0 +1,68 @@
+substitutions:
+  _APP_NAME: 'healthshield-frontend'
+  _REGION: 'us-central1'
+  _HEALTHSHIELD_ORG_ID: '11'
+
+steps:
+  # Log build info
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'echo "Building ${_APP_NAME} from commit $COMMIT_SHA with BUILD_ID $BUILD_ID"'
+
+  # Build Docker image (bash entrypoint required for secretEnv resolution)
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker build \
+          --build-arg NEXT_PUBLIC_API_URL=https://systemsf1rst-backend-887571186773.us-central1.run.app \
+          --build-arg NEXT_PUBLIC_BUILD_ID=$BUILD_ID \
+          --build-arg NEXT_PUBLIC_HEALTHSHIELD_ORG_ID=${_HEALTHSHIELD_ORG_ID} \
+          --build-arg NEXT_PUBLIC_REVERB_APP_KEY="$$REVERB_APP_KEY" \
+          --build-arg NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-887571186773.us-central1.run.app \
+          -t gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID \
+          -t gcr.io/$PROJECT_ID/${_APP_NAME}:latest \
+          .
+    id: 'Build'
+    secretEnv: ['REVERB_APP_KEY']
+
+  # Push to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID']
+    id: 'Push'
+    waitFor: ['Build']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy ${_APP_NAME} \
+          --image gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID \
+          --region ${_REGION} \
+          --platform managed \
+          --allow-unauthenticated \
+          --memory 1Gi \
+          --cpu 1 \
+          --min-instances 0 \
+          --max-instances 5 \
+          --set-env-vars "NODE_ENV=production,NEXT_PUBLIC_API_URL=https://systemsf1rst-backend-887571186773.us-central1.run.app,BUILD_ID=$BUILD_ID,ANTHROPIC_API_KEY=$$ANTHROPIC_API_KEY,NEXT_PUBLIC_REVERB_APP_KEY=$$REVERB_APP_KEY,NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-887571186773.us-central1.run.app,NEXT_PUBLIC_REVERB_PORT=443,NEXT_PUBLIC_REVERB_SCHEME=https,NEXT_PUBLIC_HEALTHSHIELD_ORG_ID=${_HEALTHSHIELD_ORG_ID}"
+    id: 'Deploy'
+    waitFor: ['Push']
+    secretEnv: ['ANTHROPIC_API_KEY', 'REVERB_APP_KEY']
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/ANTHROPIC_API_KEY/versions/latest
+      env: 'ANTHROPIC_API_KEY'
+    - versionName: projects/$PROJECT_ID/secrets/REVERB_APP_KEY/versions/latest
+      env: 'REVERB_APP_KEY'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1800s'

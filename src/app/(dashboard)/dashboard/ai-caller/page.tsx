@@ -1,0 +1,958 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import {
+  Phone,
+  PhoneCall,
+  PhoneOff,
+  TrendingUp,
+  Users,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Bot,
+  Volume2,
+  Loader2,
+  Search,
+  Filter,
+  PhoneOutgoing,
+  X,
+  Zap,
+  MessageSquare,
+  Sparkles,
+  Mail,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { AiCallerPanel, VoiceSelector, VoicePlayer, ConversationalAiPanel } from '@/components/voice';
+import {
+  aiCallerApi,
+  elevenLabsApi,
+  conversationalAiApi,
+  leadsApi,
+  communicationApi,
+  type AiCallStats,
+  type ElevenLabsVoice,
+  type ConversationalStats,
+  type ConversationalCallResult,
+} from '@/lib/api';
+import type { Lead } from '@/types/lead';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { useUser } from '@/stores/auth-store';
+
+type CallerMode = 'scripted' | 'conversational';
+
+export default function AiCallerPage() {
+  // Current user (for Call Me mode)
+  const authUser = useUser();
+
+  // Mode selection
+  const [callerMode, setCallerMode] = useState<CallerMode>('conversational');
+
+  // Stats
+  const [stats, setStats] = useState<AiCallStats | null>(null);
+  const [convStats, setConvStats] = useState<ConversationalStats | null>(null);
+
+  // Voices and leads
+  const [voices, setVoices] = useState<ElevenLabsVoice[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Loading and config states
+  const [isLoading, setIsLoading] = useState(true);
+  const [isConfigured, setIsConfigured] = useState(false);
+  const [isConvConfigured, setIsConvConfigured] = useState(false);
+  const [usageInfo, setUsageInfo] = useState<{
+    character_count: number;
+    character_limit: number;
+    remaining: number;
+    usage_percentage: number;
+  } | null>(null);
+
+  // Manual phone entry state
+  const [manualPhone, setManualPhone] = useState('');
+  const [manualName, setManualName] = useState('');
+  const [manualCallMode, setManualCallMode] = useState(false);
+
+  // SMS & Email state
+  const [smsMessage, setSmsMessage] = useState('');
+  const [sendingSms, setSendingSms] = useState(false);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [commMode, setCommMode] = useState<'call' | 'sms' | 'email'>('call');
+
+  // Initial data fetch
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+
+        // Check service status for both services
+        const [statusRes, convStatusRes, voicesRes, statsRes, usageRes, leadsRes] = await Promise.all([
+          aiCallerApi.getStatus().catch(() => ({ data: { configured: false } })),
+          conversationalAiApi.getStatus().catch(() => ({ data: { configured: false } })),
+          elevenLabsApi.getVoices().catch(() => ({ data: { premium_voices: [] } })),
+          aiCallerApi.getCallStats().catch(() => ({ data: null })),
+          elevenLabsApi.getUsage().catch(() => ({ data: { subscription: null } })),
+          leadsApi.getAll({ limit: 50 }).catch(() => ({ data: { leads: [] } })),
+        ]);
+
+        setIsConfigured(statusRes.data.configured);
+        setIsConvConfigured(convStatusRes.data.configured);
+        setVoices(voicesRes.data.premium_voices || []);
+        setStats(statsRes.data);
+        setUsageInfo(usageRes.data.subscription);
+        setLeads(leadsRes.data?.leads || []);
+
+        // If conversational is configured, fetch its stats
+        if (convStatusRes.data.configured) {
+          try {
+            const convStatsRes = await conversationalAiApi.getStats();
+            setConvStats(convStatsRes.data);
+          } catch {
+            // Ignore stats errors
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch AI Caller data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filter leads by search query
+  const filteredLeads = (leads ?? []).filter((lead) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      lead.firstName?.toLowerCase().includes(query) ||
+      lead.lastName?.toLowerCase().includes(query) ||
+      lead.email?.toLowerCase().includes(query) ||
+      lead.phone?.includes(query)
+    );
+  });
+
+  const handleCallInitiated = (result: { logId: string; audioUrl: string }) => {
+    // Refresh stats
+    aiCallerApi.getCallStats().then((res) => setStats(res.data));
+  };
+
+  const handleConvCallStarted = (result: ConversationalCallResult) => {
+    // Refresh conversational stats
+    conversationalAiApi.getStats().then((res) => setConvStats(res.data)).catch(() => {});
+  };
+
+  const handleConvCallEnded = (conversationId: string) => {
+    // Refresh conversational stats
+    conversationalAiApi.getStats().then((res) => setConvStats(res.data)).catch(() => {});
+  };
+
+  // Handle lead selection - clears manual mode
+  const handleSelectLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setManualCallMode(false);
+  };
+
+  // Handle manual call mode activation
+  const handleUseManualPhone = () => {
+    setSelectedLead(null);
+    setManualCallMode(true);
+  };
+
+  // Clear both modes
+  const handleClearSelection = () => {
+    setSelectedLead(null);
+    setManualCallMode(false);
+  };
+
+  // SMS handler
+  const handleSendSms = async () => {
+    const phoneNumber = manualPhone || selectedLead?.phone || authUser?.phone;
+    if (!phoneNumber || !smsMessage.trim()) {
+      toast.error('Phone number and message are required');
+      return;
+    }
+    setSendingSms(true);
+    try {
+      const formatted = phoneNumber.replace(/[^+\d]/g, '');
+      const to = formatted.startsWith('+') ? formatted : '+1' + formatted.replace(/^1/, '');
+      await communicationApi.sendSMS(to, smsMessage.trim());
+      toast.success('SMS sent successfully');
+      setSmsMessage('');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send SMS');
+    } finally {
+      setSendingSms(false);
+    }
+  };
+
+  // Email handler
+  const handleSendEmail = async () => {
+    if (!emailSubject.trim() || !emailBody.trim()) {
+      toast.error('Subject and body are required');
+      return;
+    }
+    setSendingEmail(true);
+    try {
+      const to = selectedLead?.email || '';
+      await communicationApi.sendEmail(to, emailSubject.trim(), emailBody.trim());
+      toast.success('Email sent successfully');
+      setEmailSubject('');
+      setEmailBody('');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send email');
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const neitherConfigured = !isConfigured && !isConvConfigured;
+
+  if (neitherConfigured) {
+    return (
+      <div className="p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-500" />
+              AI Caller Not Configured
+            </CardTitle>
+            <CardDescription>
+              The AI Caller requires ElevenLabs and Twilio to be configured.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Please contact your administrator to set up the following:
+            </p>
+            <ul className="list-disc list-inside mt-2 text-sm text-muted-foreground space-y-1">
+              <li>ElevenLabs API key for premium voice synthesis</li>
+              <li>ElevenLabs Agent ID and Phone Number ID for conversational AI</li>
+              <li>Twilio Account SID, Auth Token, and phone number</li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/25">
+              <Bot className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-gradient-orange">AI Caller</span>
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            AI-powered outbound calling with premium ElevenLabs voices
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {isConvConfigured && (
+            <Badge variant="default" className="bg-orange-500/10 text-orange-600 border-orange-500/30">
+              <Zap className="h-3 w-3 mr-1" />
+              Real-Time AI Active
+            </Badge>
+          )}
+          {isConfigured && (
+            <Badge variant="secondary">
+              Scripted Calls Active
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {/* Mode Selector Tabs */}
+      <Tabs value={callerMode} onValueChange={(v) => setCallerMode(v as CallerMode)} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="conversational" className="gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Real-Time AI
+            {isConvConfigured && <Badge variant="secondary" className="ml-1 text-xs">Premium</Badge>}
+            {!isConvConfigured && <Badge variant="outline" className="ml-1 text-xs text-muted-foreground">Setup</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="scripted" className="gap-2">
+            <Volume2 className="h-4 w-4" />
+            Scripted Calls
+            {!isConfigured && <Badge variant="outline" className="ml-1 text-xs text-muted-foreground">Setup</Badge>}
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Stats Cards - Dynamic based on mode */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {callerMode === 'conversational' ? (
+            <>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Conversations
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-orange-500" />
+                    <span className="text-2xl font-bold">{convStats?.total_calls || 0}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Avg Duration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-amber-500" />
+                    <span className="text-2xl font-bold">
+                      {convStats?.avg_duration_seconds
+                        ? `${Math.floor(convStats.avg_duration_seconds / 60)}:${String(Math.floor(convStats.avg_duration_seconds % 60)).padStart(2, '0')}`
+                        : '0:00'}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Success Rate
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-green-500" />
+                    <span className="text-2xl font-bold">{convStats?.success_rate || 0}%</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Positive Sentiment
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-orange-400" />
+                    <span className="text-2xl font-bold">{convStats?.positive_sentiment || 0}%</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Calls
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-orange-500" />
+                    <span className="text-2xl font-bold">{stats?.total_calls || 0}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Completed
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <span className="text-2xl font-bold">{stats?.completed || 0}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Success Rate
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    <span className="text-2xl font-bold">{stats?.success_rate || 0}%</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Voice Credits
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-5 w-5 text-orange-400" />
+                    <span className="text-2xl font-bold">
+                      {usageInfo ? Math.round(100 - usageInfo.usage_percentage) : 0}%
+                    </span>
+                  </div>
+                  {usageInfo && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {(usageInfo?.remaining ?? 0).toLocaleString()} characters left
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          {/* Lead Selection */}
+          <div className="lg:col-span-1 space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Select Lead</CardTitle>
+                <CardDescription>
+                  Choose a lead to call with AI voice
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search leads..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+
+                <div className="max-h-[400px] overflow-y-auto space-y-2">
+                  {filteredLeads.map((lead) => (
+                    <div
+                      key={lead.id}
+                      onClick={() => handleSelectLead(lead)}
+                      className={cn(
+                        'p-3 rounded-lg border cursor-pointer transition-colors',
+                        selectedLead?.id === lead.id && !manualCallMode
+                          ? 'border-primary bg-primary/5'
+                          : 'hover:bg-muted/50'
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">
+                            {lead.firstName} {lead.lastName}
+                          </p>
+                          {lead.phone && (
+                            <p className="text-sm text-muted-foreground">
+                              {lead.phone}
+                            </p>
+                          )}
+                        </div>
+                        {!lead.phone && (
+                          <Badge variant="secondary" className="text-xs">
+                            No phone
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {filteredLeads.length === 0 && (
+                    <p className="text-center text-muted-foreground py-8">
+                      No leads found
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Communication Mode Toggle */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold">Communication Mode</h3>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    variant={commMode === 'call' ? 'default' : 'outline'}
+                    onClick={() => setCommMode('call')}
+                    className="w-full"
+                  >
+                    <Phone className="mr-2 h-4 w-4" />
+                    Call
+                  </Button>
+                  <Button
+                    variant={commMode === 'sms' ? 'default' : 'outline'}
+                    onClick={() => setCommMode('sms')}
+                    className="w-full"
+                  >
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Text
+                  </Button>
+                  <Button
+                    variant={commMode === 'email' ? 'default' : 'outline'}
+                    onClick={() => setCommMode('email')}
+                    className="w-full"
+                  >
+                    <Mail className="mr-2 h-4 w-4" />
+                    Email
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Call Me - AI calls the logged-in user's phone */}
+            {commMode === 'call' && authUser?.phone && (
+              <Card className={cn(
+                manualCallMode && manualPhone === authUser.phone && 'border-primary bg-primary/5'
+              )}>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <PhoneCall className="h-5 w-5 text-green-500" />
+                    Call Me
+                  </CardTitle>
+                  <CardDescription>
+                    Have the AI assistant call your phone
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Your number: <span className="font-medium text-foreground">{authUser.phone}</span>
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setManualPhone(authUser.phone!);
+                      setManualName(`${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || 'Me');
+                      setSelectedLead(null);
+                      setManualCallMode(true);
+                    }}
+                    className="w-full"
+                    variant={manualCallMode && manualPhone === authUser.phone ? 'secondary' : 'default'}
+                  >
+                    {manualCallMode && manualPhone === authUser.phone ? (
+                      <>
+                        <CheckCircle2 className="h-4 w-4 mr-2" />
+                        Ready — Start Call Above
+                      </>
+                    ) : (
+                      <>
+                        <PhoneCall className="h-4 w-4 mr-2" />
+                        Call My Phone
+                      </>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quick Call - Manual Phone Entry */}
+            {commMode === 'call' && (
+              <Card className={cn(manualCallMode && !(authUser?.phone && manualPhone === authUser.phone) && 'border-primary')}>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <PhoneOutgoing className="h-5 w-5" />
+                    Quick Call
+                  </CardTitle>
+                  <CardDescription>
+                    Enter a phone number for an ad-hoc AI call
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="manualPhone">Phone Number</Label>
+                    <Input
+                      id="manualPhone"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={manualPhone}
+                      onChange={(e) => setManualPhone(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="manualName">Caller Name (optional)</Label>
+                    <Input
+                      id="manualName"
+                      placeholder="Enter name..."
+                      value={manualName}
+                      onChange={(e) => setManualName(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    onClick={handleUseManualPhone}
+                    disabled={!manualPhone.trim()}
+                    className="w-full"
+                    variant={manualCallMode ? 'secondary' : 'default'}
+                  >
+                    {manualCallMode ? (
+                      <>
+                        <CheckCircle2 className="h-4 w-4 mr-2" />
+                        Using This Number
+                      </>
+                    ) : (
+                      <>
+                        <Phone className="h-4 w-4 mr-2" />
+                        Use This Number
+                      </>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* SMS Panel */}
+            {commMode === 'sms' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-green-500" />
+                    Send Text Message
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">To</label>
+                    <Input value={manualPhone || selectedLead?.phone || authUser?.phone || ''} readOnly className="mt-1" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Message</label>
+                    <textarea
+                      value={smsMessage}
+                      onChange={(e) => setSmsMessage(e.target.value)}
+                      placeholder="Type your message..."
+                      className="w-full mt-1 p-3 border rounded-lg resize-none h-32 text-sm"
+                      maxLength={1600}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">{smsMessage.length}/1600 characters</p>
+                  </div>
+                  <Button onClick={handleSendSms} disabled={sendingSms || !smsMessage.trim()} className="w-full">
+                    {sendingSms ? 'Sending...' : 'Send Text Message'}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Email Panel */}
+            {commMode === 'email' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-blue-500" />
+                    Send Email
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">To</label>
+                    <Input value={selectedLead?.email || 'Select a lead with email'} readOnly className="mt-1" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Subject</label>
+                    <Input
+                      value={emailSubject}
+                      onChange={(e) => setEmailSubject(e.target.value)}
+                      placeholder="Email subject..."
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Body</label>
+                    <textarea
+                      value={emailBody}
+                      onChange={(e) => setEmailBody(e.target.value)}
+                      placeholder="Write your email..."
+                      className="w-full mt-1 p-3 border rounded-lg resize-none h-40 text-sm"
+                    />
+                  </div>
+                  <Button onClick={handleSendEmail} disabled={sendingEmail || !emailSubject.trim() || !emailBody.trim()} className="w-full">
+                    {sendingEmail ? 'Sending...' : 'Send Email'}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Available Voices Preview (for scripted mode) */}
+            {callerMode === 'scripted' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Volume2 className="h-5 w-5" />
+                    Premium Voices
+                  </CardTitle>
+                  <CardDescription>
+                    {(voices ?? []).length} ElevenLabs voices available
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {(voices ?? []).slice(0, 5).map((voice) => (
+                      <div
+                        key={voice.id}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Volume2 className="h-4 w-4 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">{voice.name}</p>
+                            <p className="text-xs text-muted-foreground capitalize">
+                              {voice.gender} - {voice.accent}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="text-xs capitalize">
+                          {voice.use_case}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Conversational AI Features (for conversational mode) */}
+            {callerMode === 'conversational' && (
+              <Card className="border-primary/20 bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-primary" />
+                    Real-Time AI Features
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Sub-100ms response latency
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Natural conversation flow
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      GPT-4 powered responses
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Interruption handling
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Live transcription
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Sentiment analysis
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* AI Caller Panel - Dynamic based on mode */}
+          <div className="lg:col-span-2">
+            <TabsContent value="conversational" className="mt-0">
+              {!isConvConfigured ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 text-yellow-500" />
+                      Real-Time AI Not Configured
+                    </CardTitle>
+                    <CardDescription>
+                      Configure ElevenLabs Conversational AI to enable real-time voice calls with GPT-4 intelligence.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Please contact your administrator to set up the following:
+                    </p>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                      <li>ElevenLabs API key</li>
+                      <li>ElevenLabs Agent ID for conversational AI</li>
+                      <li>ElevenLabs Phone Number ID</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              ) : (selectedLead || manualCallMode) ? (
+                <ConversationalAiPanel
+                  leadId={selectedLead?.id}
+                  leadName={manualCallMode ? (manualName || 'Manual Call') : `${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                  leadPhone={manualCallMode ? manualPhone : selectedLead?.phone}
+                  leadEmail={selectedLead?.email}
+                  leadSource={selectedLead?.source}
+                  leadNotes={selectedLead?.notes}
+                  onCallStarted={handleConvCallStarted}
+                  onCallEnded={handleConvCallEnded}
+                />
+              ) : (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium">Select a Lead or Enter Phone</h3>
+                    <p className="text-muted-foreground mt-1 max-w-md">
+                      Choose a lead from the list or enter a phone number to start a real-time AI conversation
+                    </p>
+                    <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+                      <Zap className="h-4 w-4 text-primary" />
+                      <span>Powered by ElevenLabs + GPT-4</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="scripted" className="mt-0">
+              {!isConfigured ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 text-yellow-500" />
+                      Scripted Calls Not Configured
+                    </CardTitle>
+                    <CardDescription>
+                      Configure ElevenLabs and Twilio to enable scripted AI-powered calls.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Please contact your administrator to set up the following:
+                    </p>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                      <li>ElevenLabs API key for voice synthesis</li>
+                      <li>Twilio Account SID and Auth Token</li>
+                      <li>Twilio Phone Number</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              ) : (selectedLead || manualCallMode) ? (
+                <AiCallerPanel
+                  leadId={selectedLead?.id}
+                  leadName={manualCallMode ? (manualName || 'Manual Call') : `${selectedLead?.firstName} ${selectedLead?.lastName}`}
+                  leadPhone={manualCallMode ? manualPhone : selectedLead?.phone}
+                  onCallInitiated={handleCallInitiated}
+                />
+              ) : (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <Users className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium">Select a Lead or Enter Phone</h3>
+                    <p className="text-muted-foreground mt-1">
+                      Choose a lead from the list or enter a phone number for a quick call
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+          </div>
+        </div>
+
+        {/* Call Stats by Template (Scripted mode) */}
+        {callerMode === 'scripted' && stats?.by_template && Object.keys(stats.by_template).length > 0 && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Calls by Template</CardTitle>
+              <CardDescription>
+                Breakdown of AI calls by script template
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {Object.entries(stats.by_template).map(([template, count]) => (
+                  <div
+                    key={template}
+                    className="p-4 rounded-lg bg-muted/50 text-center"
+                  >
+                    <p className="text-2xl font-bold">{count}</p>
+                    <p className="text-sm text-muted-foreground capitalize">
+                      {template.replace(/_/g, ' ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Conversation Stats by Persona (Conversational mode) */}
+        {callerMode === 'conversational' && convStats?.by_persona && Object.keys(convStats.by_persona).length > 0 && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Conversations by Persona</CardTitle>
+              <CardDescription>
+                Breakdown of AI conversations by agent persona
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                {Object.entries(convStats.by_persona).map(([persona, count]) => (
+                  <div
+                    key={persona}
+                    className="p-4 rounded-lg bg-muted/50 text-center"
+                  >
+                    <p className="text-2xl font-bold">{count as number}</p>
+                    <p className="text-sm text-muted-foreground capitalize">
+                      {persona.replace(/_/g, ' ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </Tabs>
+    </div>
+  );
+}

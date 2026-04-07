@@ -1,0 +1,57 @@
+# Environment files
+.env
+.env.local
+.env.production
+*.env.secrets
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+www/
+build/
+.next/
+out/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel
+/public/hot
+/public/storage
+/storage/*.key
+/bootstrap/cache/*
+!.gitkeep
+
+# Capacitor
+ios/App/Pods/
+ios/App/App.xcworkspace
+android/.gradle/
+android/build/
+android/app/build/
+
+# Testing
+coverage/
+.phpunit.result.cache
+
+# Temp files
+*.tmp
+*.temp
+.cache/
+
+# Secrets
+*.pem
+*.key
+*.crt
+id_rsa*

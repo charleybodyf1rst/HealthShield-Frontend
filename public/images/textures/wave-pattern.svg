@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <pattern id="waves" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+      <!-- Subtle wave lines -->
+      <path d="M0 40 Q25 30 50 40 T100 40 T150 40 T200 40" stroke="rgba(6, 182, 212, 0.08)" stroke-width="1" fill="none"/>
+      <path d="M0 60 Q25 50 50 60 T100 60 T150 60 T200 60" stroke="rgba(251, 146, 60, 0.05)" stroke-width="1" fill="none"/>
+      <path d="M0 80 Q25 70 50 80 T100 80 T150 80 T200 80" stroke="rgba(6, 182, 212, 0.06)" stroke-width="1" fill="none"/>
+      <path d="M0 100 Q25 90 50 100 T100 100 T150 100 T200 100" stroke="rgba(251, 146, 60, 0.04)" stroke-width="1" fill="none"/>
+      <path d="M0 120 Q25 110 50 120 T100 120 T150 120 T200 120" stroke="rgba(6, 182, 212, 0.07)" stroke-width="1" fill="none"/>
+      <path d="M0 140 Q25 130 50 140 T100 140 T150 140 T200 140" stroke="rgba(251, 146, 60, 0.05)" stroke-width="1" fill="none"/>
+      <path d="M0 160 Q25 150 50 160 T100 160 T150 160 T200 160" stroke="rgba(6, 182, 212, 0.06)" stroke-width="1" fill="none"/>
+      <path d="M0 180 Q25 170 50 180 T100 180 T150 180 T200 180" stroke="rgba(251, 146, 60, 0.04)" stroke-width="1" fill="none"/>
+      <!-- Subtle circles for water effect -->
+      <circle cx="30" cy="30" r="15" fill="none" stroke="rgba(6, 182, 212, 0.03)" stroke-width="0.5"/>
+      <circle cx="120" cy="90" r="20" fill="none" stroke="rgba(251, 146, 60, 0.025)" stroke-width="0.5"/>
+      <circle cx="170" cy="150" r="12" fill="none" stroke="rgba(6, 182, 212, 0.03)" stroke-width="0.5"/>
+      <circle cx="60" cy="170" r="18" fill="none" stroke="rgba(251, 146, 60, 0.02)" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="200" height="200" fill="url(#waves)"/>
+</svg>

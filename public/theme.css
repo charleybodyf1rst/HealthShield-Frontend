@@ -1,0 +1,77 @@
+/* HealthShield Theme - BodyF1RST CRM Color Scheme */
+:root {
+  --radius: 0.625rem;
+  /* Warm off-white background for contrast against white cards */
+  --background: #f8f7f4;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  /* BodyF1RST Brand Orange Primary */
+  --primary: #EA580C;
+  --primary-foreground: #ffffff;
+  /* Light gray secondary */
+  --secondary: #f5f5f5;
+  --secondary-foreground: #262626;
+  /* Soft gray muted */
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  /* Light gray accent */
+  --accent: #f5f5f5;
+  --accent-foreground: #262626;
+  --destructive: #ef4444;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #EA580C;
+  /* Chart colors - professional palette */
+  --chart-1: #EA580C;
+  --chart-2: #84cc16;
+  --chart-3: #facc15;
+  --chart-4: #0ea5e9;
+  --chart-5: #8b5cf6;
+  /* Clean white sidebar */
+  --sidebar: #fafafa;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #EA580C;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #262626;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #EA580C;
+}
+
+.dark {
+  /* Dark theme - BodyF1RST style */
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #171717;
+  --card-foreground: #fafafa;
+  --popover: #171717;
+  --popover-foreground: #fafafa;
+  --primary: #EA580C;
+  --primary-foreground: #ffffff;
+  --secondary: #262626;
+  --secondary-foreground: #fafafa;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --accent: #262626;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #EA580C;
+  --chart-1: #EA580C;
+  --chart-2: #84cc16;
+  --chart-3: #facc15;
+  --chart-4: #0ea5e9;
+  --chart-5: #8b5cf6;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #EA580C;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #EA580C;
+}

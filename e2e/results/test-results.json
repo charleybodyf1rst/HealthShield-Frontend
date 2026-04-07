@@ -1,0 +1,492 @@
+{
+  "config": {
+    "configFile": "C:\\SafeWorkspace\\HealthShield-Rentals\\playwright.config.ts",
+    "rootDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/global-setup\\.ts/"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "marketing",
+        "name": "marketing",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/marketing",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "auth",
+        "name": "auth",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/auth",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "dashboard",
+        "name": "dashboard",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/dashboard",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "ai-verification",
+        "name": "ai-verification",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/ai-verification",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "payment",
+        "name": "payment",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/payment",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "boat-rentals",
+        "name": "boat-rentals",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/dashboard",
+        "testIgnore": [],
+        "testMatch": [
+          "bookings-crud.spec.ts",
+          "equipment-crud.spec.ts",
+          "damage-reports.spec.ts",
+          "promo-codes.spec.ts",
+          "maintenance.spec.ts",
+          "captain-schedules.spec.ts",
+          "captain-waivers.spec.ts",
+          "automations-crud.spec.ts",
+          "interactions.spec.ts",
+          "analytics-deep.spec.ts"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "C:/SafeWorkspace/HealthShield-Rentals/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "booking-flow",
+        "name": "booking-flow",
+        "testDir": "C:/SafeWorkspace/HealthShield-Rentals/e2e/marketing",
+        "testIgnore": [],
+        "testMatch": [
+          "booking-flow.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "open": "never",
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "e2e/results/test-results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth\\debug-login.spec.ts",
+      "file": "auth/debug-login.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "FULL DEBUG: capture every network call during login",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "auth",
+              "projectName": "auth",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14461,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "=== PAGE TEXT CHECK ===\n"
+                    },
+                    {
+                      "text": "Has \"Forgot password?\": \u001b[33mfalse\u001b[39m\n"
+                    },
+                    {
+                      "text": "Has \"Need help signing in?\": \u001b[33mtrue\u001b[39m\n"
+                    },
+                    {
+                      "text": "Has error already: \u001b[33mfalse\u001b[39m\n"
+                    },
+                    {
+                      "text": "\n=== CLICKING SIGN IN ===\n"
+                    },
+                    {
+                      "text": "\n=== NETWORK LOG ===\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/?_rsc=17yrj - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/contact?_rsc=to9i9 - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/?_rsc=to9i9 - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/contact?_rsc=17yrj - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": ">> POST https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/auth/login\n"
+                    },
+                    {
+                      "text": "   BODY: {\"email\":\"charley@bodyf1rst.com\",\"password\":\"Password123!\",\"app\":\"crm\"}\n"
+                    },
+                    {
+                      "text": "<< 200 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/auth/login\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":200,\"message\":\"Login successful\",\"token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0NTYiLCJqdGkiOiIwN2UwMDQ0MzE3MWI5OTk0YjY5MDdiZmFmNzJiMzliNDc3YmQ4NWQ0Y2ExZDk0ZGUyY2QwNDYzODQ1MTEwMTEwYjlkOWM5ZGNmNTdlZTY1NCIsImlhdCI6MTc3Mzk1ODI4NC40MTU2NTIsIm5iZiI6MTc3Mzk1ODI4NC40MTU2NTQsImV4cCI6MTg\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap - csp\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/kpis\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/today-schedule\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/approvals\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/calls?status=in_progress,ringing,dialing\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/activity?limit=10\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/inbox/unread-count\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/leads/stats\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/leads?page=1&limit=5\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/pipeline/kanban\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/ai-agents/next-best-actions?limit=5\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/automations?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/ai-agents?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/companies?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/ai-caller?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/crm?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/best-practices?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/leads?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/messages?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/leads/new?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/analytics?_rsc=18t7j - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/boat-analytics?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/automations?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/ai-agents?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/calls?status=in_progress%2Cringing%2Cdialing\n"
+                    },
+                    {
+                      "text": "<< 301 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/calls?status=in_progress,ringing,dialing\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/approvals\n"
+                    },
+                    {
+                      "text": "<< 301 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/approvals\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/activity?limit=10\n"
+                    },
+                    {
+                      "text": "<< 301 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/activity?limit=10\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/best-practices?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/crm?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/calendar?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/contacts?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/kpis\n"
+                    },
+                    {
+                      "text": "<< 301 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/kpis\n"
+                    },
+                    {
+                      "text": ">> GET https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/today-schedule\n"
+                    },
+                    {
+                      "text": "<< 301 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/boat-rentals/crm/today-schedule\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/pipeline?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/leads?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/bookings?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/messages?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "!! FAILED GET https://healthshield-frontend-887571186773.us-central1.run.app/dashboard/leads/new?_rsc=15moa - net::ERR_ABORTED\n"
+                    },
+                    {
+                      "text": "<< 200 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/inbox/unread-count\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":200,\"data\":{\"unread_count\":0}}\n"
+                    },
+                    {
+                      "text": "<< 401 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/approvals\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":401,\"message\":\"Unauthenticated.\",\"error\":\"unauthenticated\"}\n"
+                    },
+                    {
+                      "text": "<< 200 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/leads?page=1&limit=5\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":200,\"message\":\"Leads retrieved successfully\",\"data\":{\"leads\":[{\"id\":\"b5799113-565e-448b-92b9-0f22421f79e2\",\"firstName\":\"Unknown\",\"lastName\":\"\",\"email\":\"test-client@example.com\",\"phone\":null,\"company\":null,\"jobTitle\":null,\"website\":null,\"source\":\"phone_call\",\"classification\":null,\"classific\n"
+                    },
+                    {
+                      "text": "<< 401 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/calls?status=in_progress%2Cringing%2Cdialing\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":401,\"message\":\"Unauthenticated.\",\"error\":\"unauthenticated\"}\n"
+                    },
+                    {
+                      "text": "<< 401 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/kpis\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":401,\"message\":\"Unauthenticated.\",\"error\":\"unauthenticated\"}\n"
+                    },
+                    {
+                      "text": "<< 401 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/activity?limit=10\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":401,\"message\":\"Unauthenticated.\",\"error\":\"unauthenticated\"}\n"
+                    },
+                    {
+                      "text": "<< 200 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/ai-agents/next-best-actions?limit=5\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":200,\"data\":{\"actions\":[]}}\n"
+                    },
+                    {
+                      "text": "<< 200 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/leads/stats\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":200,\"data\":{\"stats\":{\"totalLeads\":15,\"activeLeads\":11,\"wonLeads\":4,\"lostLeads\":0,\"leadsThisMonth\":5,\"leadsChange\":100,\"revenueThisMonth\":0,\"revenueChange\":0,\"conversionRate\":0,\"conversionChange\":0,\"aiCallsMade\":0,\"callsChange\":0}}}\n"
+                    },
+                    {
+                      "text": "<< 401 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/boat-rentals/crm/today-schedule\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":401,\"message\":\"Unauthenticated.\",\"error\":\"unauthenticated\"}\n"
+                    },
+                    {
+                      "text": "<< 200 https://systemsf1rst-backend-887571186773.us-central1.run.app/api/v1/sales/pipeline/kanban\n"
+                    },
+                    {
+                      "text": "   RESP: {\"status\":200,\"data\":{\"stages\":[{\"id\":\"new\",\"name\":\"New Lead\",\"description\":\"Newly captured leads awaiting initial contact\",\"color\":\"#3B82F6\",\"order\":1,\"probability\":10,\"exit_criteria\":[\"Lead contact information verified\",\"Initial outreach attempt made\",\"Lead source recorded\"],\"leads\":[{\"id\":\"10cff3\n"
+                    },
+                    {
+                      "text": "\n=== FINAL STATE ===\n"
+                    },
+                    {
+                      "text": "URL: https://healthshield-frontend-887571186773.us-central1.run.app/dashboard\n"
+                    },
+                    {
+                      "text": "Has error: \u001b[33mfalse\u001b[39m\n"
+                    },
+                    {
+                      "text": "localStorage: {\"isAuth\":true,\"hasToken\":true}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-19T22:11:17.211Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5f1889fdd7b10a4db9e9-5d1f51cbae4bf13c7177",
+          "file": "auth/debug-login.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-19T22:11:14.830Z",
+    "duration": 18781.291,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

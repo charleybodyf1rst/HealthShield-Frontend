@@ -1,0 +1,172 @@
+'use client';
+
+import { useEffect, useRef, useCallback } from 'react';
+import { getEcho, disconnectEcho } from '@/lib/echo';
+import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
+import { useAuthStore } from '@/stores/auth-store';
+
+interface BoatCrmEvent {
+  type: string;
+  data: Record<string, unknown>;
+}
+
+export function useBoatCrmRealtime() {
+  const { user } = useAuthStore();
+  const {
+    fetchKPIs,
+    fetchTodaySchedule,
+    fetchPendingApprovals,
+    fetchActiveCalls,
+    fetchRecentActivity,
+    startPolling,
+    stopPolling,
+  } = useHealthShieldCrmStore();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const channelRef = useRef<any>(null);
+  const isSubscribedRef = useRef(false);
+
+  const handleBoatCrmEvent = useCallback((event: BoatCrmEvent) => {
+    switch (event.type) {
+      case 'booking.created':
+      case 'booking.updated':
+      case 'booking.cancelled':
+        fetchKPIs();
+        fetchTodaySchedule();
+        fetchRecentActivity(10);
+        break;
+      case 'approval.new':
+      case 'approval.resolved':
+        fetchPendingApprovals();
+        fetchRecentActivity(10);
+        break;
+      case 'call.started':
+      case 'call.ended':
+      case 'call.status':
+      case 'call.status.updated':
+        fetchActiveCalls();
+        break;
+      case 'captain.assigned':
+      case 'captain.status':
+        fetchTodaySchedule();
+        break;
+      case 'trip.started':
+      case 'trip.completed':
+        fetchKPIs();
+        fetchTodaySchedule();
+        fetchRecentActivity(10);
+        break;
+      case 'payment.received':
+      case 'refund.processed':
+        fetchKPIs();
+        fetchRecentActivity(10);
+        break;
+      case 'activity.new':
+        fetchRecentActivity(10);
+        break;
+    }
+  }, [fetchKPIs, fetchTodaySchedule, fetchPendingApprovals, fetchActiveCalls, fetchRecentActivity]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const echo = getEcho();
+
+    if (!echo) {
+      // Fallback to polling if WebSocket is not available
+      startPolling(5000);
+      return () => {
+        stopPolling();
+      };
+    }
+
+    // Subscribe to private channel for boat CRM events
+    const channelName = `private-boat-crm.${user.id}`;
+
+    if (!isSubscribedRef.current) {
+      const channel = echo.private(channelName)
+        // Booking events
+        .listen('.booking.created', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'booking.created', data });
+        })
+        .listen('.booking.updated', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'booking.updated', data });
+        })
+        .listen('.booking.cancelled', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'booking.cancelled', data });
+        })
+        // Approval events
+        .listen('.approval.new', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'approval.new', data });
+        })
+        .listen('.approval.resolved', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'approval.resolved', data });
+        })
+        // Call events
+        .listen('.call.started', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'call.started', data });
+        })
+        .listen('.call.ended', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'call.ended', data });
+        })
+        .listen('.call.status', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'call.status', data });
+        })
+        .listen('.call.status.updated', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'call.status.updated', data });
+        })
+        // Captain events
+        .listen('.captain.assigned', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'captain.assigned', data });
+        })
+        .listen('.captain.status', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'captain.status', data });
+        })
+        // Trip events
+        .listen('.trip.started', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'trip.started', data });
+        })
+        .listen('.trip.completed', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'trip.completed', data });
+        })
+        // Payment events
+        .listen('.payment.received', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'payment.received', data });
+        })
+        .listen('.refund.processed', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'refund.processed', data });
+        })
+        // Activity
+        .listen('.activity.new', (data: Record<string, unknown>) => {
+          handleBoatCrmEvent({ type: 'activity.new', data });
+        });
+
+      channelRef.current = channel;
+      isSubscribedRef.current = true;
+    }
+
+    return () => {
+      if (isSubscribedRef.current && channelRef.current) {
+        echo.leave(channelName);
+        isSubscribedRef.current = false;
+        channelRef.current = null;
+      }
+    };
+  }, [user?.id, handleBoatCrmEvent, startPolling, stopPolling]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      disconnectEcho();
+    };
+  }, []);
+
+  return {
+    isConnected: isSubscribedRef.current,
+  };
+}
+
+// Simplified hook for components that just need to enable realtime
+export function useEnableBoatCrmRealtime() {
+  useBoatCrmRealtime();
+}

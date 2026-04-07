@@ -1,0 +1,59 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Next.js (static export for Firebase)
+        run: |
+          # Override output mode from 'standalone' to 'export' for Firebase Hosting
+          sed -i "s/output: 'standalone'/output: 'export'/" next.config.ts
+          # Remove middleware (incompatible with static export)
+          mv src/middleware.ts src/middleware.ts.bak || true
+          # Remove API routes (incompatible with static export unless force-static)
+          rm -rf src/app/api || true
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/861022425168/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'firebase-deploy@healthshield-frontend.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Configure Firebase deploy target
+        run: firebase target:apply hosting healthshield-frontend healthshield-frontend --project healthshield-frontend
+
+      - name: Deploy to Firebase Hosting
+        run: |
+          # Use gcloud auth token for Firebase CLI
+          firebase deploy --only hosting --project healthshield-frontend --token "$(gcloud auth print-access-token)"
