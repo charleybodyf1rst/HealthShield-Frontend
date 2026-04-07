@@ -47,71 +47,16 @@
 }
 
 /* ==============================================
-   BANANA BOAT RENTALS - PARTY ENERGY REDESIGN
-   Aesthetic: Miami Vice meets Austin Lake
-   Feel: Neon Party Energy + Premium Playful
+   HEALTHSHIELD - Design Tokens
    ============================================== */
 
 :root {
-  /* ========== ORANGE - Primary (BodyF1RST Brand) ========== */
-  --pink-50: #fff7ed;
-  --pink-100: #ffedd5;
-  --pink-200: #fed7aa;
-  --pink-300: #fdba74;
-  --pink-400: #fb923c;
-  --pink-500: #f97316;
-  --pink-600: #EA580C;
-  --pink-700: #c2410c;
-  --pink-800: #9a3412;
-  --pink-900: #7c2d12;
-
-  /* ========== LIME GREEN - Secondary (Fun/Fresh) ========== */
-  --lime-50: #f7fee7;
-  --lime-100: #ecfccb;
-  --lime-200: #d9f99d;
-  --lime-300: #bef264;
-  --lime-400: #a3e635;
-  --lime-500: #84cc16;
-  --lime-600: #65a30d;
-  --lime-700: #4d7c0f;
-  --lime-800: #3f6212;
-  --lime-900: #365314;
-
-  /* ========== BANANA YELLOW - Accent (Tropical Pop) ========== */
-  --banana-50: #fefce8;
-  --banana-100: #fef9c3;
-  --banana-200: #fef08a;
-  --banana-300: #fde047;
-  --banana-400: #facc15;
-  --banana-500: #eab308;
-  --banana-600: #ca8a04;
-  --banana-700: #a16207;
-  --banana-800: #854d0e;
-
-  /* ========== LAKE BLUE - Water/Calm ========== */
-  --lake-50: #f0f9ff;
-  --lake-100: #e0f2fe;
-  --lake-200: #bae6fd;
-  --lake-300: #7dd3fc;
-  --lake-400: #38bdf8;
-  --lake-500: #0ea5e9;
-  --lake-600: #0284c7;
-  --lake-700: #0369a1;
-
-  /* ========== DEEP NAVY - Text/Contrast ========== */
-  --navy-800: #1e293b;
-  --navy-900: #0f172a;
-  --navy-950: #020617;
-
   /* ========== Glass Effects ========== */
   --glass-white: rgba(255, 255, 255, 0.15);
-  --glass-pink: rgba(236, 72, 153, 0.1);
-  --glass-lime: rgba(132, 204, 22, 0.1);
   --glass-dark: rgba(15, 23, 42, 0.8);
 
   /* ========== Background ========== */
   --fresh-white: #fffbfc;
-  --warm-white: #fef7f0;
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, serif;
@@ -126,7 +71,7 @@
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #f97316;
+  --primary: #3b82f6;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
@@ -138,11 +83,11 @@
   --destructive-foreground: #ffffff;
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #f97316;
-  --chart-1: #f97316;
-  --chart-2: #84cc16;
-  --chart-3: #0ea5e9;
-  --chart-4: #eab308;
+  --ring: #3b82f6;
+  --chart-1: #3b82f6;
+  --chart-2: #8b5cf6;
+  --chart-3: #06b6d4;
+  --chart-4: #10b981;
   --chart-5: #ec4899;
 }
 
@@ -157,188 +102,13 @@ html {
 body {
   font-family: var(--font-body);
   background: var(--fresh-white);
-  color: var(--navy-900);
+  color: var(--foreground);
   overflow-x: hidden;
 }
 
 /* ==============================================
-   REVOLUTIONARY ANIMATIONS - Party Energy
+   GENERIC ANIMATIONS (kept)
    ============================================== */
-
-/* Water Wave Parallax */
-@keyframes oceanWave {
-  0%, 100% {
-    transform: translateX(0) translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateX(-15px) translateY(8px) rotate(-2deg);
-  }
-  50% {
-    transform: translateX(0) translateY(-5px) rotate(0deg);
-  }
-  75% {
-    transform: translateX(15px) translateY(8px) rotate(2deg);
-  }
-}
-
-/* 3D Boat Bobbing */
-@keyframes boatFloat {
-  0%, 100% {
-    transform: translateY(0) rotateX(0deg) rotateZ(-1deg);
-  }
-  25% {
-    transform: translateY(-12px) rotateX(2deg) rotateZ(1deg);
-  }
-  50% {
-    transform: translateY(-5px) rotateX(-1deg) rotateZ(-0.5deg);
-  }
-  75% {
-    transform: translateY(-15px) rotateX(1deg) rotateZ(0.5deg);
-  }
-}
-
-/* Confetti Burst */
-@keyframes confettiBurst {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(0);
-    opacity: 1;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-400px) rotate(720deg) scale(1);
-    opacity: 0;
-  }
-}
-
-/* Particle Drift */
-@keyframes particleDrift {
-  0%, 100% {
-    transform: translateY(0) translateX(0) scale(1);
-    opacity: 0.6;
-  }
-  25% {
-    transform: translateY(-20px) translateX(10px) scale(1.1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: translateY(-40px) translateX(-5px) scale(0.9);
-    opacity: 0.4;
-  }
-  75% {
-    transform: translateY(-30px) translateX(15px) scale(1.05);
-    opacity: 0.7;
-  }
-}
-
-/* Gradient Border Animation */
-@keyframes borderGlow {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Magnetic Pull Effect */
-@keyframes magneticPull {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Slot Machine Number Roll */
-@keyframes slotMachine {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Neon Pulse */
-@keyframes neonPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 5px var(--pink-400),
-      0 0 10px var(--pink-400),
-      0 0 20px var(--pink-500),
-      0 0 40px var(--pink-500);
-  }
-  50% {
-    box-shadow:
-      0 0 10px var(--pink-400),
-      0 0 20px var(--pink-400),
-      0 0 40px var(--pink-500),
-      0 0 80px var(--pink-500),
-      0 0 120px var(--pink-600);
-  }
-}
-
-/* Pink Glow Pulse */
-@keyframes pinkGlow {
-  0%, 100% {
-    box-shadow: 0 0 30px rgba(236, 72, 153, 0.4),
-                0 0 60px rgba(236, 72, 153, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 50px rgba(236, 72, 153, 0.6),
-                0 0 100px rgba(236, 72, 153, 0.3),
-                0 0 150px rgba(236, 72, 153, 0.15);
-  }
-}
-
-/* Lime Glow Pulse */
-@keyframes limeGlow {
-  0%, 100% {
-    box-shadow: 0 0 30px rgba(132, 204, 22, 0.4),
-                0 0 60px rgba(132, 204, 22, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 50px rgba(132, 204, 22, 0.6),
-                0 0 100px rgba(132, 204, 22, 0.3);
-  }
-}
-
-/* Rainbow Gradient Flow */
-@keyframes rainbowFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* 3D Card Tilt */
-@keyframes cardTilt {
-  0%, 100% {
-    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
-  }
-  25% {
-    transform: perspective(1000px) rotateY(5deg) rotateX(-3deg);
-  }
-  75% {
-    transform: perspective(1000px) rotateY(-5deg) rotateX(3deg);
-  }
-}
 
 /* Shimmer Effect */
 @keyframes shimmer {
@@ -347,6 +117,18 @@ body {
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+/* Slide Up Fade */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -365,30 +147,6 @@ body {
   100% {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-/* Slide Up Fade */
-@keyframes slideUpFade {
-  from {
-    opacity: 0;
-    transform: translateY(60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Rotate In */
-@keyframes rotateIn {
-  from {
-    opacity: 0;
-    transform: rotate(-180deg) scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
   }
 }
 
@@ -417,25 +175,15 @@ body {
   }
 }
 
-/* Water Ripple */
-@keyframes waterRipple {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-/* Scroll Progress */
-@keyframes scrollProgress {
+/* Rotate In */
+@keyframes rotateIn {
   from {
-    transform: scaleX(0);
+    opacity: 0;
+    transform: rotate(-180deg) scale(0);
   }
   to {
-    transform: scaleX(1);
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
   }
 }
 
@@ -449,23 +197,13 @@ body {
   }
 }
 
-/* Spin Slow */
-@keyframes spinSlow {
+/* Scroll Progress */
+@keyframes scrollProgress {
   from {
-    transform: rotate(0deg);
+    transform: scaleX(0);
   }
   to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Text Gradient Animation */
-@keyframes textGradient {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
+    transform: scaleX(1);
   }
 }
 
@@ -473,27 +211,12 @@ body {
    ANIMATION UTILITY CLASSES
    ============================================== */
 
-.animate-oceanWave { animation: oceanWave 8s ease-in-out infinite; }
-.animate-boatFloat { animation: boatFloat 6s ease-in-out infinite; }
-.animate-confetti { animation: confettiBurst 2s ease-out forwards; }
-.animate-particleDrift { animation: particleDrift 10s ease-in-out infinite; }
-.animate-borderGlow { animation: borderGlow 3s ease infinite; background-size: 200% 200%; }
-.animate-magneticPull { animation: magneticPull 0.3s ease-out; }
-.animate-slotMachine { animation: slotMachine 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-.animate-neonPulse { animation: neonPulse 2s ease-in-out infinite; }
-.animate-pinkGlow { animation: pinkGlow 3s ease-in-out infinite; }
-.animate-limeGlow { animation: limeGlow 3s ease-in-out infinite; }
-.animate-rainbowFlow { animation: rainbowFlow 5s ease infinite; background-size: 300% 300%; }
-.animate-cardTilt { animation: cardTilt 4s ease-in-out infinite; }
 .animate-shimmer { animation: shimmer 3s linear infinite; background-size: 200% 100%; }
 .animate-bounceIn { animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
 .animate-slideUpFade { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-rotateIn { animation: rotateIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
 .animate-elasticPop { animation: elasticPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-.animate-waterRipple { animation: waterRipple 2s ease-out infinite; }
 .animate-floatGentle { animation: floatGentle 5s ease-in-out infinite; }
-.animate-spinSlow { animation: spinSlow 20s linear infinite; }
-.animate-textGradient { animation: textGradient 4s ease infinite; background-size: 300% 100%; }
 
 /* Animation Delays */
 .animate-delay-100 { animation-delay: 100ms; }
@@ -507,94 +230,10 @@ body {
 .animate-delay-1000 { animation-delay: 1000ms; }
 
 /* ==============================================
-   PREMIUM BUTTON STYLES - Neon Party
+   COMPONENT STYLES
    ============================================== */
 
 @layer components {
-  /* Primary CTA - Hot Pink Neon */
-  .btn-party {
-    @apply relative overflow-hidden;
-    background: linear-gradient(135deg, var(--pink-600) 0%, var(--pink-500) 50%, var(--pink-400) 100%);
-    @apply text-white font-bold rounded-full px-10 py-5;
-    @apply shadow-[0_10px_40px_rgba(236,72,153,0.5)];
-    @apply transition-all duration-500 ease-out;
-    font-family: var(--font-accent);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 0.95rem;
-  }
-
-  .btn-party:hover {
-    @apply shadow-[0_20px_60px_rgba(236,72,153,0.7)] -translate-y-2;
-    transform: translateY(-4px) scale(1.02);
-  }
-
-  .btn-party::before {
-    content: '';
-    @apply absolute inset-0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    @apply -translate-x-full;
-    transition: transform 0.8s ease;
-  }
-
-  .btn-party:hover::before {
-    @apply translate-x-full;
-  }
-
-  /* Secondary CTA - Lime Energy */
-  .btn-lime {
-    @apply relative overflow-hidden;
-    background: linear-gradient(135deg, var(--lime-600) 0%, var(--lime-500) 50%, var(--lime-400) 100%);
-    @apply text-white font-bold rounded-full px-10 py-5;
-    @apply shadow-[0_10px_40px_rgba(132,204,22,0.4)];
-    @apply transition-all duration-500 ease-out;
-    font-family: var(--font-accent);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 0.95rem;
-  }
-
-  .btn-lime:hover {
-    @apply shadow-[0_20px_60px_rgba(132,204,22,0.6)] -translate-y-2;
-  }
-
-  /* Banana Accent Button */
-  .btn-banana {
-    @apply relative overflow-hidden;
-    background: linear-gradient(135deg, var(--banana-500) 0%, var(--banana-400) 50%, var(--banana-300) 100%);
-    @apply font-bold rounded-full px-10 py-5;
-    color: var(--navy-900);
-    @apply shadow-[0_10px_40px_rgba(234,179,8,0.4)];
-    @apply transition-all duration-500 ease-out;
-    font-family: var(--font-accent);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 0.95rem;
-  }
-
-  .btn-banana:hover {
-    @apply shadow-[0_20px_60px_rgba(234,179,8,0.6)] -translate-y-2;
-  }
-
-  /* Outline Pink */
-  .btn-outline-pink {
-    @apply border-2 font-bold rounded-full px-10 py-5;
-    border-color: var(--pink-500);
-    color: var(--pink-600);
-    @apply bg-transparent backdrop-blur-sm;
-    @apply transition-all duration-400;
-    font-family: var(--font-accent);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 0.95rem;
-  }
-
-  .btn-outline-pink:hover {
-    background: var(--pink-500);
-    @apply text-white;
-    @apply shadow-[0_15px_50px_rgba(236,72,153,0.4)];
-  }
-
   /* Glass Button - White */
   .btn-glass {
     @apply relative overflow-hidden;
@@ -610,76 +249,6 @@ body {
     @apply shadow-[0_15px_50px_rgba(255,255,255,0.15)];
   }
 
-  /* Neon Button - Animated Glow */
-  .btn-neon {
-    @apply relative overflow-hidden;
-    background: linear-gradient(135deg, var(--pink-500) 0%, var(--lime-500) 100%);
-    @apply text-white font-bold rounded-full px-10 py-5;
-    @apply transition-all duration-500;
-    font-family: var(--font-accent);
-    animation: neonPulse 2s ease-in-out infinite;
-  }
-
-  .btn-neon:hover {
-    transform: scale(1.05);
-  }
-
-  /* ==============================================
-     PREMIUM CARD STYLES - Glass + Neon
-     ============================================== */
-
-  /* Main Boat Card - 3D Tilt Ready */
-  .card-boat {
-    @apply relative overflow-hidden;
-    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(253,242,248,0.95) 100%);
-    @apply backdrop-blur-2xl;
-    @apply border border-white/60;
-    @apply rounded-3xl;
-    @apply shadow-[0_25px_80px_rgba(0,0,0,0.08)];
-    @apply transition-all duration-600 ease-out;
-    transform-style: preserve-3d;
-  }
-
-  .card-boat:hover {
-    @apply -translate-y-4;
-    @apply shadow-[0_40px_100px_rgba(236,72,153,0.2)];
-    border-color: var(--pink-300);
-  }
-
-  /* Pink Boat Card Variant */
-  .card-boat-pink {
-    @apply relative overflow-hidden;
-    background: linear-gradient(180deg, rgba(253,242,248,1) 0%, rgba(252,231,243,1) 100%);
-    @apply backdrop-blur-2xl;
-    @apply border-2 border-pink-200;
-    @apply rounded-3xl;
-    @apply shadow-[0_25px_80px_rgba(236,72,153,0.15)];
-    @apply transition-all duration-600 ease-out;
-  }
-
-  .card-boat-pink:hover {
-    @apply -translate-y-4;
-    @apply shadow-[0_40px_100px_rgba(236,72,153,0.3)];
-    border-color: var(--pink-400);
-  }
-
-  /* Yellow Boat Card Variant */
-  .card-boat-yellow {
-    @apply relative overflow-hidden;
-    background: linear-gradient(180deg, rgba(254,252,232,1) 0%, rgba(254,249,195,1) 100%);
-    @apply backdrop-blur-2xl;
-    @apply border-2 rounded-3xl;
-    border-color: var(--banana-200);
-    @apply shadow-[0_25px_80px_rgba(234,179,8,0.15)];
-    @apply transition-all duration-600 ease-out;
-  }
-
-  .card-boat-yellow:hover {
-    @apply -translate-y-4;
-    @apply shadow-[0_40px_100px_rgba(234,179,8,0.3)];
-    border-color: var(--banana-400);
-  }
-
   /* Glass Card */
   .card-glass {
     background: rgba(255, 255, 255, 0.7);
@@ -688,325 +257,10 @@ body {
     @apply rounded-3xl;
     @apply shadow-[0_15px_50px_rgba(0,0,0,0.06)];
   }
-
-  /* Neon Border Card */
-  .card-neon {
-    @apply relative overflow-hidden rounded-3xl;
-    background: white;
-  }
-
-  .card-neon::before {
-    content: '';
-    @apply absolute inset-0 rounded-3xl;
-    background: linear-gradient(135deg, var(--pink-400), var(--lime-400), var(--banana-400), var(--pink-400));
-    background-size: 300% 300%;
-    animation: borderGlow 4s ease infinite;
-    z-index: -1;
-    padding: 3px;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-  }
-
-  /* ==============================================
-     PREMIUM TEXT GRADIENTS - Party Colors
-     ============================================== */
-
-  .text-gradient-party {
-    background: linear-gradient(135deg, var(--pink-500) 0%, var(--pink-400) 50%, var(--lime-500) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-gradient-pink {
-    background: linear-gradient(135deg, var(--pink-600) 0%, var(--pink-400) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-gradient-lime {
-    background: linear-gradient(135deg, var(--lime-600) 0%, var(--lime-400) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-gradient-banana {
-    background: linear-gradient(135deg, var(--banana-600) 0%, var(--banana-400) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-gradient-neon {
-    background: linear-gradient(135deg, var(--pink-500) 0%, var(--lime-400) 25%, var(--banana-400) 50%, var(--pink-400) 75%, var(--lime-500) 100%);
-    background-size: 300% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: textGradient 4s ease infinite;
-  }
-
-  .text-gradient-lake {
-    background: linear-gradient(135deg, var(--lake-600) 0%, var(--lake-400) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* ==============================================
-     PREMIUM ORANGE COMPONENTS - BodyF1RST Style
-     ============================================== */
-
-  .btn-premium {
-    @apply bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600;
-    @apply hover:from-orange-500 hover:via-amber-500 hover:to-orange-500;
-    @apply text-white font-semibold;
-    @apply shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40;
-    @apply transition-all duration-300 hover:-translate-y-0.5;
-    @apply rounded-xl px-6 py-2.5;
-  }
-
-  .card-premium {
-    @apply border-orange-500/20 hover:border-orange-500/40;
-    @apply shadow-lg shadow-orange-500/5 hover:shadow-orange-500/15;
-    @apply transition-all duration-300;
-    background: linear-gradient(135deg, rgba(234,88,12,0.03) 0%, transparent 50%, rgba(245,158,11,0.03) 100%);
-  }
-
-  .text-gradient-orange {
-    background: linear-gradient(to right, #EA580C, #F59E0B, #EA580C);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .stat-card-orange {
-    @apply border-orange-500/10 hover:border-orange-500/30;
-    @apply transition-all duration-200;
-  }
-
-  .stat-card-orange:hover {
-    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
-  }
-
-  /* ==============================================
-     SECTION STYLES
-     ============================================== */
-
-  .section-header {
-    @apply text-center mb-20;
-  }
-
-  .section-badge {
-    @apply inline-block px-6 py-2.5 mb-8;
-    background: linear-gradient(135deg, var(--pink-100) 0%, var(--lime-100) 100%);
-    color: var(--pink-700);
-    @apply rounded-full text-sm font-bold uppercase tracking-widest;
-    border: 1px solid var(--pink-200);
-    font-family: var(--font-accent);
-  }
-
-  .section-badge-lime {
-    @apply inline-block px-6 py-2.5 mb-8;
-    background: linear-gradient(135deg, var(--lime-100) 0%, var(--banana-100) 100%);
-    color: var(--lime-700);
-    @apply rounded-full text-sm font-bold uppercase tracking-widest;
-    border: 1px solid var(--lime-200);
-    font-family: var(--font-accent);
-  }
-
-  .section-title {
-    @apply text-5xl md:text-6xl lg:text-7xl font-bold;
-    color: var(--navy-900);
-    @apply mb-8;
-    @apply leading-tight;
-    font-family: var(--font-display);
-  }
-
-  .section-subtitle {
-    @apply text-xl md:text-2xl;
-    color: var(--navy-800);
-    @apply max-w-3xl mx-auto;
-    @apply leading-relaxed;
-    opacity: 0.8;
-  }
-
-  /* ==============================================
-     FEATURE CARDS - Party Style
-     ============================================== */
-
-  .feature-card {
-    @apply p-10 rounded-3xl;
-    background: white;
-    @apply border border-pink-100;
-    @apply shadow-[0_15px_50px_rgba(0,0,0,0.05)];
-    @apply transition-all duration-500;
-  }
-
-  .feature-card:hover {
-    @apply -translate-y-3;
-    @apply shadow-[0_30px_80px_rgba(236,72,153,0.15)];
-    border-color: var(--pink-300);
-  }
-
-  .feature-icon {
-    @apply w-20 h-20 rounded-2xl mb-8;
-    background: linear-gradient(135deg, var(--pink-100) 0%, var(--lime-100) 100%);
-    border: 1px solid var(--pink-200);
-    @apply flex items-center justify-center;
-    color: var(--pink-600);
-    @apply transition-all duration-400;
-  }
-
-  .feature-card:hover .feature-icon {
-    @apply scale-110;
-    @apply shadow-[0_10px_40px_rgba(236,72,153,0.3)];
-    background: linear-gradient(135deg, var(--pink-500) 0%, var(--lime-500) 100%);
-    color: white;
-  }
-
-  /* ==============================================
-     PARTY GALLERY CARDS
-     ============================================== */
-
-  .party-card {
-    @apply relative overflow-hidden rounded-3xl;
-    background: white;
-    @apply border border-white/60;
-    @apply shadow-[0_20px_60px_rgba(0,0,0,0.08)];
-    @apply transition-all duration-600 ease-out;
-  }
-
-  .party-card:hover {
-    @apply -translate-y-5 scale-[1.02];
-    @apply shadow-[0_40px_100px_rgba(236,72,153,0.2)];
-  }
-
-  .party-card-image {
-    @apply relative w-full aspect-[4/3] overflow-hidden;
-  }
-
-  .party-card-image img {
-    @apply w-full h-full object-cover;
-    @apply transition-transform duration-800 ease-out;
-  }
-
-  .party-card:hover .party-card-image img {
-    @apply scale-115;
-  }
-
-  .party-card-overlay {
-    @apply absolute inset-0;
-    background: linear-gradient(
-      to top,
-      rgba(15, 23, 42, 0.95) 0%,
-      rgba(15, 23, 42, 0.4) 50%,
-      transparent 100%
-    );
-  }
-
-  /* Event Type Badges - Neon Colors */
-  .badge-pink {
-    background: linear-gradient(135deg, var(--pink-500) 0%, var(--pink-400) 100%);
-    @apply text-white shadow-[0_6px_20px_rgba(236,72,153,0.4)];
-  }
-  .badge-lime {
-    background: linear-gradient(135deg, var(--lime-500) 0%, var(--lime-400) 100%);
-    @apply text-white shadow-[0_6px_20px_rgba(132,204,22,0.4)];
-  }
-  .badge-banana {
-    background: linear-gradient(135deg, var(--banana-500) 0%, var(--banana-400) 100%);
-    color: var(--navy-900);
-    @apply shadow-[0_6px_20px_rgba(234,179,8,0.4)];
-  }
-  .badge-lake {
-    background: linear-gradient(135deg, var(--lake-500) 0%, var(--lake-400) 100%);
-    @apply text-white shadow-[0_6px_20px_rgba(14,165,233,0.4)];
-  }
 }
 
 /* ==============================================
-   HERO SECTION STYLES - Party Vibes
-   ============================================== */
-
-.hero-gradient {
-  background:
-    linear-gradient(
-      180deg,
-      var(--pink-50) 0%,
-      var(--fresh-white) 30%,
-      var(--lime-50) 60%,
-      var(--fresh-white) 100%
-    );
-}
-
-.hero-overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(253,242,248,0.3) 0%,
-    rgba(255,251,252,0.7) 40%,
-    rgba(247,254,231,0.5) 100%
-  );
-}
-
-.hero-dark-overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(15,23,42,0.3) 0%,
-    rgba(15,23,42,0.6) 50%,
-    rgba(15,23,42,0.9) 100%
-  );
-}
-
-/* ==============================================
-   DJ BANANA MASCOT - Neon Party Style
-   ============================================== */
-
-.dj-banana {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 80px;
-  height: 80px;
-  cursor: pointer;
-  z-index: 1000;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  filter: drop-shadow(0 12px 35px rgba(236, 72, 153, 0.5));
-}
-
-.dj-banana:hover {
-  transform: scale(1.25) rotate(15deg);
-  filter: drop-shadow(0 20px 50px rgba(236, 72, 153, 0.7));
-}
-
-.dj-banana.dancing {
-  animation: dj-dance 0.35s ease-in-out infinite;
-}
-
-@keyframes dj-dance {
-  0%, 100% { transform: rotate(-10deg) scale(1.15); }
-  50% { transform: rotate(10deg) scale(1.2); }
-}
-
-/* ==============================================
-   SCROLL PROGRESS BAR
-   ============================================== */
-
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--pink-500), var(--lime-500), var(--banana-500));
-  transform-origin: left;
-  z-index: 9999;
-}
-
-/* ==============================================
-   CUSTOM SCROLLBAR - Neon Theme
+   CUSTOM SCROLLBAR
    ============================================== */
 
 ::-webkit-scrollbar {
@@ -1014,445 +268,35 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--pink-50);
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--pink-400), var(--lime-400));
+  background: linear-gradient(180deg, #3b82f6, #8b5cf6);
   border-radius: 10px;
-  border: 2px solid var(--pink-50);
+  border: 2px solid #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--pink-500), var(--lime-500));
+  background: linear-gradient(180deg, #2563eb, #7c3aed);
 }
 
 /* ==============================================
-   GRADIENT BACKGROUNDS - Party Vibes
+   HEALTHSHIELD KEYFRAMES
    ============================================== */
 
-.gradient-hero {
-  background: linear-gradient(
-    180deg,
-    var(--pink-50) 0%,
-    var(--fresh-white) 50%,
-    var(--lime-50) 100%
-  );
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.95); }
 }
 
-.gradient-section {
-  background: linear-gradient(
-    180deg,
-    var(--fresh-white) 0%,
-    var(--pink-50) 50%,
-    var(--fresh-white) 100%
-  );
+@keyframes morph-blob {
+  0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  50% { border-radius: 60% 40% 30% 70% / 50% 60% 30% 60%; }
 }
 
-.gradient-section-lime {
-  background: linear-gradient(
-    180deg,
-    var(--lime-50) 0%,
-    var(--fresh-white) 50%,
-    var(--lime-50) 100%
-  );
-}
-
-.gradient-section-banana {
-  background: linear-gradient(
-    180deg,
-    var(--banana-50) 0%,
-    var(--fresh-white) 100%
-  );
-}
-
-/* ==============================================
-   GLOW EFFECTS - Neon Style
-   ============================================== */
-
-.glow-pink {
-  box-shadow: 0 0 40px rgba(236, 72, 153, 0.4),
-              0 0 80px rgba(236, 72, 153, 0.2),
-              0 0 120px rgba(236, 72, 153, 0.1);
-}
-
-.glow-lime {
-  box-shadow: 0 0 40px rgba(132, 204, 22, 0.4),
-              0 0 80px rgba(132, 204, 22, 0.2);
-}
-
-.glow-banana {
-  box-shadow: 0 0 40px rgba(234, 179, 8, 0.4),
-              0 0 80px rgba(234, 179, 8, 0.2);
-}
-
-.glow-neon {
-  box-shadow: 0 0 30px rgba(236, 72, 153, 0.3),
-              0 0 60px rgba(132, 204, 22, 0.2),
-              0 0 90px rgba(234, 179, 8, 0.1);
-}
-
-.text-shadow-neon {
-  text-shadow: 0 0 20px rgba(236, 72, 153, 0.5),
-               0 0 40px rgba(236, 72, 153, 0.3),
-               0 0 80px rgba(132, 204, 22, 0.2);
-}
-
-/* ==============================================
-   NAVIGATION STYLES
-   ============================================== */
-
-.nav-link {
-  @apply relative font-medium;
-  color: var(--navy-900);
-  @apply transition-colors duration-300;
-  font-family: var(--font-accent);
-}
-
-.nav-link:hover {
-  color: var(--pink-600);
-}
-
-.nav-link::after {
-  content: '';
-  @apply absolute bottom-0 left-0 w-0 h-0.5;
-  background: linear-gradient(90deg, var(--pink-500), var(--lime-500));
-  @apply transition-all duration-300;
-}
-
-.nav-link:hover::after {
-  @apply w-full;
-}
-
-.nav-link.active {
-  color: var(--pink-600);
-}
-
-.nav-link.active::after {
-  @apply w-full;
-}
-
-/* ==============================================
-   UTILITY CLASSES
-   ============================================== */
-
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  @apply backdrop-blur-2xl border border-white/60;
-}
-
-.glass-pink {
-  background: rgba(253, 242, 248, 0.8);
-  @apply backdrop-blur-2xl border border-pink-200/60;
-}
-
-.glass-dark {
-  background: rgba(15, 23, 42, 0.8);
-  @apply backdrop-blur-2xl border border-white/10;
-}
-
-.divider-gradient {
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--pink-400),
-    var(--lime-400),
-    var(--banana-400),
-    transparent
-  );
-  opacity: 0.6;
-}
-
-.hover-lift {
-  @apply transition-all duration-400;
-}
-
-.hover-lift:hover {
-  @apply -translate-y-3;
-  @apply shadow-[0_30px_60px_rgba(236,72,153,0.15)];
-}
-
-.image-zoom {
-  @apply overflow-hidden rounded-3xl;
-}
-
-.image-zoom img {
-  @apply transition-transform duration-800 ease-out;
-}
-
-.image-zoom:hover img {
-  @apply scale-110;
-}
-
-/* Typography Helpers */
-.font-display {
-  font-family: var(--font-display);
-}
-
-.font-body {
-  font-family: var(--font-body);
-}
-
-.font-accent {
-  font-family: var(--font-accent);
-}
-
-/* ==============================================
-   3D CARD TILT EFFECT
-   ============================================== */
-
-.tilt-card {
-  transform-style: preserve-3d;
-  transform: perspective(1000px);
-}
-
-.tilt-card-content {
-  transform: translateZ(50px);
-}
-
-/* ==============================================
-   PARTICLE EFFECTS
-   ============================================== */
-
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.particle-pink {
-  background: var(--pink-400);
-}
-
-.particle-lime {
-  background: var(--lime-400);
-}
-
-.particle-banana {
-  background: var(--banana-400);
-}
-
-/* ==============================================
-   CONFETTI CONTAINER
-   ============================================== */
-
-.confetti-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-  overflow: hidden;
-}
-
-.confetti-piece {
-  position: absolute;
-  width: 10px;
-  height: 20px;
-  animation: confettiBurst 3s ease-out forwards;
-}
-
-/* ==============================================
-   RESPONSIVE ADJUSTMENTS
-   ============================================== */
-
-@media (max-width: 768px) {
-  .section-title {
-    @apply text-4xl;
-  }
-
-  .section-subtitle {
-    @apply text-lg;
-  }
-
-  .feature-card {
-    @apply p-7;
-  }
-
-  .btn-party,
-  .btn-lime,
-  .btn-banana {
-    @apply px-7 py-4 text-sm;
-  }
-
-  .dj-banana {
-    width: 60px;
-    height: 60px;
-    bottom: 20px;
-    right: 20px;
-  }
-}
-
-/* ==============================================
-   SPECIAL EFFECTS
-   ============================================== */
-
-.premium-border {
-  @apply relative;
-}
-
-.premium-border::before {
-  content: '';
-  @apply absolute inset-0 rounded-3xl;
-  background: linear-gradient(135deg, var(--pink-400), var(--lime-400), var(--banana-400));
-  @apply -z-10;
-  padding: 2px;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-}
-
-.shine-effect {
-  @apply relative overflow-hidden;
-}
-
-.shine-effect::after {
-  content: '';
-  @apply absolute top-0 -left-full w-1/2 h-full;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
-  animation: shimmer 4s ease-in-out infinite;
-}
-
-/* Water ripple effect */
-.water-ripple {
-  @apply relative;
-}
-
-.water-ripple::before {
-  content: '';
-  @apply absolute inset-0 rounded-full;
-  border: 2px solid var(--lake-300);
-  animation: waterRipple 2.5s ease-out infinite;
-}
-
-/* Floating decorative elements */
-.float-element {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-}
-
-.float-element.pink {
-  background: radial-gradient(circle, var(--pink-300), transparent);
-}
-
-.float-element.lime {
-  background: radial-gradient(circle, var(--lime-300), transparent);
-}
-
-.float-element.banana {
-  background: radial-gradient(circle, var(--banana-200), transparent);
-}
-
-/* ==============================================
-   GOOGLE REVIEWS SECTION STYLES
-   ============================================== */
-
-.gradient-section-alt {
-  background: linear-gradient(
-    180deg,
-    var(--navy-950) 0%,
-    #1a1f2e 50%,
-    var(--navy-950) 100%
-  );
-}
-
-/* Review Card with Clear Separation */
-.testimonial-card {
-  @apply p-6 rounded-2xl;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-  @apply border-2 border-amber-500/30;
-  @apply shadow-[0_8px_32px_rgba(251,191,36,0.15)];
-  @apply transition-all duration-400;
-}
-
-.testimonial-card:hover {
-  @apply -translate-y-2;
-  @apply border-amber-400/50;
-  @apply shadow-[0_16px_48px_rgba(251,191,36,0.25)];
-}
-
-/* Google Badge Compact (for hero) */
-.google-badge-compact {
-  @apply inline-flex items-center gap-2 px-4 py-2;
-  background: rgba(255, 255, 255, 0.1);
-  @apply backdrop-blur-lg rounded-full;
-  @apply border border-white/20;
-  @apply text-white text-sm font-medium;
-  @apply transition-all duration-300;
-}
-
-.google-badge-compact:hover {
-  background: rgba(255, 255, 255, 0.15);
-  @apply border-amber-400/40;
-}
-
-/* Google Badge Full (for reviews section) */
-.google-badge {
-  @apply inline-flex items-center gap-4 px-6 py-4;
-  background: white;
-  @apply rounded-2xl;
-  @apply shadow-[0_10px_40px_rgba(0,0,0,0.15)];
-  @apply transition-all duration-400;
-}
-
-.google-badge:hover {
-  @apply -translate-y-1;
-  @apply shadow-[0_20px_60px_rgba(251,191,36,0.2)];
-}
-
-/* Gold Outline Button */
-.btn-outline-gold {
-  @apply border-2 font-bold rounded-full px-8 py-4;
-  border-color: var(--banana-500);
-  color: var(--banana-400);
-  @apply bg-transparent backdrop-blur-sm;
-  @apply transition-all duration-400;
-  font-family: var(--font-accent);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-}
-
-.btn-outline-gold:hover {
-  background: var(--banana-500);
-  color: var(--navy-900);
-  @apply shadow-[0_15px_50px_rgba(234,179,8,0.4)];
-}
-
-/* Fade In Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-.animate-fadeInUp {
-  animation: fadeInUp 0.6s ease-out forwards;
+@keyframes typing-dots {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
 }

@@ -78,10 +78,34 @@ export default function MarketingPage() {
     <div className="bg-black">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-black to-purple-900/20" />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+        {/* Background image layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80')" }}
+        />
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 to-black/95" />
+        {/* Grid texture overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
+        {/* Enhanced floating blobs */}
+        <div
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+          style={{ animation: 'float-slow 20s ease-in-out infinite' }}
+        />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+          style={{ animation: 'morph-blob 25s ease-in-out infinite' }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"
+          style={{ animation: 'float-slow 15s ease-in-out infinite reverse' }}
+        />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 text-center lg:px-8">
           <motion.div
@@ -142,8 +166,16 @@ export default function MarketingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        {/* Background image layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&q=80')" }}
+        />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/90 to-black/95" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
           <FadeInSection className="text-center mb-16">
             <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl font-bold text-white uppercase tracking-wide">
               Intelligent Automation
@@ -174,8 +206,16 @@ export default function MarketingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-24 lg:py-32 border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="relative py-24 lg:py-32 border-t border-white/10 overflow-hidden">
+        {/* Background image layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80')" }}
+        />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 to-black/90" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
           <FadeInSection className="text-center mb-16">
             <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl font-bold text-white uppercase tracking-wide">
               How It Works
@@ -206,8 +246,16 @@ export default function MarketingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        {/* Background image layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1920&q=80')" }}
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-purple-900/85 to-blue-900/90" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
           <FadeInSection>
             <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 lg:p-16 text-center">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-blue-500/20 to-transparent rounded-full blur-3xl" />
