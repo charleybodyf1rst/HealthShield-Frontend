@@ -1,24 +1,93 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, ArrowLeft, Mail, Phone } from 'lucide-react';
-import { useUser } from '@/stores/auth-store';
+import { User, ArrowLeft, Mail, Phone, Loader2 } from 'lucide-react';
+import { useUser, useAuthStore } from '@/stores/auth-store';
+import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
+interface ProfileFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  title: string;
+  department: string;
+}
+
 export default function ProfilePage() {
   const user = useUser();
+  const updateUser = useAuthStore((state) => state.updateUser);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<ProfileFormData>({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      title: '',
+      department: '',
+    },
+  });
+
+  // Populate form with current user data on mount / user change
+  useEffect(() => {
+    if (user) {
+      reset({
+        firstName: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        email: user.email ?? '',
+        phone: (user as any).phone ?? '',
+        title: (user as any).title ?? '',
+        department: (user as any).department ?? '',
+      });
+    }
+  }, [user, reset]);
 
   const initials = user
     ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`
     : '??';
 
-  const handleSave = () => {
-    toast.info('Profile editing coming soon');
+  const onSubmit = async (data: ProfileFormData) => {
+    setIsSaving(true);
+    try {
+      await api.patch('/api/v1/crm/profile', {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        title: data.title,
+        department: data.department,
+      });
+
+      // Update local auth store so UI reflects changes immediately
+      updateUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+      });
+
+      toast.success('Profile updated successfully');
+    } catch (error: any) {
+      const message =
+        error?.message || 'Failed to update profile. Please try again.';
+      toast.error(message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -65,67 +134,87 @@ export default function ProfilePage() {
       </Card>
 
       {/* Profile Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Personal Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  {...register('firstName', { required: true })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  {...register('lastName', { required: true })}
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="email" className="flex items-center gap-1">
+                <Mail className="h-3.5 w-3.5" />
+                Email
+              </Label>
               <Input
-                id="firstName"
-                value={user?.firstName ?? ''}
-                readOnly
-                className="bg-muted/50"
+                id="email"
+                type="email"
+                {...register('email', { required: true })}
               />
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="phone" className="flex items-center gap-1">
+                <Phone className="h-3.5 w-3.5" />
+                Phone
+              </Label>
               <Input
-                id="lastName"
-                value={user?.lastName ?? ''}
-                readOnly
-                className="bg-muted/50"
+                id="phone"
+                {...register('phone')}
+                placeholder="No phone number on file"
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-1">
-              <Mail className="h-3.5 w-3.5" />
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={user?.email ?? ''}
-              readOnly
-              className="bg-muted/50"
-            />
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  {...register('title')}
+                  placeholder="e.g. Sales Manager"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Input
+                  id="department"
+                  {...register('department')}
+                  placeholder="e.g. Insurance Sales"
+                />
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="flex items-center gap-1">
-              <Phone className="h-3.5 w-3.5" />
-              Phone
-            </Label>
-            <Input
-              id="phone"
-              value={user?.phone ?? ''}
-              readOnly
-              placeholder="No phone number on file"
-              className="bg-muted/50"
-            />
-          </div>
-
-          <div className="pt-4">
-            <Button onClick={handleSave}>
-              Save Changes
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="pt-4">
+              <Button type="submit" disabled={isSaving || !isDirty}>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </form>
     </div>
   );
 }
