@@ -332,13 +332,14 @@ export const leadsApi = {
 
   create: async (data: CreateLeadData) => {
     const payload = {
+      company_name: data.boatName || `${data.firstName} ${data.lastName}`.trim(),
       contact_first_name: data.firstName,
       contact_last_name: data.lastName,
       contact_email: data.email,
       contact_phone: data.phone,
-      source: mapLeadSource(data.source),
-      classification: data.boatName,
-      value: data.value,
+      lead_source: mapLeadSource(data.source),
+      industry: data.boatName || undefined,
+      deal_value: data.value,
       notes: data.notes,
     };
     const response = await api.post<{ success: boolean; message: string; data: unknown }>(
@@ -351,8 +352,25 @@ export const leadsApi = {
     };
   },
 
-  update: (id: string, data: UpdateLeadData) =>
-    api.put<{ success: boolean; data: Lead }>(`/api/v1/crm/leads/${id}`, data),
+  update: async (id: string, data: UpdateLeadData) => {
+    const payload: Record<string, unknown> = {};
+    if (data.status !== undefined) payload.status = data.status;
+    if (data.firstName !== undefined) payload.contact_first_name = data.firstName;
+    if (data.lastName !== undefined) payload.contact_last_name = data.lastName;
+    if (data.email !== undefined) payload.contact_email = data.email;
+    if (data.phone !== undefined) payload.contact_phone = data.phone;
+    if (data.notes !== undefined) payload.notes = data.notes;
+    if (data.value !== undefined) payload.value = data.value;
+    if (data.source !== undefined) payload.source = mapLeadSource(data.source);
+    if (data.assignedTo !== undefined) payload.assigned_to_user_id = data.assignedTo;
+    if (data.nextFollowUpAt !== undefined) payload.next_follow_up_at = data.nextFollowUpAt;
+    if (data.lostReason !== undefined) payload.lost_reason = data.lostReason;
+
+    const response = await api.put<unknown>(`/api/v1/crm/leads/${id}`, payload);
+    return {
+      data: mapBoatLeadToLead(response),
+    };
+  },
 
   delete: (id: string) =>
     api.delete<{ success: boolean; message: string }>(`/api/v1/crm/leads/${id}`),
