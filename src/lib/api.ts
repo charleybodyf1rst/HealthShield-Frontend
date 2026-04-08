@@ -326,11 +326,10 @@ export const leadsApi = {
   },
 
   getById: async (id: string) => {
-    const response = await api.get<{ success: boolean; data: unknown }>(`/api/v1/crm/leads/${id}`);
-    return {
-      ...response,
-      data: mapCrmLeadToLead(response.data),
-    };
+    const response = await api.get<any>(`/api/v1/crm/leads/${id}`);
+    // CRM controller returns lead at top level
+    const rawLead = response.data || response;
+    return { data: mapCrmLeadToLead(rawLead) };
   },
 
   create: async (data: CreateLeadData) => {
@@ -345,14 +344,13 @@ export const leadsApi = {
       deal_value: data.value,
       notes: data.notes,
     };
-    const response = await api.post<{ success: boolean; message: string; data: unknown }>(
+    const response = await api.post<any>(
       '/api/v1/crm/leads',
       payload
     );
-    return {
-      ...response,
-      data: mapCrmLeadToLead(response.data),
-    };
+    // CRM controller returns lead at top level, not in {data: lead}
+    const rawLead = response.data || response;
+    return { data: mapCrmLeadToLead(rawLead) };
   },
 
   update: async (id: string, data: UpdateLeadData) => {
@@ -363,8 +361,8 @@ export const leadsApi = {
     if (data.email !== undefined) payload.contact_email = data.email;
     if (data.phone !== undefined) payload.contact_phone = data.phone;
     if (data.notes !== undefined) payload.notes = data.notes;
-    if (data.value !== undefined) payload.value = data.value;
-    if (data.source !== undefined) payload.source = mapLeadSource(data.source);
+    if (data.value !== undefined) payload.deal_value = data.value;
+    if (data.source !== undefined) payload.lead_source = mapLeadSource(data.source);
     if (data.assignedTo !== undefined) payload.assigned_to_user_id = data.assignedTo;
     if (data.nextFollowUpAt !== undefined) payload.next_follow_up_at = data.nextFollowUpAt;
     if (data.lostReason !== undefined) payload.lost_reason = data.lostReason;
