@@ -3,7 +3,7 @@
  *
  * Kanban board for:
  * - Daily operations tasks
- * - Boat maintenance tracking
+ * - Policy review tracking
  * - Marketing campaigns
  * - Customer follow-ups
  * - Team assignments
@@ -26,7 +26,7 @@ export interface Task {
   checklist?: ChecklistItem[];
   attachments?: TaskAttachment[];
   comments?: TaskComment[];
-  boatSlug?: string;
+  serviceSlug?: string;
   bookingId?: string;
   recurrence?: TaskRecurrence;
 }
@@ -143,8 +143,8 @@ export const defaultTaskBoard: TaskBoard = {
 export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
   // Daily Operations
   {
-    title: 'Morning Boat Inspection',
-    description: 'Check all boats before first trip of the day',
+    title: 'Morning Policy Queue Review',
+    description: 'Review pending policies before start of the day',
     status: 'todo',
     priority: 'high',
     category: 'operations',
@@ -163,17 +163,17 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
   },
   {
     title: 'End of Day Cleanup',
-    description: 'Clean and secure all boats after last trip',
+    description: 'Close and archive all cases after end of day',
     status: 'todo',
     priority: 'high',
     category: 'operations',
     tags: ['daily', 'cleaning'],
     checklist: [
-      { id: 'c1', text: 'Trash removed from all boats', completed: false },
+      { id: 'c1', text: 'Cases properly documented', completed: false },
       { id: 'c2', text: 'Coolers emptied and cleaned', completed: false },
       { id: 'c3', text: 'Seats wiped down', completed: false },
       { id: 'c4', text: 'Equipment secured', completed: false },
-      { id: 'c5', text: 'Boats tied properly', completed: false },
+      { id: 'c5', text: 'Files archived properly', completed: false },
     ],
     recurrence: {
       frequency: 'daily',
@@ -224,8 +224,8 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
 
   // Monthly Tasks
   {
-    title: 'Monthly Boat Deep Clean',
-    description: 'Thorough cleaning of all boats',
+    title: 'Monthly Data Audit',
+    description: 'Thorough audit of all records',
     status: 'todo',
     priority: 'medium',
     category: 'maintenance',
@@ -285,14 +285,14 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
 
   // Seasonal Tasks
   {
-    title: 'Pre-Season Boat Prep',
-    description: 'Get all boats ready for peak season (April)',
+    title: 'Pre-Enrollment Period Prep',
+    description: 'Get all systems ready for enrollment period',
     status: 'backlog',
     priority: 'high',
     category: 'maintenance',
     tags: ['seasonal', 'spring'],
     checklist: [
-      { id: 'c1', text: 'Full engine service for all boats', completed: false },
+      { id: 'c1', text: 'Full system audit for all programs', completed: false },
       { id: 'c2', text: 'Replace worn safety equipment', completed: false },
       { id: 'c3', text: 'Update sound systems if needed', completed: false },
       { id: 'c4', text: 'New lily pads/floats', completed: false },
@@ -302,7 +302,7 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
   },
   {
     title: 'End of Season Winterization',
-    description: 'Prepare boats for off-season (October)',
+    description: 'Prepare for renewal period (October)',
     status: 'backlog',
     priority: 'high',
     category: 'maintenance',
@@ -310,7 +310,7 @@ export const taskTemplates: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>[] = [
     checklist: [
       { id: 'c1', text: 'Engine winterization', completed: false },
       { id: 'c2', text: 'Drain all water systems', completed: false },
-      { id: 'c3', text: 'Cover all boats', completed: false },
+      { id: 'c3', text: 'Archive inactive records', completed: false },
       { id: 'c4', text: 'Store removable equipment', completed: false },
       { id: 'c5', text: 'Document any repairs needed', completed: false },
     ],
@@ -344,12 +344,12 @@ export const sampleTasks: Task[] = [
   },
   {
     id: 'task-002',
-    title: 'King Kong speaker replacement',
+    title: 'Premium Plan speaker replacement',
     description: 'Left rear speaker is crackling - need to replace',
     status: 'todo',
     priority: 'medium',
     category: 'maintenance',
-    boatSlug: 'king-kong',
+    serviceSlug: 'king-kong',
     dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
     updatedAt: new Date(),
@@ -402,7 +402,7 @@ export function filterTasks(
     priority?: TaskPriority;
     category?: TaskCategory;
     assigneeId?: string;
-    boatSlug?: string;
+    serviceSlug?: string;
     dueBefore?: Date;
     tags?: string[];
   }
@@ -412,7 +412,7 @@ export function filterTasks(
     if (filters.priority && task.priority !== filters.priority) return false;
     if (filters.category && task.category !== filters.category) return false;
     if (filters.assigneeId && task.assigneeId !== filters.assigneeId) return false;
-    if (filters.boatSlug && task.boatSlug !== filters.boatSlug) return false;
+    if (filters.serviceSlug && task.serviceSlug !== filters.serviceSlug) return false;
     if (filters.dueBefore && task.dueDate && task.dueDate > filters.dueBefore) return false;
     if (filters.tags && filters.tags.length > 0) {
       const hasMatchingTag = filters.tags.some((t) => task.tags.includes(t));

@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    const required = ['boat_name', 'rental_date', 'start_time', 'duration', 'first_name', 'last_name', 'email', 'phone'];
+    const required = ['plan_name', 'appointment_date', 'start_time', 'duration', 'first_name', 'last_name', 'email', 'phone'];
     for (const field of required) {
       if (!body[field]) {
         return NextResponse.json({ error: `${field} is required` }, { status: 400 });
@@ -18,13 +18,13 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: getServerHeaders(),
       body: JSON.stringify({
-        boat_name: body.boat_name,
-        boat_slug: body.boat_slug,
-        rental_date: body.rental_date,
+        plan_name: body.plan_name,
+        plan_type: body.plan_type,
+        appointment_date: body.appointment_date,
         start_time: body.start_time,
         duration_hours: body.duration,
-        passenger_count: body.party_size || 1,
-        occasion: body.occasion || null,
+        member_count: body.party_size || 1,
+        enrollment_type: body.occasion || null,
         special_requests: body.special_requests || null,
         customer_first_name: body.first_name,
         customer_last_name: body.last_name,
@@ -33,12 +33,12 @@ export async function POST(request: NextRequest) {
         emergency_contact_name: body.emergency_name || null,
         emergency_contact_phone: body.emergency_phone || null,
         base_rate: body.base_price || 0,
-        agent_fee: body.agent_fee || 0,
-        equipment_fees: body.add_ons_total || 0,
+        processing_fee: body.agent_fee || 0,
+        addon_fees: body.add_ons_total || 0,
         tax_amount: body.tax || 0,
         total_amount: body.total || 0,
         promo_code: body.promo_code || null,
-        waiver_sms_consent: body.agree_to_waiver_sms || false,
+        consent_sms: body.agree_to_consent_sms || false,
         source: 'website',
       }),
     });

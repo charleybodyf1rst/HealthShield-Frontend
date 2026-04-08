@@ -41,12 +41,12 @@ import {
   Circle,
   Clock,
   Users,
-  Ship,
+  FileCheck,
   UserPlus,
   UserCircle,
   PenTool,
   AlertTriangle,
-  Anchor,
+  ShieldCheck,
   RefreshCw,
   Phone,
   Mail,
@@ -54,10 +54,10 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { SignaturePad } from './SignaturePad';
-import { PassengerWaiverCard } from './PassengerWaiverCard';
+import { ClientConsentCard } from './PassengerWaiverCard';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { BookingWaiverStatus, PassengerWaiverStatus, WaiverSignatureData } from '@/types/plan-crm';
+import type { BookingWaiverStatus, PassengerWaiverStatus, WaiverSignatureData } from '@/types/crm';
 
 interface AgentCheckinProps {
   initialBooking?: BookingWaiverStatus | null;
@@ -211,7 +211,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
         isMinor: newPassengerForm.isMinor,
       });
 
-      toast.success('Passenger added');
+      toast.success('Client added');
       setShowAddPassengerDialog(false);
       setNewPassengerForm({ fullName: '', email: '', phone: '', isMinor: false });
 
@@ -219,7 +219,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
       const updated = await fetchBookingWaivers(selectedBooking.bookingId);
       if (updated) setSelectedBooking(updated);
     } catch {
-      toast.error('Failed to add passenger');
+      toast.error('Failed to add client');
     } finally {
       setIsSubmitting(false);
     }
@@ -233,7 +233,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
       const result = await recordHeadCount(selectedBooking.bookingId, headCount, headCountNotes);
 
       if (result.discrepancy > 0) {
-        toast.warning(`${result.discrepancy} passengers still need waivers`);
+        toast.warning(`${result.discrepancy} clients still need consent forms`);
       } else {
         toast.success('Head count recorded');
       }
@@ -261,14 +261,14 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
     try {
       await approveDeparture(selectedBooking.bookingId, forceDepart);
       if (forceDepart && !allSigned) {
-        toast.warning('Departure approved - Manager has been notified of missing waivers');
+        toast.warning('Enrollment approved - Manager has been notified of missing consent forms');
       } else {
-        toast.success('Departure approved! Have a great trip!');
+        toast.success('Enrollment approved! Processing complete.');
       }
       setShowForceDialog(false);
       onBack();
     } catch {
-      toast.error('Failed to approve departure');
+      toast.error('Failed to approve enrollment');
     } finally {
       setIsSubmitting(false);
     }
@@ -306,8 +306,8 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Ship className="w-5 h-5 text-blue-500" />
-              Today&apos;s Bookings
+              <FileCheck className="w-5 h-5 text-blue-500" />
+              Today&apos;s Appointments
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -334,13 +334,13 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                           'p-3 rounded-xl',
                           booking.status === 'complete' ? 'bg-emerald-100' : 'bg-slate-100'
                         )}>
-                          <Ship className={cn(
+                          <FileCheck className={cn(
                             'w-6 h-6',
                             booking.status === 'complete' ? 'text-emerald-600' : 'text-slate-500'
                           )} />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-lg">{booking.boatName}</h3>
+                          <h3 className="font-semibold text-lg">{booking.serviceName}</h3>
                           <p className="text-slate-500">{booking.customerName}</p>
                           <p className="text-sm text-slate-400">{booking.startTime}</p>
                         </div>
@@ -362,7 +362,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               </div>
             ) : (
               <div className="text-center py-8 text-slate-500">
-                No bookings for today
+                No appointments for today
               </div>
             )}
           </CardContent>
@@ -384,7 +384,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
             Back
           </Button>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">{selectedBooking.boatName}</h2>
+            <h2 className="text-2xl font-bold text-slate-900">{selectedBooking.serviceName}</h2>
             <p className="text-slate-500">{selectedBooking.customerName} • {selectedBooking.startTime}</p>
           </div>
         </div>
@@ -451,10 +451,10 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-500" />
-                Passenger Checklist
+                Client Checklist
               </CardTitle>
               <CardDescription>
-                Verify all passengers have signed their waivers
+                Verify all clients have signed their consent forms
               </CardDescription>
             </div>
             <Button
@@ -463,7 +463,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               className="gap-2"
             >
               <UserPlus className="w-4 h-4" />
-              Add Passenger
+              Add Client
             </Button>
           </CardHeader>
           <CardContent>
@@ -582,7 +582,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               Record Head Count
             </CardTitle>
             <CardDescription>
-              Count all passengers aboard before departure
+              Verify all clients present for the enrollment session
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -624,10 +624,10 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                 <div>
                   <p className="font-medium text-yellow-800">Head count mismatch</p>
                   <p className="text-sm text-yellow-700">
-                    Expected {selectedBooking.waiversRequired} passengers, counted {headCount}.
+                    Expected {selectedBooking.waiversRequired} clients, counted {headCount}.
                     {headCount > selectedBooking.waiversCollected && (
                       <span className="block mt-1">
-                        {headCount - selectedBooking.waiversCollected} passengers need to sign waivers.
+                        {headCount - selectedBooking.waiversCollected} clients need to sign consent forms.
                       </span>
                     )}
                   </p>
@@ -648,7 +648,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
 
             <div className="flex justify-between pt-4 border-t">
               <Button variant="outline" onClick={() => setCurrentStep('passengers')}>
-                Back to Passengers
+                Back to Clients
               </Button>
               <Button
                 onClick={handleRecordHeadCount}
@@ -671,17 +671,17 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Anchor className="w-5 h-5 text-emerald-500" />
-              Departure Approval
+              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              Enrollment Approval
             </CardTitle>
             <CardDescription>
-              Final check before departing
+              Final check before completing enrollment
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-slate-50 rounded-lg">
-                <p className="text-sm text-slate-500">Passengers</p>
+                <p className="text-sm text-slate-500">Clients</p>
                 <p className="text-2xl font-bold">{headCount}</p>
               </div>
               <div className="p-4 bg-emerald-50 rounded-lg">
@@ -696,27 +696,27 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
                 <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
                 <h3 className="text-xl font-semibold text-emerald-700">All Clear!</h3>
-                <p className="text-emerald-600">All waivers collected. Ready for departure.</p>
+                <p className="text-emerald-600">All consent forms collected. Ready to proceed.</p>
               </div>
             ) : (
               <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
                 <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-3" />
-                <h3 className="text-xl font-semibold text-yellow-700">Missing Waivers</h3>
+                <h3 className="text-xl font-semibold text-yellow-700">Missing Consent Forms</h3>
                 <p className="text-yellow-600 mb-4">
-                  {missingCount} passenger{missingCount > 1 ? 's' : ''} still need to sign waivers
+                  {missingCount} client{missingCount > 1 ? 's' : ''} still need to sign consent forms
                 </p>
                 <div className="flex justify-center gap-3">
                   <Button
                     variant="outline"
                     onClick={() => setCurrentStep('passengers')}
                   >
-                    Collect Waivers
+                    Collect Consent Forms
                   </Button>
                   <Button
                     variant="destructive"
                     onClick={() => setShowForceDialog(true)}
                   >
-                    Depart Anyway
+                    Proceed Anyway
                   </Button>
                 </div>
               </div>
@@ -734,9 +734,9 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                 {isSubmitting ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
                 ) : (
-                  <Anchor className="w-4 h-4" />
+                  <ShieldCheck className="w-4 h-4" />
                 )}
-                Approve Departure
+                Approve Enrollment
               </Button>
             </div>
           </CardContent>
@@ -752,7 +752,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               Collect Waiver Signature
             </DialogTitle>
             <DialogDescription>
-              {signingPassenger?.fullName} - Sign waiver on agent&apos;s device
+              {signingPassenger?.fullName} - Sign consent form on agent&apos;s device
             </DialogDescription>
           </DialogHeader>
 
@@ -874,7 +874,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                   onCheckedChange={(checked) => setSignatureForm(prev => ({ ...prev, acknowledgedRisks: !!checked }))}
                 />
                 <Label htmlFor="ack-risks" className="text-sm leading-tight cursor-pointer">
-                  I acknowledge that boating involves inherent risks including drowning, collision, and injury. I accept these risks.
+                  I acknowledge that I have reviewed the insurance terms, conditions, and disclosures. I understand the coverage details and limitations.
                 </Label>
               </div>
               <div className="flex items-start gap-2">
@@ -884,7 +884,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                   onCheckedChange={(checked) => setSignatureForm(prev => ({ ...prev, acknowledgedRules: !!checked }))}
                 />
                 <Label htmlFor="ack-rules" className="text-sm leading-tight cursor-pointer">
-                  I agree to follow all safety rules, Coast Guard regulations, and operator instructions during the rental.
+                  I agree to provide accurate information and comply with all policy terms, enrollment requirements, and regulatory guidelines.
                 </Label>
               </div>
             </div>
@@ -915,16 +915,16 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Add Passenger Dialog */}
+      {/* Add Client Dialog */}
       <Dialog open={showAddPassengerDialog} onOpenChange={setShowAddPassengerDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <UserPlus className="w-5 h-5" />
-              Add Walk-up Passenger
+              Add Walk-in Client
             </DialogTitle>
             <DialogDescription>
-              Add a passenger who wasn&apos;t on the original booking
+              Add a client who wasn&apos;t on the original appointment
             </DialogDescription>
           </DialogHeader>
 
@@ -982,24 +982,24 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               ) : (
                 <UserPlus className="w-4 h-4" />
               )}
-              Add Passenger
+              Add Client
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Force Departure Dialog - Manager Alert Warning */}
+      {/* Force Enrollment Dialog - Manager Alert Warning */}
       <AlertDialog open={showForceDialog} onOpenChange={setShowForceDialog}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-red-600">
               <AlertTriangle className="w-6 h-6" />
-              Missing Waivers!
+              Missing Consent Forms!
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-3 mt-4">
                 <p className="font-semibold text-slate-700">
-                  {missingCount} passenger{missingCount > 1 ? 's have' : ' has'} NOT signed waivers:
+                  {missingCount} client{missingCount > 1 ? 's have' : ' has'} NOT signed consent forms:
                 </p>
                 <ul className="list-disc pl-5 space-y-1">
                   {unsignedPassengers.map(p => (
@@ -1015,7 +1015,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Go Back &amp; Collect Waivers</AlertDialogCancel>
+            <AlertDialogCancel>Go Back &amp; Collect Consent Forms</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => handleApproveDeparture(true)}
               disabled={isSubmitting}
@@ -1024,7 +1024,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               {isSubmitting ? (
                 <RefreshCw className="w-4 h-4 animate-spin mr-2" />
               ) : null}
-              Depart Anyway (Alert Manager)
+              Proceed Anyway (Alert Manager)
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

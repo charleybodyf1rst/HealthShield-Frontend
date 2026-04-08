@@ -31,9 +31,9 @@ export interface BookingPayment {
   customerId: string;
   customerEmail: string;
   customerName: string;
-  boatSlug: string;
-  boatName: string;
-  tripDate: Date;
+  serviceSlug: string;
+  serviceName: string;
+  appointmentDate: Date;
   duration: '3hr' | '4hr' | '5hr' | '6hr' | '7hr' | '8hr';
   basePrice: number;
   surcharges: Surcharge[];
@@ -78,9 +78,9 @@ export interface CreatePaymentIntentRequest {
   customerEmail: string;
   customerName: string;
   metadata: {
-    boatSlug: string;
-    boatName: string;
-    tripDate: string;
+    serviceSlug: string;
+    serviceName: string;
+    appointmentDate: string;
     duration: string;
     paymentType: 'deposit' | 'balance' | 'full';
   };
@@ -102,7 +102,7 @@ export interface RefundRequest {
 // Price calculation utilities
 export function calculateBookingPrice(params: {
   basePrice: number;
-  tripDate: Date;
+  appointmentDate: Date;
   groupSize: number;
   maxCapacity: number;
   addons?: string[];
@@ -116,7 +116,7 @@ export function calculateBookingPrice(params: {
   let subtotal = params.basePrice;
 
   // Weekend surcharge
-  const dayOfWeek = params.tripDate.getDay();
+  const dayOfWeek = params.appointmentDate.getDay();
   if (dayOfWeek === 0 || dayOfWeek === 6) {
     const weekendSurcharge = Math.round(params.basePrice * (paymentConfig.weekendSurchargePercent / 100));
     surcharges.push({
@@ -129,7 +129,7 @@ export function calculateBookingPrice(params: {
   }
 
   // Holiday surcharge
-  if (isHolidayWeekend(params.tripDate)) {
+  if (isHolidayWeekend(params.appointmentDate)) {
     const holidaySurcharge = Math.round(params.basePrice * (paymentConfig.holidaySurchargePercent / 100));
     surcharges.push({
       type: 'holiday',
@@ -212,9 +212,9 @@ export const samplePayments: BookingPayment[] = [
     customerId: 'cust-001',
     customerEmail: 'jessica@email.com',
     customerName: 'Jessica Johnson',
-    boatSlug: 'king-kong',
-    boatName: 'King Kong',
-    tripDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    serviceSlug: 'consultation-001',
+    serviceName: 'Health Consultation',
+    appointmentDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
     duration: '4hr',
     basePrice: 1000,
     surcharges: [
@@ -237,9 +237,9 @@ export const samplePayments: BookingPayment[] = [
     customerId: 'cust-002',
     customerEmail: 'mike@company.com',
     customerName: 'Mike Thompson',
-    boatSlug: 'bananarama',
-    boatName: 'Bananarama',
-    tripDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    serviceSlug: 'enrollment-001',
+    serviceName: 'Plan Enrollment',
+    appointmentDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     duration: '6hr',
     basePrice: 1200,
     surcharges: [],
@@ -262,9 +262,9 @@ export const samplePayments: BookingPayment[] = [
     customerId: 'cust-003',
     customerEmail: 'sarah@email.com',
     customerName: 'Sarah Williams',
-    boatSlug: 'banana-split',
-    boatName: 'Banana Split',
-    tripDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    serviceSlug: 'claims-001',
+    serviceName: 'Claims Review',
+    appointmentDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
     duration: '4hr',
     basePrice: 750,
     surcharges: [
@@ -358,33 +358,33 @@ export function calculateRefundAmount(
   processingFee: number;
   reason: string;
 } {
-  const tripDate = new Date(payment.tripDate);
-  const daysUntilTrip = Math.ceil(
-    (tripDate.getTime() - cancellationDate.getTime()) / (1000 * 60 * 60 * 24)
+  const apptDate = new Date(payment.appointmentDate);
+  const daysUntilAppointment = Math.ceil(
+    (apptDate.getTime() - cancellationDate.getTime()) / (1000 * 60 * 60 * 24)
   );
 
   const totalPaid = payment.depositAmount + (payment.balancePaidAt ? payment.balanceAmount : 0);
 
-  if (daysUntilTrip >= 7) {
+  if (daysUntilAppointment >= 7) {
     // Full refund minus $50 processing
     return {
       refundAmount: totalPaid - 50,
       processingFee: 50,
-      reason: 'Cancelled 7+ days before trip',
+      reason: 'Cancelled 7+ days before appointment',
     };
-  } else if (daysUntilTrip >= 3) {
+  } else if (daysUntilAppointment >= 3) {
     // 50% refund
     return {
       refundAmount: Math.round(totalPaid * 0.5),
       processingFee: 0,
-      reason: 'Cancelled 3-7 days before trip (50% refund)',
+      reason: 'Cancelled 3-7 days before appointment (50% refund)',
     };
   } else {
     // No refund
     return {
       refundAmount: 0,
       processingFee: 0,
-      reason: 'Cancelled less than 3 days before trip (no refund)',
+      reason: 'Cancelled less than 3 days before appointment (no refund)',
     };
   }
 }
@@ -408,24 +408,24 @@ export function generateReceiptData(payment: BookingPayment): {
   date: string;
 } {
   const durationLabels: Record<string, string> = {
-    '3hr': '3 Hour Rental',
-    '4hr': '4 Hour Rental',
-    '5hr': '5 Hour Rental',
-    '6hr': '6 Hour Rental (Half Day)',
-    '7hr': '7 Hour Rental',
-    '8hr': 'Full Day Rental (8 Hours)',
+    '3hr': '3 Hour Session',
+    '4hr': '4 Hour Session',
+    '5hr': '5 Hour Session',
+    '6hr': '6 Hour Session (Half Day)',
+    '7hr': '7 Hour Session',
+    '8hr': 'Full Day Session (8 Hours)',
   };
 
   return {
     receiptNumber: `RCP-${payment.id.split('-')[1]}`,
     businessName: 'HealthShield',
-    businessAddress: 'Lake Travis, TX',
-    businessPhone: '512-705-7758',
+    businessAddress: 'HealthShield Office',
+    businessPhone: '',
     customerName: payment.customerName,
     customerEmail: payment.customerEmail,
     items: [
       {
-        description: `${payment.boatName} - ${durationLabels[payment.duration]}`,
+        description: `${payment.serviceName} - ${durationLabels[payment.duration]}`,
         amount: payment.basePrice,
       },
     ],

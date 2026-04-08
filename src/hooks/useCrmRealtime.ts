@@ -5,12 +5,12 @@ import { getEcho, disconnectEcho } from '@/lib/echo';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { useAuthStore } from '@/stores/auth-store';
 
-interface BoatCrmEvent {
+interface CrmEvent {
   type: string;
   data: Record<string, unknown>;
 }
 
-export function useBoatCrmRealtime() {
+export function useCrmRealtime() {
   const { user } = useAuthStore();
   const {
     fetchKPIs,
@@ -26,7 +26,7 @@ export function useBoatCrmRealtime() {
   const channelRef = useRef<any>(null);
   const isSubscribedRef = useRef(false);
 
-  const handleBoatCrmEvent = useCallback((event: BoatCrmEvent) => {
+  const handleCrmEvent = useCallback((event: CrmEvent) => {
     switch (event.type) {
       case 'booking.created':
       case 'booking.updated':
@@ -80,65 +80,65 @@ export function useBoatCrmRealtime() {
       };
     }
 
-    // Subscribe to private channel for boat CRM events
-    const channelName = `private-boat-crm.${user.id}`;
+    // Subscribe to private channel for CRM events
+    const channelName = `private-crm.${user.id}`;
 
     if (!isSubscribedRef.current) {
       const channel = echo.private(channelName)
         // Booking events
         .listen('.booking.created', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'booking.created', data });
+          handleCrmEvent({ type: 'booking.created', data });
         })
         .listen('.booking.updated', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'booking.updated', data });
+          handleCrmEvent({ type: 'booking.updated', data });
         })
         .listen('.booking.cancelled', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'booking.cancelled', data });
+          handleCrmEvent({ type: 'booking.cancelled', data });
         })
         // Approval events
         .listen('.approval.new', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'approval.new', data });
+          handleCrmEvent({ type: 'approval.new', data });
         })
         .listen('.approval.resolved', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'approval.resolved', data });
+          handleCrmEvent({ type: 'approval.resolved', data });
         })
         // Call events
         .listen('.call.started', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'call.started', data });
+          handleCrmEvent({ type: 'call.started', data });
         })
         .listen('.call.ended', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'call.ended', data });
+          handleCrmEvent({ type: 'call.ended', data });
         })
         .listen('.call.status', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'call.status', data });
+          handleCrmEvent({ type: 'call.status', data });
         })
         .listen('.call.status.updated', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'call.status.updated', data });
+          handleCrmEvent({ type: 'call.status.updated', data });
         })
         // Agent events
         .listen('.agent.assigned', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'agent.assigned', data });
+          handleCrmEvent({ type: 'agent.assigned', data });
         })
         .listen('.agent.status', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'agent.status', data });
+          handleCrmEvent({ type: 'agent.status', data });
         })
         // Trip events
         .listen('.trip.started', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'trip.started', data });
+          handleCrmEvent({ type: 'trip.started', data });
         })
         .listen('.trip.completed', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'trip.completed', data });
+          handleCrmEvent({ type: 'trip.completed', data });
         })
         // Payment events
         .listen('.payment.received', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'payment.received', data });
+          handleCrmEvent({ type: 'payment.received', data });
         })
         .listen('.refund.processed', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'refund.processed', data });
+          handleCrmEvent({ type: 'refund.processed', data });
         })
         // Activity
         .listen('.activity.new', (data: Record<string, unknown>) => {
-          handleBoatCrmEvent({ type: 'activity.new', data });
+          handleCrmEvent({ type: 'activity.new', data });
         });
 
       channelRef.current = channel;
@@ -152,7 +152,7 @@ export function useBoatCrmRealtime() {
         channelRef.current = null;
       }
     };
-  }, [user?.id, handleBoatCrmEvent, startPolling, stopPolling]);
+  }, [user?.id, handleCrmEvent, startPolling, stopPolling]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -167,6 +167,6 @@ export function useBoatCrmRealtime() {
 }
 
 // Simplified hook for components that just need to enable realtime
-export function useEnableBoatCrmRealtime() {
-  useBoatCrmRealtime();
+export function useEnableCrmRealtime() {
+  useCrmRealtime();
 }

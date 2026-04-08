@@ -1,5 +1,5 @@
-// Boat CRM Type Definitions
-// AI Orchestra features adapted for boat rental business
+// CRM Type Definitions
+// AI Orchestra features adapted for HealthShield insurance platform
 
 // =============================================================================
 // Agent Status Types
@@ -23,10 +23,10 @@ export interface AgentStatus {
 }
 
 // =============================================================================
-// Boat CRM Specific Types
+// CRM Specific Types
 // =============================================================================
 
-export interface BoatCustomer {
+export interface Contact {
   id: string;
   firstName: string;
   lastName: string;
@@ -54,12 +54,12 @@ export interface Agent {
   address?: string;
   date_of_birth?: string;
   agents_license_number?: string;
-  license_type?: 'six_pack' | 'master' | 'oupv' | '100_ton' | '200_ton';
+  license_type?: 'health' | 'life' | 'property_casualty' | 'series_6' | 'series_7';
   license_expires?: string;
   endorsements?: string[];
   certifications?: string[];
-  last_drug_test?: string;
-  last_physical?: string;
+  last_background_check?: string;
+  last_ce_completion?: string;
   hourly_rate?: number;
   overtime_rate?: number;
   tip_percentage?: number;
@@ -67,16 +67,12 @@ export interface Agent {
   bank_account_last4?: string;
   bio?: string;
   photo_url?: string;
-  boat_certifications?: number[];
-  can_do_fishing_charters?: boolean;
-  can_do_watersports?: boolean;
-  can_do_overnight?: boolean;
-  status: 'active' | 'inactive' | 'on_leave' | 'available' | 'on_trip' | 'off_duty';
+  can_handle_medicare?: boolean;
+  status: 'active' | 'inactive' | 'on_leave' | 'available' | 'on_call' | 'off_duty';
   hire_date?: string;
   termination_date?: string;
-  assignedBoatId?: string;
   rating: number;
-  totalTrips: number;
+  totalAppointments: number;
   bookings_count?: number;
   schedules?: AgentScheduleEntry[];
   created_at?: string;
@@ -107,19 +103,17 @@ export interface CreateAgentData {
   overtime_rate?: number;
   tip_percentage?: number;
   bio?: string;
-  can_do_fishing_charters?: boolean;
-  can_do_watersports?: boolean;
-  can_do_overnight?: boolean;
+  can_handle_medicare?: boolean;
   status?: string;
   hire_date?: string;
 }
 
-export interface BoatBooking {
+export interface Appointment {
   id: string;
   customerId: string;
-  customer?: BoatCustomer;
-  boatId: string;
-  boatName: string;
+  customer?: Contact;
+  serviceId: string;
+  serviceName: string;
   agentId?: string;
   agent?: Agent;
   date: string;
@@ -180,7 +174,7 @@ export interface ChatMessage {
 }
 
 // =============================================================================
-// Pending Approval Types (Boat-specific actions)
+// Pending Approval Types (CRM actions)
 // =============================================================================
 
 export type ApprovalActionType =
@@ -216,7 +210,7 @@ export interface PendingApproval {
 // AI Caller Types (Customer communication)
 // =============================================================================
 
-export type BoatCallType =
+export type CrmCallType =
   | 'booking_confirmation'
   | 'reminder_24h'
   | 'reminder_2h'
@@ -225,7 +219,7 @@ export type BoatCallType =
   | 'review_request'
   | 'custom';
 
-export type BoatCallStatus =
+export type CrmCallStatus =
   | 'scheduled'
   | 'queued'
   | 'dialing'
@@ -237,11 +231,11 @@ export type BoatCallStatus =
   | 'voicemail'
   | 'cancelled';
 
-export interface BoatCall {
+export interface CrmCall {
   id: string;
   uuid: string;
-  type: BoatCallType;
-  status: BoatCallStatus;
+  type: CrmCallType;
+  status: CrmCallStatus;
   subject: string;
   phoneNumber: string;
   customerName?: string;
@@ -265,7 +259,7 @@ export interface BoatCall {
 export interface CallScript {
   id: string;
   name: string;
-  type: BoatCallType;
+  type: CrmCallType;
   prompt: string;
   voice: string;
   variables: string[];
@@ -282,8 +276,8 @@ export type ActivityType =
   | 'booking_created'
   | 'booking_confirmed'
   | 'booking_cancelled'
-  | 'trip_started'
-  | 'trip_completed'
+  | 'appointment_started'
+  | 'appointment_completed'
   | 'call_completed'
   | 'call_scheduled'
   | 'payment_received'
@@ -295,7 +289,7 @@ export type ActivityType =
   | 'maintenance_scheduled'
   | 'error';
 
-export interface BoatActivity {
+export interface CrmActivity {
   id: string;
   type: ActivityType;
   title: string;
@@ -321,7 +315,7 @@ export interface BookingAnalytics {
   bookingsToday: number;
   bookingsThisWeek: number;
   bookingsThisMonth: number;
-  bookingsByBoat: Record<string, number>;
+  bookingsByService: Record<string, number>;
   trend: 'up' | 'down' | 'stable';
   trendPercent?: number;
 }
@@ -332,7 +326,7 @@ export interface CallAnalytics {
   failedCalls: number;
   avgDuration: number;
   successRate: number;
-  callsByType: Record<BoatCallType, number>;
+  callsByType: Record<CrmCallType, number>;
   callsToday: number;
   callsThisWeek: number;
 }
@@ -340,12 +334,12 @@ export interface CallAnalytics {
 export interface AgentAnalytics {
   totalAgents: number;
   availableAgents: number;
-  tripsToday: number;
+  appointmentsToday: number;
   avgRating: number;
-  topAgents: { id: string; name: string; trips: number; rating: number }[];
+  topAgents: { id: string; name: string; appointments: number; rating: number }[];
 }
 
-export interface BoatCrmAnalytics {
+export interface CrmAnalytics {
   bookings: BookingAnalytics;
   calls: CallAnalytics;
   agents: AgentAnalytics;
@@ -362,7 +356,7 @@ export interface DashboardKPIs {
   totalBookings: number;
   upcomingBookings: number;
   pendingApprovals: number;
-  activeTrips: number;
+  activeAppointments: number;
   revenueToday: number;
   totalRevenue: number;
   revenueTrend: 'up' | 'down' | 'stable';
@@ -372,8 +366,8 @@ export interface DashboardKPIs {
 export interface TodaySchedule {
   id: string;
   time: string;
-  boatName: string;
-  boatEmoji: string;
+  serviceName: string;
+  serviceIcon: string;
   agentName: string;
   customerName: string;
   partySize: number;
@@ -391,7 +385,7 @@ export interface ScheduleCallRequest {
   customerName?: string;
   customerId?: string;
   bookingId?: string;
-  type: BoatCallType;
+  type: CrmCallType;
   scriptId?: string;
   scheduledFor?: string;
   variables?: Record<string, string>;
@@ -413,22 +407,22 @@ export interface ApprovalResponse {
 // UI State Types
 // =============================================================================
 
-export interface BoatCrmTab {
+export interface CrmTab {
   id: 'overview' | 'customers' | 'approvals' | 'ai-caller' | 'analytics' | 'waivers';
   label: string;
   icon: string;
   badge?: number;
 }
 
-export interface BoatCrmFilters {
+export interface CrmFilters {
   bookings: {
     status?: BookingStatus[];
-    boatId?: string;
+    serviceId?: string;
     dateRange?: { start: string; end: string };
   };
   calls: {
-    status?: BoatCallStatus[];
-    type?: BoatCallType[];
+    status?: CrmCallStatus[];
+    type?: CrmCallType[];
     dateRange?: { start: string; end: string };
   };
   activity: {
@@ -476,7 +470,7 @@ export interface BookingWaiverStatus {
   bookingNumber: string;
   rentalDate: string;
   startTime: string;
-  boatName: string;
+  serviceName: string;
   customerName: string;
   customerPhone?: string;
   waiversRequired: number;
@@ -534,24 +528,14 @@ export interface HeadCountRecord {
 // Lead Types (Sales Pipeline)
 // =============================================================================
 
-export type LeadBoatType = 'double_decker' | 'pink' | 'pontoon' | 'wakesurfing' | 'any';
+export type LeadCategory = 'individual' | 'family' | 'group' | 'corporate';
 
 export type LeadOccasion =
-  | 'birthday'
-  | 'bachelorette'
-  | 'bachelor'
-  | 'corporate'
-  | 'family'
-  | 'date'
-  | 'wedding'
-  | 'graduation'
-  | 'reunion'
-  | 'holiday'
-  | 'team_building'
-  | 'sunset_cruise'
-  | 'fishing'
-  | 'wakesurfing'
-  | 'other';
+  | 'new_policy'
+  | 'renewal'
+  | 'upgrade'
+  | 'group_enrollment'
+  | 'consultation';
 
 export type LeadSource =
   | 'website'
@@ -575,23 +559,19 @@ export type LeadStatus =
   | 'lost'
   | 'unresponsive';
 
-export type LakePreference = 'lake_travis' | 'either';
-
-export interface BoatLead {
+export interface CrmLead {
   id: number;
   userId: number;
   firstName: string;
   lastName?: string;
   email?: string;
   phone: string;
-  boatTypeInterested?: LeadBoatType;
-  specificBoatName?: string;
+  categoryInterested?: LeadCategory;
   hoursRequested?: number;
   partySize?: number;
   occasion?: LeadOccasion;
   preferredDate?: string;
   preferredTime?: string;
-  lakePreference: LakePreference;
   budgetMin?: number;
   budgetMax?: number;
   specialRequests?: string;
@@ -607,7 +587,7 @@ export interface BoatLead {
   convertedBookingId?: number;
   convertedAt?: string;
   notes?: string;
-  interactions?: BoatInteraction[];
+  interactions?: CrmInteraction[];
   createdAt: string;
   updatedAt: string;
 }
@@ -659,7 +639,7 @@ export type InteractionOutcome =
   | 'needs_info'
   | 'referred';
 
-export interface BoatInteraction {
+export interface CrmInteraction {
   id: number;
   userId: number;
   leadId?: number;
@@ -699,7 +679,7 @@ export interface BoatInteraction {
 // =============================================================================
 
 export interface LeadOptions {
-  boatTypes: Record<LeadBoatType, string>;
+  categories: Record<LeadCategory, string>;
   occasions: Record<LeadOccasion, string>;
   sources: Record<LeadSource, string>;
   statuses: Record<LeadStatus, string>;
@@ -721,10 +701,10 @@ export interface AgentContext {
     lastName: string;
     photoUrl?: string;
   };
-  assignedBoat: {
+  assignedService: {
     id: number;
     name: string;
-    emoji?: string;
+    icon?: string;
   } | null;
   todayStats: {
     totalBookings: number;
@@ -742,7 +722,7 @@ export interface ArchivedWaiver {
   email?: string;
   phone?: string;
   isMinor: boolean;
-  boatName: string;
+  serviceName: string;
   agentName?: string;
   signedAt: string;
   collectionMethod: 'online' | 'agent_device' | 'in_person';
@@ -755,7 +735,7 @@ export interface WaiverArchiveFilters {
   dateTo: string | null;
   bookingNumber: string;
   customerSearch: string;
-  boatId: number | null;
+  serviceId: number | null;
   agentId: number | null;
   status: 'all' | 'valid' | 'expired' | 'revoked';
   sortBy: 'signed_at' | 'full_name' | 'booking_number';
@@ -769,7 +749,7 @@ export interface QuickSignSearchResult {
   phone?: string;
   rentalDate: string;
   startTime: string;
-  boatName: string;
+  serviceName: string;
   unsignedPassengers: Array<{
     id: number;
     fullName: string;
@@ -785,3 +765,25 @@ export interface WaiverArchivePagination {
 }
 
 export type WaiverSubTab = 'today' | 'archive' | 'quick-sign' | 'templates';
+
+// =============================================================================
+// Legacy Aliases (for backward compatibility during migration)
+// =============================================================================
+
+/** @deprecated Use Contact */
+export type Contact = Contact;
+/** @deprecated Use Appointment */
+export type Appointment = Appointment;
+/** @deprecated Use CrmCall */
+export type CrmCall = CrmCall;
+/** @deprecated Use CrmCallType */
+export type CrmCallType = CrmCallType;
+/** @deprecated Use CrmActivity */
+export type CrmActivity = CrmActivity;
+/** @deprecated Use CrmAnalytics */
+/** @deprecated Use CrmFilters */
+/** @deprecated Use CrmLead */
+export type CrmLead = CrmLead;
+/** @deprecated Use CrmInteraction */
+export type CrmInteraction = CrmInteraction;
+/** @deprecated Use LeadCategory */

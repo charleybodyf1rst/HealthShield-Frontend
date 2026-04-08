@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { BoatInteraction, InteractionType, InteractionOutcome } from '@/types/plan-crm';
+import type { CrmInteraction, InteractionType, InteractionOutcome } from '@/types/crm';
 
 const typeIcons: Record<InteractionType, React.ReactNode> = {
   sms: <MessageSquare className="w-4 h-4" />,
@@ -70,7 +70,7 @@ const outcomeColors: Record<InteractionOutcome, string> = {
 };
 
 interface InteractionTimelineProps {
-  interactions: BoatInteraction[];
+  interactions: CrmInteraction[];
   loading?: boolean;
   leadId?: number;
   customerId?: number;
@@ -136,7 +136,7 @@ export function InteractionTimeline({
   );
 }
 
-function InteractionItem({ interaction }: { interaction: BoatInteraction }) {
+function InteractionItem({ interaction }: { interaction: CrmInteraction }) {
   const [expanded, setExpanded] = useState(false);
 
   const isInbound = interaction.direction === 'inbound';

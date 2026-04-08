@@ -45,7 +45,7 @@ export interface DriveFolder {
 }
 
 // HealthShield folder structure in Google Drive
-export const bananBoatFolderStructure = {
+export const healthShieldFolderStructure = {
   root: 'HealthShield',
   subfolders: [
     {
@@ -57,14 +57,14 @@ export const bananBoatFolderStructure = {
       subfolders: ['Policies', 'Claims', 'Certificates'],
     },
     {
-      name: 'Boat Records',
+      name: 'Service Records',
       subfolders: [
-        'King Kong',
-        'Lemon Drop',
-        'Bananarama',
-        'Banana Daiquiri',
-        'Pineapple Express',
-        'Banana Split',
+        'Health Consultation',
+        'Plan Enrollment',
+        'Claims Review',
+        'Wellness Program',
+        'Benefits Review',
+        'Policy Renewal',
       ],
     },
     {
@@ -73,14 +73,14 @@ export const bananBoatFolderStructure = {
     },
     {
       name: 'Customer Contracts',
-      subfolders: ['Waivers', 'Rental Agreements', 'Corporate Contracts'],
+      subfolders: ['Agreements', 'Enrollment Forms', 'Corporate Contracts'],
     },
     {
       name: 'Marketing Assets',
       subfolders: ['Photos', 'Videos', 'Graphics', 'Social Media'],
     },
     {
-      name: 'Trip Photos',
+      name: 'Client Documents',
       subfolders: ['2024', '2023'],
     },
     {
@@ -186,12 +186,12 @@ export class GoogleDriveService {
       const folders: Record<string, string> = {};
 
       // Create root folder
-      const rootId = await this.createFolder(bananBoatFolderStructure.root);
+      const rootId = await this.createFolder(healthShieldFolderStructure.root);
       if (!rootId) throw new Error('Failed to create root folder');
       folders['root'] = rootId;
 
       // Create subfolders
-      for (const subfolder of bananBoatFolderStructure.subfolders) {
+      for (const subfolder of healthShieldFolderStructure.subfolders) {
         const folderId = await this.createFolder(subfolder.name, rootId);
         if (folderId) {
           folders[subfolder.name] = folderId;

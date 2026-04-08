@@ -3,12 +3,10 @@
  *
  * This module provides intelligent AI-powered features:
  * - Vector embeddings for semantic search
- * - Knowledge base for boat recommendations
+ * - Knowledge base for insurance plan recommendations
  * - Context-aware AI responses
- * - Real-time availability insights
+ * - Real-time enrollment insights
  */
-
-import { boats, type Boat } from '../boats';
 
 // Types for Vector Store
 export interface VectorDocument {
@@ -24,128 +22,124 @@ export interface SearchResult {
 }
 
 export interface KnowledgeBaseEntry {
-  category: 'boat' | 'faq' | 'policy' | 'location' | 'experience';
+  category: 'plan' | 'faq' | 'policy' | 'wellness' | 'enrollment';
   question?: string;
   answer: string;
   keywords: string[];
-  boatSlug?: string;
+  planSlug?: string;
 }
 
-// Knowledge Base - Comprehensive boat rental information
+// Knowledge Base - Comprehensive health insurance information
 export const knowledgeBase: KnowledgeBaseEntry[] = [
-  // Boat Information
-  ...boats.map((boat) => ({
-    category: 'boat' as const,
-    answer: `${boat.name} is a ${boat.capacity}-person party boat located at ${boat.location}. ${boat.longDescription} Features include: ${boat.features.join(', ')}. Pricing starts at $${boat.pricing.weekday['3hr']} for 3 hours (Mon-Thu).`,
-    keywords: [boat.name.toLowerCase(), boat.slug, boat.location.toLowerCase(), boat.lake, ...boat.features.map(f => f.toLowerCase())],
-    boatSlug: boat.slug,
-  })),
+  // Plan Information
+  {
+    category: 'plan',
+    answer: 'The Bronze Plan is our most affordable option, designed for healthy individuals who want coverage for unexpected events. It covers preventive care at no cost, has a lower monthly premium, and includes telehealth access. Best for individuals and young adults on a budget.',
+    keywords: ['bronze', 'affordable', 'budget', 'cheap', 'basic', 'low cost'],
+    planSlug: 'bronze',
+  },
+  {
+    category: 'plan',
+    answer: 'The Silver Plan offers a balanced combination of monthly premiums and out-of-pocket costs. It covers preventive care, specialist visits, prescription drugs, and mental health services. Ideal for individuals and families who visit the doctor regularly.',
+    keywords: ['silver', 'balanced', 'moderate', 'mid-range', 'standard'],
+    planSlug: 'silver',
+  },
+  {
+    category: 'plan',
+    answer: 'The Gold Plan provides comprehensive coverage with lower out-of-pocket costs. It includes preventive care, specialist visits, hospital stays, prescription coverage, dental and vision basics, and wellness program access. Best for families and those with ongoing medical needs.',
+    keywords: ['gold', 'comprehensive', 'family', 'full coverage', 'premium'],
+    planSlug: 'gold',
+  },
+  {
+    category: 'plan',
+    answer: 'The Platinum Plan is our most comprehensive offering with the lowest out-of-pocket costs. It includes everything in the Gold Plan plus enhanced dental and vision, international coverage, concierge health services, and priority claims processing. Ideal for those who want maximum coverage and convenience.',
+    keywords: ['platinum', 'maximum', 'best', 'top tier', 'elite', 'concierge'],
+    planSlug: 'platinum',
+  },
 
   // FAQs
   {
     category: 'faq',
-    question: 'What should I bring on the boat?',
-    answer: 'We recommend bringing: sunscreen, towels, swimsuits, snacks and drinks (no glass containers), a waterproof phone case, and a good attitude! We provide life jackets, a cooler with ice, lily pads, and Bluetooth speakers.',
-    keywords: ['bring', 'pack', 'items', 'what to bring', 'checklist'],
+    question: 'How do I enroll in a plan?',
+    answer: 'You can enroll online at healthshield.ai, call our enrollment specialists, or use our AI assistant for guided enrollment. Open enrollment is available year-round for qualifying life events. Standard open enrollment runs November through January.',
+    keywords: ['enroll', 'sign up', 'register', 'join', 'apply', 'enrollment'],
   },
   {
     category: 'faq',
-    question: 'Can I bring alcohol?',
-    answer: 'Yes! You are welcome to bring your own alcoholic beverages. Please note: NO GLASS containers allowed on any of our boats for safety reasons. We recommend cans, plastic bottles, or boxed wine. Please drink responsibly.',
-    keywords: ['alcohol', 'beer', 'wine', 'drinks', 'byob', 'liquor'],
+    question: 'What is covered under preventive care?',
+    answer: 'All HealthShield plans cover preventive care at no additional cost. This includes annual wellness visits, immunizations, screenings (blood pressure, cholesterol, cancer), and preventive counseling. No copay or deductible required for in-network preventive services.',
+    keywords: ['preventive', 'wellness visit', 'screening', 'checkup', 'immunization', 'vaccine'],
   },
   {
     category: 'faq',
-    question: 'What is your cancellation policy?',
-    answer: 'Cancellations made 7+ days before: Full refund minus $50 processing fee. 3-7 days before: 50% refund. Less than 3 days: No refund. Weather cancellations by us: Full refund or reschedule with no penalty.',
-    keywords: ['cancel', 'cancellation', 'refund', 'policy', 'reschedule'],
+    question: 'How do I file a claim?',
+    answer: 'Most claims are filed automatically by your healthcare provider. For out-of-network services or reimbursement requests, log into your HealthShield dashboard, navigate to Claims, and submit your claim with the required documentation. Claims are typically processed within 14 business days.',
+    keywords: ['claim', 'file', 'submit', 'reimbursement', 'billing'],
   },
   {
     category: 'faq',
-    question: 'What if it rains?',
-    answer: 'We monitor weather closely. If conditions are unsafe, we\'ll contact you to reschedule at no extra charge. Light rain typically doesn\'t affect trips - it can actually be fun! If you want to cancel due to weather, standard cancellation policy applies unless we officially cancel.',
-    keywords: ['rain', 'weather', 'storm', 'cancel', 'bad weather'],
+    question: 'Can I keep my current doctor?',
+    answer: 'HealthShield partners with a wide network of healthcare providers. You can search our provider directory at healthshield.ai/providers to check if your doctor is in-network. Out-of-network care is covered at a reduced rate on Silver plans and above.',
+    keywords: ['doctor', 'provider', 'network', 'in-network', 'out-of-network', 'physician'],
   },
   {
     category: 'faq',
-    question: 'How much does it cost?',
-    answer: 'Pricing varies by boat and duration. Our boats start at $450-$600 for 2 hours. All boats are on Lake Travis at Highland Lakes Marina. Weekend bookings have a 20% surcharge. Full payment is required at the time of booking.',
-    keywords: ['price', 'cost', 'how much', 'pricing', 'rate', 'fee', 'deposit'],
+    question: 'What are the payment options?',
+    answer: 'We accept all major credit cards, debit cards, ACH bank transfers, and HSA/FSA payments. Monthly premiums can be set up for automatic payment. We also offer premium assistance for qualifying individuals.',
+    keywords: ['payment', 'pay', 'credit card', 'billing', 'premium', 'cost'],
   },
   {
     category: 'faq',
-    question: 'What AI agents do you offer?',
-    answer: 'Yes! All rentals include a licensed, experienced agent. You don\'t need any boating experience - just show up ready to have fun. Our agents know the best spots on the lake and will ensure your safety.',
-    keywords: ['agent', 'driver', 'pilot', 'licensed', 'experience'],
+    question: 'Do you offer telehealth services?',
+    answer: 'Yes! All HealthShield plans include telehealth access at no additional cost. Connect with board-certified doctors 24/7 via video or phone for non-emergency medical issues, mental health counseling, and prescription refills.',
+    keywords: ['telehealth', 'virtual', 'online doctor', 'video visit', 'remote'],
   },
   {
     category: 'faq',
-    question: 'How many people can fit on the boats?',
-    answer: 'Our boats accommodate different group sizes: King Kong (25 people), Lemon Drop & Bananarama (21 people each), and Banana Daiquiri, Pineapple Express & Banana Split (18 people each). These are strict maximums per Coast Guard regulations.',
-    keywords: ['capacity', 'people', 'guests', 'group size', 'maximum', 'how many'],
-  },
-  {
-    category: 'faq',
-    question: 'What payment methods do you accept?',
-    answer: 'We accept all major credit cards (Visa, Mastercard, Amex, Discover), debit cards, and Apple Pay/Google Pay. Full payment is required at the time of booking. No balance due at arrival.',
-    keywords: ['payment', 'pay', 'credit card', 'deposit', 'cash', 'venmo'],
-  },
-  {
-    category: 'faq',
-    question: 'Can I have drinks delivered to the boat?',
-    answer: 'Yes! We\'ve partnered with Party On Delivery, a locally-owned liquor store and delivery service. They can have your boat stocked with drinks upon arrival at our marinas. Use discount code BANANAboatATX at checkout to get FREE DELIVERY! Visit partyondelivery.com and give them at least 72 hours notice for best service.',
-    keywords: ['drinks', 'delivery', 'alcohol delivery', 'party on delivery', 'liquor', 'stock', 'beverage'],
-  },
-
-  // Location Information
-  {
-    category: 'location',
-    answer: 'Lake Travis is Austin\'s premier boating destination with crystal-clear water, dramatic cliffs, and hidden coves. All our boats launch from Highland Lakes Marina at 16120 Wharf Cove, Volente, TX 78641. Popular spots include cliff jumping areas, swimming coves, and scenic viewpoints.',
-    keywords: ['lake travis', 'volente', 'highland lakes marina', 'cliffs', 'coves'],
-  },
-  {
-    category: 'location',
-    answer: 'Lake Travis is a larger, more adventurous lake with stunning cliff views, hidden coves, and deep blue water. It\'s about 20 minutes from downtown Austin and offers a more dramatic landscape. Popular for longer cruises and swimming in crystal-clear water.',
-    keywords: ['lake travis', 'travis', 'cliffs', 'deep water', 'coves'],
+    question: 'What wellness programs are available?',
+    answer: 'HealthShield offers comprehensive wellness programs including fitness tracking rewards, nutrition counseling, mental health support, smoking cessation programs, weight management coaching, and preventive health challenges. Gold and Platinum members get enhanced wellness benefits.',
+    keywords: ['wellness', 'fitness', 'nutrition', 'mental health', 'program', 'healthy'],
   },
 
   // Policies
   {
     category: 'policy',
-    answer: 'For safety, we have a few rules: No glass containers, no diving from the boat, life jackets for non-swimmers, follow agent instructions, and treat the boat with respect. Cleaning fee of $150 may apply for excessive mess.',
-    keywords: ['rules', 'policy', 'safety', 'guidelines', 'restrictions'],
+    answer: 'HealthShield plans renew annually. You can make changes to your plan during the open enrollment period (November-January) or within 60 days of a qualifying life event such as marriage, birth of a child, job loss, or relocation.',
+    keywords: ['renewal', 'change plan', 'open enrollment', 'life event', 'switch'],
   },
   {
     category: 'policy',
-    answer: 'We love dogs! Well-behaved dogs are welcome on all boats at no extra charge. Please bring waste bags and clean up after your pet. If your dog causes any damage, you\'ll be responsible for repairs.',
-    keywords: ['dogs', 'pets', 'animals', 'dog friendly'],
+    answer: 'You can cancel your HealthShield plan at any time with 30 days written notice. Coverage will continue through the end of the paid period. Refunds for unused prepaid premiums are processed within 14 business days.',
+    keywords: ['cancel', 'cancellation', 'stop', 'end coverage', 'terminate'],
   },
   {
     category: 'policy',
-    answer: 'Gratuity for your agent is not included in the rental price. Tips are greatly appreciated and can be added during booking (15%, 20%, 25%) or given as cash directly to your agent.',
-    keywords: ['tip', 'gratuity', 'tipping', 'agent tip'],
+    answer: 'HealthShield protects your personal health information in compliance with HIPAA regulations. Your data is encrypted, access is restricted to authorized personnel, and we never share your information with third parties without your explicit consent.',
+    keywords: ['privacy', 'hipaa', 'data', 'security', 'confidential', 'information'],
   },
 
-  // Experience Types
+  // Enrollment information
   {
-    category: 'experience',
-    answer: 'Bachelor and bachelorette parties are our specialty! We recommend King Kong for large groups (25 people) or Bananarama for medium groups. Our boats come with premium sound systems perfect for dancing. We can connect you with local photographers and catering services.',
-    keywords: ['bachelor', 'bachelorette', 'party', 'wedding', 'bridal'],
+    category: 'enrollment',
+    answer: 'To enroll, you will need: a valid government-issued ID, Social Security number, proof of residency, income verification (for premium assistance eligibility), and information about any current coverage. The enrollment process takes approximately 15 minutes online.',
+    keywords: ['documents', 'requirements', 'id', 'what do i need', 'verification'],
   },
   {
-    category: 'experience',
-    answer: 'Birthday celebrations on the water are magical! We see lots of milestone birthdays (21st, 30th, 40th, 50th). Consider Banana Split for a "sweet" celebration or any of our boats for a party atmosphere. Let us know it\'s a birthday and we\'ll make it special!',
-    keywords: ['birthday', 'celebration', 'party', 'milestone'],
+    category: 'enrollment',
+    answer: 'Qualifying life events that allow enrollment outside the standard open enrollment period include: marriage or divorce, birth or adoption of a child, loss of other health coverage, relocation, change in income, and turning 26 (aging off parent plan).',
+    keywords: ['qualifying event', 'special enrollment', 'life event', 'marriage', 'baby', 'job loss'],
+  },
+
+  // Wellness
+  {
+    category: 'wellness',
+    answer: 'HealthShield Rewards lets you earn points for healthy activities: annual checkups (500 points), fitness milestones (100-300 points), completing health assessments (250 points), and participating in wellness challenges (varies). Points can be redeemed for premium discounts, gift cards, or wellness products.',
+    keywords: ['rewards', 'points', 'earn', 'incentive', 'discount', 'healthy activities'],
   },
   {
-    category: 'experience',
-    answer: 'Corporate events and team building on our boats create unforgettable bonding experiences. King Kong is ideal for large teams (up to 25). We can accommodate multi-boat rentals for bigger groups. Ask about our corporate packages.',
-    keywords: ['corporate', 'team building', 'company', 'work event', 'business'],
-  },
-  {
-    category: 'experience',
-    answer: 'For a romantic sunset cruise, we recommend Banana Daiquiri or Pineapple Express on Lake Travis. The views are spectacular, and the intimate setting is perfect for anniversaries, proposals, or date nights. Best sunset times are typically around 7-8 PM in summer.',
-    keywords: ['romantic', 'sunset', 'anniversary', 'date', 'proposal', 'couples'],
+    category: 'wellness',
+    answer: 'Our mental health support includes unlimited telehealth counseling sessions, access to our mindfulness and meditation app, stress management workshops, crisis support hotline (24/7), and coverage for in-person therapy visits. No referral needed for mental health services.',
+    keywords: ['mental health', 'therapy', 'counseling', 'stress', 'anxiety', 'depression', 'mindfulness'],
   },
 ];
 
@@ -165,7 +159,7 @@ class VectorStore {
         category: entry.category,
         question: entry.question,
         keywords: entry.keywords,
-        boatSlug: entry.boatSlug,
+        planSlug: entry.planSlug,
       },
     }));
   }
@@ -222,7 +216,7 @@ export interface RAGResponse {
   answer: string;
   sources: SearchResult[];
   confidence: number;
-  suggestedPlans?: Boat[];
+  suggestedPlans?: string[];
 }
 
 export async function generateRAGResponse(query: string): Promise<RAGResponse> {
@@ -230,22 +224,22 @@ export async function generateRAGResponse(query: string): Promise<RAGResponse> {
 
   if (searchResults.length === 0) {
     return {
-      answer: "I'd be happy to help you with your boat rental questions! Could you please tell me more about what you're looking for? I can help with boat selection, pricing, availability, what to bring, or any other questions about your upcoming trip.",
+      answer: "I'd be happy to help you with your health insurance questions! Could you please tell me more about what you're looking for? I can help with plan comparison, enrollment, claims, wellness programs, or any other questions about your coverage.",
       sources: [],
       confidence: 0.3,
     };
   }
 
-  // Determine if user is asking about specific boats
-  const boatSlugs = new Set<string>();
+  // Determine if user is asking about specific plans
+  const planSlugs = new Set<string>();
   for (const result of searchResults) {
-    if (result.document.metadata.boatSlug) {
-      boatSlugs.add(result.document.metadata.boatSlug as string);
+    if (result.document.metadata.planSlug) {
+      planSlugs.add(result.document.metadata.planSlug as string);
     }
   }
 
-  const suggestedPlans = boatSlugs.size > 0
-    ? boats.filter((b) => boatSlugs.has(b.slug))
+  const suggestedPlans = planSlugs.size > 0
+    ? Array.from(planSlugs)
     : undefined;
 
   // Build comprehensive response
@@ -275,149 +269,110 @@ export async function generateRAGResponse(query: string): Promise<RAGResponse> {
   };
 }
 
-// Smart Boat Recommendation Engine
-export interface BookingPreferences {
-  groupSize: number;
-  occasion?: string;
-  lake?: 'lake_travis';
-  budget?: number;
-  duration?: '3hr' | '4hr' | '5hr' | '6hr' | '7hr' | '8hr';
-  features?: string[];
+// Smart Plan Recommendation Engine
+export interface CoveragePreferences {
+  age: number;
+  familySize: number;
+  budgetRange?: 'low' | 'moderate' | 'high';
+  hasPreExistingConditions?: boolean;
+  needsDental?: boolean;
+  needsVision?: boolean;
+  prioritizesLowPremium?: boolean;
+  prioritizesLowDeductible?: boolean;
 }
 
-export function recommendBoats(preferences: BookingPreferences): Boat[] {
-  let candidates = [...boats];
+export function recommendPlans(preferences: CoveragePreferences): string[] {
+  const recommendations: { plan: string; score: number }[] = [
+    { plan: 'bronze', score: 50 },
+    { plan: 'silver', score: 50 },
+    { plan: 'gold', score: 50 },
+    { plan: 'platinum', score: 50 },
+  ];
 
-  // Filter by capacity
-  candidates = candidates.filter((b) => b.capacity >= preferences.groupSize);
-
-  // Filter by lake if specified
-  if (preferences.lake) {
-    candidates = candidates.filter((b) => b.lake === preferences.lake);
-  }
-
-  // Filter by budget if specified (using weekday prices as baseline)
-  if (preferences.budget && preferences.duration) {
-    candidates = candidates.filter(
-      (b) => b.pricing.weekday[preferences.duration!] <= preferences.budget!
-    );
-  }
-
-  // Score remaining boats
-  const scored = candidates.map((boat) => {
-    let score = 100;
-
-    // Prefer boats closer to group size (not too big, not too small)
-    const capacityDiff = boat.capacity - preferences.groupSize;
-    if (capacityDiff < 3) score += 20; // Good fit
-    if (capacityDiff > 10) score -= 10; // Way too big
-
-    // Occasion-based scoring
-    if (preferences.occasion) {
-      const occasion = preferences.occasion.toLowerCase();
-
-      if (occasion.includes('bachelor') || occasion.includes('bachelorette')) {
-        if (boat.name === 'King Kong' || boat.name === 'Bananarama') score += 30;
-      }
-
-      if (occasion.includes('birthday')) {
-        if (boat.name === 'Banana Split') score += 20;
-      }
-
-      if (occasion.includes('corporate') || occasion.includes('team')) {
-        if (boat.name === 'King Kong') score += 30;
-      }
-
-      if (occasion.includes('romantic') || occasion.includes('sunset') || occasion.includes('anniversary')) {
-        if (boat.lake === 'lake_travis') score += 20;
-        if (boat.capacity <= 18) score += 15;
-      }
+  for (const rec of recommendations) {
+    // Budget-based scoring
+    if (preferences.budgetRange === 'low') {
+      if (rec.plan === 'bronze') rec.score += 30;
+      if (rec.plan === 'silver') rec.score += 15;
+    } else if (preferences.budgetRange === 'high') {
+      if (rec.plan === 'platinum') rec.score += 30;
+      if (rec.plan === 'gold') rec.score += 20;
     }
 
-    // Feature matching
-    if (preferences.features && preferences.features.length > 0) {
-      for (const feature of preferences.features) {
-        if (boat.features.some((f) => f.toLowerCase().includes(feature.toLowerCase()))) {
-          score += 10;
-        }
-      }
+    // Family size scoring
+    if (preferences.familySize > 2) {
+      if (rec.plan === 'gold') rec.score += 25;
+      if (rec.plan === 'platinum') rec.score += 20;
     }
 
-    return { boat, score };
-  });
+    // Pre-existing conditions
+    if (preferences.hasPreExistingConditions) {
+      if (rec.plan === 'gold') rec.score += 20;
+      if (rec.plan === 'platinum') rec.score += 25;
+      if (rec.plan === 'bronze') rec.score -= 10;
+    }
 
-  // Sort by score and return top 3
-  return scored
+    // Dental/Vision needs
+    if (preferences.needsDental || preferences.needsVision) {
+      if (rec.plan === 'gold') rec.score += 15;
+      if (rec.plan === 'platinum') rec.score += 20;
+    }
+
+    // Premium vs deductible preference
+    if (preferences.prioritizesLowPremium) {
+      if (rec.plan === 'bronze') rec.score += 20;
+      if (rec.plan === 'silver') rec.score += 10;
+    }
+    if (preferences.prioritizesLowDeductible) {
+      if (rec.plan === 'platinum') rec.score += 20;
+      if (rec.plan === 'gold') rec.score += 15;
+    }
+  }
+
+  return recommendations
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
-    .map((s) => s.boat);
+    .map((r) => r.plan);
 }
 
-// Availability Insights
-export interface AvailabilityInsight {
+// Enrollment Period Insights
+export interface EnrollmentInsight {
   date: Date;
-  popularityScore: number;
+  isOpenEnrollment: boolean;
   recommendation: string;
-  pricingTier: 'standard' | 'peak' | 'premium';
+  urgency: 'low' | 'medium' | 'high';
 }
 
-export function getAvailabilityInsights(date: Date): AvailabilityInsight {
-  const dayOfWeek = date.getDay();
+export function getEnrollmentInsights(date: Date): EnrollmentInsight {
   const month = date.getMonth();
-  const dayOfMonth = date.getDate();
 
-  let popularityScore = 50;
-  let pricingTier: 'standard' | 'peak' | 'premium' = 'standard';
+  let isOpenEnrollment = false;
   let recommendation = '';
+  let urgency: 'low' | 'medium' | 'high' = 'low';
 
-  // Weekend pricing (20% surcharge)
-  if (dayOfWeek === 0 || dayOfWeek === 6) {
-    popularityScore += 30;
-    pricingTier = 'peak';
-    recommendation = 'Weekend bookings are popular! Consider booking early.';
+  // Open enrollment period (November-January)
+  if (month >= 10 || month === 0) {
+    isOpenEnrollment = true;
+    urgency = 'high';
+    recommendation = 'Open enrollment is active! Now is the best time to enroll or change your plan.';
   }
 
-  // Summer months (May-September)
-  if (month >= 4 && month <= 8) {
-    popularityScore += 20;
-    if (pricingTier === 'peak') pricingTier = 'premium';
-    recommendation += ' Summer is our busiest season - boats fill up fast!';
+  // Pre-enrollment awareness (September-October)
+  if (month >= 8 && month <= 9) {
+    urgency = 'medium';
+    recommendation = 'Open enrollment starts soon. Review your current coverage and explore plan options.';
   }
 
-  // Holiday weekends
-  const isHolidayWeekend = checkHolidayWeekend(date);
-  if (isHolidayWeekend) {
-    popularityScore += 25;
-    pricingTier = 'premium';
-    recommendation = 'Holiday weekend detected - book ASAP for best selection!';
-  }
-
-  // Friday (start of weekend)
-  if (dayOfWeek === 5) {
-    popularityScore += 15;
-    pricingTier = 'peak';
+  // Mid-year
+  if (month >= 1 && month <= 7) {
+    urgency = 'low';
+    recommendation = 'Outside of open enrollment. You can still enroll if you have a qualifying life event.';
   }
 
   return {
     date,
-    popularityScore: Math.min(popularityScore, 100),
-    recommendation: recommendation.trim() || 'Great choice! Standard availability expected.',
-    pricingTier,
+    isOpenEnrollment,
+    recommendation,
+    urgency,
   };
-}
-
-function checkHolidayWeekend(date: Date): boolean {
-  const month = date.getMonth();
-  const dayOfMonth = date.getDate();
-
-  // Memorial Day weekend (late May)
-  if (month === 4 && dayOfMonth >= 25) return true;
-
-  // July 4th weekend
-  if (month === 6 && dayOfMonth >= 1 && dayOfMonth <= 7) return true;
-
-  // Labor Day weekend (early September)
-  if (month === 8 && dayOfMonth <= 7) return true;
-
-  return false;
 }

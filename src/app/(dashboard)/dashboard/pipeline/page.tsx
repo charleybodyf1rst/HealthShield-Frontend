@@ -491,8 +491,9 @@ export default function PipelinePage() {
       } catch (err) {
         console.error('Failed to update lead status:', err);
         toast.error('Failed to move lead. Please try again.');
-        // Revert - move back to source stage
+        // Revert and refresh to ensure consistency
         moveLeadToStage(activeLeadId, destStage.id, sourceStage.id);
+        fetchPipeline();
       } finally {
         setIsMoving(false);
       }

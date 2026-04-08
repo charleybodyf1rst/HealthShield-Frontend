@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
-  Ship,
+  Shield,
   Clock,
   Users,
   CheckCircle,
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { TodaySchedule, PendingApproval, BoatActivity } from '@/types/plan-crm';
+import type { TodaySchedule, PendingApproval, CrmActivity } from '@/types/crm';
 
 function ScheduleCard({ schedule }: { schedule: TodaySchedule }) {
   const waiversComplete = schedule.waiversRequired > 0
@@ -38,9 +38,9 @@ function ScheduleCard({ schedule }: { schedule: TodaySchedule }) {
           : "bg-white border-slate-200"
     )}>
       <div className="flex items-center gap-4">
-        <div className="text-3xl">{schedule.boatEmoji}</div>
+        <div className="text-3xl">{schedule.serviceIcon}</div>
         <div>
-          <h4 className="font-semibold text-slate-900">{schedule.boatName}</h4>
+          <h4 className="font-semibold text-slate-900">{schedule.serviceName}</h4>
           <p className="text-sm text-slate-500">{schedule.customerName}</p>
         </div>
       </div>
@@ -127,7 +127,7 @@ function ApprovalCard({ approval, onApprove, onReject }: {
   );
 }
 
-function ActivityItem({ activity }: { activity: BoatActivity }) {
+function ActivityItem({ activity }: { activity: CrmActivity }) {
   const colorClasses = {
     green: 'bg-emerald-500',
     blue: 'bg-blue-500',

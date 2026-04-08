@@ -179,7 +179,7 @@ export default function ExpensesPage() {
                   id="exp-description"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="e.g., Fuel for King Kong"
+                  placeholder="e.g., Fuel for Premium Plan"
                 />
               </div>
               <div className="grid gap-2">

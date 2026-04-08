@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -165,8 +166,9 @@ export default function LeadDetailClient() {
     setLead((prev) => ({ ...prev, status: newStatus as Lead['status'] }));
     try {
       await updateLead(Number(lead.id), { status: newStatus as Lead['status'] });
+      toast.success('Status updated');
     } catch {
-      // Revert on failure
+      toast.error('Failed to update status');
       loadLead();
     }
   };

@@ -1,6 +1,6 @@
 // =============================================================================
-// BANANA BOAT RENTALS - SMS NOTIFICATIONS (TWILIO)
-// Automated SMS for bookings, reminders, and agent communication
+// HEALTHSHIELD - SMS NOTIFICATIONS (TWILIO)
+// Automated SMS for appointments, reminders, and advisor communication
 // =============================================================================
 
 export interface SMSConfig {
@@ -47,113 +47,95 @@ export type SMSType =
 
 export const smsTemplates: Record<SMSType, (data: Record<string, string>) => string> = {
   'booking-confirmation': (data) => `
-Howdy! This is HealthShield with your pickup info.
+Hello! This is HealthShield confirming your upcoming appointment.
 
-📍 Pickup Location
-Highland Lakes Marina
-16120 Wharf Cove
-Volente TX 78641
+📅 Date: ${data.date}
+⏰ Time: ${data.timeSlot}
+📂 Service: ${data.serviceName || 'Consultation'}
+👤 Advisor: ${data.agentName || 'TBD'}
 
-Marina entry fee:
-* $5 per person OR
-* $20 per car (up to 4 people)
+Please have your insurance information and ID ready for your appointment.
 
-Extra passengers in a car: $5 each.
-Uber/Lyft drop-offs are not charged vehicle fees.
+Questions? Call or text us at the number on file.
 
-Each boat includes a large cooler but NO ice, so please bring ice with you.
-
-Questions? Call or text 512-705-7758
-
-We look forward to having you on the water! 🌊
+We look forward to assisting you! ✅
   `.trim(),
 
   'booking-reminder-24h': (data) => `
-🍌 Reminder: Your boat party is TOMORROW!
+📋 Reminder: Your appointment is TOMORROW!
 
-${data.customerName}, get ready for:
+${data.customerName}, here are your details:
 📅 ${data.date}
 ⏰ ${data.timeSlot}
-🚤 ${data.boatName}
+📂 ${data.serviceName}
 📍 ${data.meetingPoint}
 
 Don't forget:
-✅ Sunscreen
-✅ Towels
-✅ Cooler with drinks
-✅ Good vibes!
+✅ Insurance card
+✅ Photo ID
+✅ Any relevant medical documents
 
-Agent ${data.agentName} is excited to see you!
+Advisor ${data.agentName} looks forward to assisting you!
 
-Questions? 512-705-7758
+Questions? Reply to this message.
   `.trim(),
 
   'booking-reminder-2h': (data) => `
-🍌 2 Hours Until Your Boat Party!
+📋 2 Hours Until Your Appointment!
 
 ${data.customerName}, it's almost time!
 ⏰ ${data.timeSlot}
-📍 Meet at: ${data.meetingPoint}
+📍 Location: ${data.meetingPoint}
 
-Your agent ${data.agentName} is prepping ${data.boatName} for you now!
+Your advisor ${data.agentName} is preparing for your ${data.serviceName} consultation now!
 
-Running late? Text us back or call 512-705-7758
+Running late? Text us back or call the number on file.
   `.trim(),
 
   'booking-reminder-3d': (data) => `
-Howdy from HealthShield!
+Hello from HealthShield!
 
-Just a reminder about your upcoming boat rental in a few days.
+Just a reminder about your upcoming appointment in a few days.
 
-📍 Pickup Location
-Highland Lakes Marina
-16120 Wharf Cove
-Volente TX 78641
+📅 ${data.date}
+📂 ${data.serviceName || 'Consultation'}
+👤 Advisor: ${data.agentName || 'TBD'}
 
-Marina entry fees:
-* $5 per person OR
-* $20 per car (up to 4 passengers)
+Please have the following ready:
+✅ Insurance card
+✅ Photo ID
+✅ Any relevant documents or records
 
-Uber/Lyft drop-offs are not charged vehicle fees.
+If you have any questions before your appointment, feel free to call or text us.
 
-Reminder: Each boat has a large cooler but we do NOT provide ice, so please bring ice with you.
-
-If you have any questions before your trip, feel free to call or text us at 512-705-7758.
-
-We look forward to seeing you soon! 🌊
+We look forward to seeing you soon! ✅
   `.trim(),
 
   'booking-reminder-dayof': (data) => `
 Good morning! This is HealthShield. We look forward to seeing you today!
 
-📍 Pickup Location
-Highland Lakes Marina
-16120 Wharf Cove
-Volente TX 78641
+📅 Your appointment is today
+⏰ ${data.timeSlot || 'See confirmation email for time'}
+📂 ${data.serviceName || 'Consultation'}
 
-Reminder from the marina:
-* $5 per person OR
-* $20 per car (up to 4 people)
+Please remember to bring:
+✅ Insurance card
+✅ Photo ID
 
-Uber/Lyft drop-offs are not charged vehicle fees.
+If you need to reschedule, please call us as soon as possible.
 
-Each boat includes a large cooler but no ice, so please bring ice with you.
-
-If you have any issues finding the marina, call or text 512-705-7758.
-
-See you on the lake! ☀️
+See you soon! ✅
   `.trim(),
 
   'agent-assignment': (data) => `
-🚤 CAPTAIN ASSIGNMENT
+📋 NEW APPOINTMENT ASSIGNMENT
 
-Hey Agent ${data.agentName}!
+Hey ${data.agentName}!
 
-New trip assigned:
+New appointment assigned:
 📅 ${data.date} at ${data.timeSlot}
-🚤 ${data.boatName}
-👥 ${data.partySize} guests
-📞 Customer: ${data.customerName} - ${data.customerPhone}
+📂 ${data.serviceName}
+👤 Customer: ${data.customerName} - ${data.customerPhone}
 
 Special requests: ${data.specialRequests || 'None'}
 
@@ -161,51 +143,51 @@ Confirm receipt by replying YES
   `.trim(),
 
   'agent-on-way': (data) => `
-🍌 Agent ${data.agentName} is on the way!
+📋 Advisor ${data.agentName} is ready for you!
 
-${data.customerName}, your agent is heading to ${data.meetingPoint} now and will arrive in about ${data.eta} minutes.
+${data.customerName}, your advisor is preparing for your appointment at ${data.meetingPoint} now. Your session starts in about ${data.eta} minutes.
 
-Look for ${data.boatName} 🚤
+Service: ${data.serviceName}
 
 Need anything? Reply to this text!
   `.trim(),
 
   'trip-started': (data) => `
-🎉 Your boat party has started!
+🎉 Your consultation has started!
 
-Have an amazing time, ${data.customerName}!
+Welcome, ${data.customerName}!
 
-Trip ends at: ${data.endTime}
+Session ends at: ${data.endTime}
 
-Need assistance during your trip? Agent ${data.agentName} is there for you, or call base: 512-705-7758
+Need assistance during your session? Advisor ${data.agentName} is there for you.
 
-#HealthShieldLife 🍌🌊
+#HealthShield
   `.trim(),
 
   'trip-completed': (data) => `
-🍌 Thanks for sailing with us!
+Thanks for choosing HealthShield!
 
-${data.customerName}, we hope you had a blast on ${data.boatName}!
+${data.customerName}, we hope your ${data.serviceName} consultation was helpful!
 
 We'd love to hear about your experience! Leave us a Google review:
 ${data.reviewLink}
 
-Book again and get 10% off: ${data.rebookLink}
+Schedule your next appointment: ${data.rebookLink}
 
-See you next time! 🌊
+See you next time! ✅
   `.trim(),
 
   'review-request': (data) => `
-🍌 Quick favor, ${data.customerName}?
+Quick favor, ${data.customerName}?
 
-How was your trip on ${data.boatName}? We'd love a Google review!
+How was your recent consultation? We'd love a Google review!
 
 ⭐ Leave a review: ${data.reviewLink}
 
-As thanks, here's $25 off your next booking: ${data.discountCode}
+As thanks, here's $25 off your next appointment: ${data.discountCode}
 
 Thanks for being awesome!
-- Agent Jason & Crew
+- The HealthShield Team
   `.trim(),
 
   'payment-confirmation': (data) => `
@@ -228,11 +210,11 @@ Questions? 512-705-7758
 ${data.customerName}, your booking has been cancelled:
 
 📅 ${data.date} - ${data.timeSlot}
-🚤 ${data.boatName}
+📂 ${data.serviceName}
 
 ${data.refundAmount ? `Refund of $${data.refundAmount} will be processed in 5-7 business days.` : ''}
 
-We're sorry to see you go! Hope to see you on the water soon.
+We're sorry to see you go! Hope to assist you again soon.
 
 Rebook anytime: ${data.rebookLink}
   `.trim(),
@@ -253,7 +235,7 @@ Questions? Call 512-705-7758
   `.trim(),
 
   'reschedule-offer': (data) => `
-🍌 Ready to Reschedule?
+📋 Ready to Reschedule?
 
 ${data.customerName}, we have these openings for your rain check:
 
@@ -274,7 +256,7 @@ As a thank you, enjoy ${data.reward}
 Use code: ${data.rewardCode}
 Expires: ${data.expiryDate}
 
-Book now: healthshieldrentals.com/book
+Book now: healthshield.com/book
   `.trim(),
 
   'birthday-offer': (data) => `
@@ -282,12 +264,12 @@ Book now: healthshieldrentals.com/book
 
 From the HealthShield crew to you - have an amazing day!
 
-Celebrate on the water with 20% OFF:
+Celebrate with 20% OFF your next consultation:
 Use code: BDAY${data.discountCode}
 
-Valid for 30 days. Book at healthshieldrentals.com
+Valid for 30 days. Book at healthshield.com
 
-🍌🎈 Party time! 🎈🍌
+🎈 Enjoy your special day! 🎈
   `.trim(),
 
   'custom': (data) => data.message || '',
@@ -453,7 +435,7 @@ export function scheduleBookingSMS(
     scheduledFor: reviewRequest,
     data: {
       ...customerData,
-      reviewLink: 'https://g.page/r/healthshieldrentals/review',
+      reviewLink: 'https://g.page/r/healthshield/review',
       discountCode: `THANKS${bookingId.slice(-4).toUpperCase()}`,
     },
     status: 'pending',
@@ -463,7 +445,7 @@ export function scheduleBookingSMS(
 }
 
 // =============================================================================
-// CAPTAIN NOTIFICATIONS
+// ADVISOR NOTIFICATIONS
 // =============================================================================
 
 /**
@@ -487,14 +469,14 @@ export async function notifyAgentEnRoute(
   customerPhone: string,
   customerName: string,
   agentName: string,
-  boatName: string,
+  serviceName: string,
   meetingPoint: string,
   eta: number
 ): Promise<SMSMessage> {
   return sendSMS(customerPhone, 'agent-on-way', {
     customerName,
     agentName,
-    boatName,
+    serviceName,
     meetingPoint,
     eta: String(eta),
   });

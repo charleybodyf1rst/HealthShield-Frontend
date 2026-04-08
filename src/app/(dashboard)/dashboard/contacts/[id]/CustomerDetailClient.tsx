@@ -43,7 +43,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
-import type { BoatCustomer as InsuranceCustomer, BoatInteraction as CustomerInteraction, InteractionType } from '@/types/boat-crm';
+import type { Contact as InsuranceCustomer, CrmInteraction as CustomerInteraction, InteractionType } from '@/types/crm';
 
 const interactionTypeIcons: Record<string, typeof Phone> = {
   call: PhoneCall,

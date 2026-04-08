@@ -82,7 +82,7 @@ const demoEmployees = [
     hourlyRate: 35,
     rating: 4.9,
     totalShifts: 245,
-    preferredLocation: 'lake-travis' as const,
+    preferredLocation: 'regional' as const,
     certifications: [
       { id: 'cert-1', type: 'USCG-OUPV', name: 'USCG OUPV License', expiryDate: '2025-06-15', status: 'valid' as CertificationStatus },
       { id: 'cert-2', type: 'CPR-FirstAid', name: 'CPR/First Aid', expiryDate: '2024-02-28', status: 'expiring-soon' as CertificationStatus },
@@ -102,7 +102,7 @@ const demoEmployees = [
     hourlyRate: 38,
     rating: 4.8,
     totalShifts: 312,
-    preferredLocation: 'lake-travis' as const,
+    preferredLocation: 'regional' as const,
     certifications: [
       { id: 'cert-3', type: 'USCG-Master', name: 'USCG Master License', expiryDate: '2026-01-10', status: 'valid' as CertificationStatus },
       { id: 'cert-4', type: 'CPR-FirstAid', name: 'CPR/First Aid', expiryDate: '2024-08-15', status: 'valid' as CertificationStatus },
@@ -141,7 +141,7 @@ const demoEmployees = [
     hourlyRate: 35,
     rating: 4.7,
     totalShifts: 156,
-    preferredLocation: 'lake-travis' as const,
+    preferredLocation: 'regional' as const,
     certifications: [
       { id: 'cert-6', type: 'USCG-OUPV', name: 'USCG OUPV License', expiryDate: '2025-09-20', status: 'valid' as CertificationStatus },
       { id: 'cert-7', type: 'CPR-FirstAid', name: 'CPR/First Aid', expiryDate: '2023-12-01', status: 'expired' as CertificationStatus },
@@ -161,7 +161,7 @@ const demoEmployees = [
     hourlyRate: 30,
     rating: null,
     totalShifts: 12,
-    preferredLocation: 'lake-travis' as const,
+    preferredLocation: 'regional' as const,
     certifications: [
       { id: 'cert-8', type: 'USCG-OUPV', name: 'USCG OUPV License', expiryDate: '2028-01-05', status: 'valid' as CertificationStatus },
     ],
@@ -540,10 +540,10 @@ export default function EmployeesPage() {
                   <TableCell>
                     <span className="text-sm">
                       {employee.preferredLocation === 'both'
-                        ? 'Both Lakes'
-                        : employee.preferredLocation === 'lake-travis'
-                        ? 'Lake Travis'
-                        : 'Lake Travis'}
+                        ? 'All Regions'
+                        : employee.preferredLocation === 'regional'
+                        ? 'Regional Office'
+                        : 'Main Office'}
                     </span>
                   </TableCell>
                   <TableCell>

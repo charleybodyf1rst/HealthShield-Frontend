@@ -40,10 +40,10 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { BoatCall, BoatCallType } from '@/types/plan-crm';
+import type { CrmCall, CrmCallType } from '@/types/crm';
 import { toast } from 'sonner';
 
-const callTypeLabels: Record<BoatCallType, string> = {
+const callTypeLabels: Record<CrmCallType, string> = {
   booking_confirmation: 'Booking Confirmation',
   reminder_24h: '24h Reminder',
   reminder_2h: '2h Reminder',
@@ -66,7 +66,7 @@ const statusColors: Record<string, string> = {
   cancelled: 'bg-slate-100 text-slate-500',
 };
 
-function ActiveCallCard({ call }: { call: BoatCall }) {
+function ActiveCallCard({ call }: { call: CrmCall }) {
   const [duration, setDuration] = useState(call.durationSeconds || 0);
 
   // Timer for active calls
@@ -122,7 +122,7 @@ function ActiveCallCard({ call }: { call: BoatCall }) {
   );
 }
 
-function CallHistoryCard({ call }: { call: BoatCall }) {
+function CallHistoryCard({ call }: { call: CrmCall }) {
   const formatDuration = (seconds?: number) => {
     if (!seconds) return '-';
     const mins = Math.floor(seconds / 60);
@@ -181,7 +181,7 @@ function ScheduleCallDialog() {
   const [open, setOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [customerName, setCustomerName] = useState('');
-  const [callType, setCallType] = useState<BoatCallType>('booking_confirmation');
+  const [callType, setCallType] = useState<CrmCallType>('booking_confirmation');
   const [scheduledFor, setScheduledFor] = useState('');
 
   const { scheduleCall, callsLoading } = useHealthShieldCrmStore();
@@ -239,7 +239,7 @@ function ScheduleCallDialog() {
           </div>
           <div className="space-y-2">
             <Label>Call Type</Label>
-            <Select value={callType} onValueChange={(v) => setCallType(v as BoatCallType)}>
+            <Select value={callType} onValueChange={(v) => setCallType(v as CrmCallType)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

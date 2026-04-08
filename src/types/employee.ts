@@ -3,7 +3,7 @@
 export type EmployeeRole = 'agent' | 'crew' | 'admin' | 'manager' | 'dispatcher';
 export type EmployeeType = 'employee' | 'subcontractor';
 export type EmployeeStatus = 'active' | 'on-leave' | 'training' | 'inactive' | 'terminated';
-export type CertificationType = 'USCG-OUPV' | 'USCG-Master' | 'CPR-FirstAid' | 'Water-Safety' | 'Boat-Specific' | 'Drug-Test' | 'Background-Check';
+export type CertificationType = 'USCG-OUPV' | 'USCG-Master' | 'CPR-FirstAid' | 'Water-Safety' | 'Insurance-License' | 'Drug-Test' | 'Background-Check';
 export type CertificationStatus = 'valid' | 'expiring-soon' | 'expired' | 'pending';
 
 export interface Employee {
@@ -36,8 +36,8 @@ export interface Employee {
   certifications: Certification[];
 
   // Preferences
-  preferredLocation?: 'lake-travis' | 'both';
-  preferredBoats?: string[];
+  preferredLocation?: 'regional' | 'both';
+  preferredServices?: string[];
   maxHoursPerWeek?: number;
   availableDays?: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
 
@@ -99,7 +99,7 @@ export interface EmergencyContact {
 export interface Shift {
   id: string;
   employeeId: string;
-  boatId?: string;
+  serviceId?: string;
   bookingId?: string;
 
   // Schedule
@@ -115,7 +115,7 @@ export interface Shift {
   clockOutTime?: string;
 
   // Location
-  location: 'lake-travis';
+  location: 'regional';
   marina?: string;
 
   // Compensation
@@ -164,7 +164,7 @@ export interface EmployeeFilters {
   status?: EmployeeStatus;
   role?: EmployeeRole;
   type?: EmployeeType;
-  location?: 'lake-travis';
+  location?: 'regional';
   search?: string;
   certificationStatus?: CertificationStatus;
   sort?: 'name' | 'hireDate' | 'rating' | 'role' | 'status';
@@ -183,7 +183,7 @@ export interface CreateEmployeeData {
   hireDate: string;
   hourlyRate: number;
   emergencyContact: EmergencyContact;
-  preferredLocation?: 'lake-travis' | 'both';
+  preferredLocation?: 'regional' | 'both';
   notes?: string;
 }
 
@@ -196,8 +196,8 @@ export interface UpdateEmployeeData {
   status?: EmployeeStatus;
   hourlyRate?: number;
   overtimeRate?: number;
-  preferredLocation?: 'lake-travis' | 'both';
-  preferredBoats?: string[];
+  preferredLocation?: 'regional' | 'both';
+  preferredServices?: string[];
   maxHoursPerWeek?: number;
   availableDays?: string[];
   notes?: string;

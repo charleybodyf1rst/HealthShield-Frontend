@@ -24,7 +24,7 @@ import {
   Plus,
   Phone,
   Mail,
-  Ship,
+  Shield,
   Users,
   Clock,
   Calendar,
@@ -41,7 +41,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { BoatLead, LeadStatus } from '@/types/plan-crm';
+import type { CrmLead, LeadStatus } from '@/types/crm';
 import { InteractionTimeline } from './InteractionTimeline';
 
 const statusColors: Record<LeadStatus, string> = {
@@ -55,18 +55,18 @@ const statusColors: Record<LeadStatus, string> = {
   unresponsive: 'bg-gray-100 text-gray-700',
 };
 
-const boatTypeEmojis: Record<string, string> = {
-  double_decker: '🦍',
-  pink: '💖',
-  pontoon: '🍌',
-  wakesurfing: '🏄',
-  any: '🚤',
+const planTypeIcons: Record<string, string> = {
+  individual: 'Individual',
+  family: 'Family',
+  group: 'Group',
+  corporate: 'Corporate',
+  any: 'Any',
 };
 
 export function LeadsTab() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedLead, setSelectedLead] = useState<BoatLead | null>(null);
+  const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
   const [showNewLeadDialog, setShowNewLeadDialog] = useState(false);
   const [showConvertDialog, setShowConvertDialog] = useState(false);
 
@@ -205,9 +205,9 @@ export function LeadsTab() {
             <SelectItem value="contacted">Contacted</SelectItem>
             <SelectItem value="qualified">Qualified</SelectItem>
             <SelectItem value="quoted">Quote Sent</SelectItem>
-            <SelectItem value="negotiating">Deposit Pending</SelectItem>
-            <SelectItem value="converted">Booked</SelectItem>
-            <SelectItem value="lost">Cancelled</SelectItem>
+            <SelectItem value="negotiating">Negotiating</SelectItem>
+            <SelectItem value="converted">Enrolled</SelectItem>
+            <SelectItem value="lost">Lost</SelectItem>
           </SelectContent>
         </Select>
 
@@ -324,7 +324,7 @@ function LeadRow({
   isSelected,
   onClick,
 }: {
-  lead: BoatLead;
+  lead: CrmLead;
   isSelected: boolean;
   onClick: () => void;
 }) {
@@ -360,23 +360,17 @@ function LeadRow({
             )}
           </div>
 
-          {lead.boatTypeInterested && (
+          {lead.categoryInterested && (
             <div className="flex items-center gap-3 mt-2 text-sm">
               <span className="flex items-center gap-1 text-slate-600">
-                <Ship className="w-3 h-3" />
-                {boatTypeEmojis[lead.boatTypeInterested] || '🚤'}{' '}
-                {lead.specificBoatName || lead.boatTypeInterested.replace('_', ' ')}
+                <Shield className="w-3 h-3" />
+                {planTypeIcons[lead.categoryInterested] || 'Insurance'}{' '}
+                {lead.categoryInterested.replace('_', ' ')}
               </span>
               {lead.partySize && (
                 <span className="flex items-center gap-1 text-slate-600">
                   <Users className="w-3 h-3" />
-                  {lead.partySize} guests
-                </span>
-              )}
-              {lead.hoursRequested && (
-                <span className="flex items-center gap-1 text-slate-600">
-                  <Clock className="w-3 h-3" />
-                  {lead.hoursRequested}h
+                  {lead.partySize} members
                 </span>
               )}
             </div>
@@ -397,9 +391,9 @@ function LeadDetailPanel({
   onConvert,
   onMarkLost,
 }: {
-  lead: BoatLead;
+  lead: CrmLead;
   onClose: () => void;
-  onUpdate: (data: Partial<BoatLead>) => Promise<void>;
+  onUpdate: (data: Partial<CrmLead>) => Promise<void>;
   onConvert: () => void;
   onMarkLost: (reason: string) => void;
 }) {
@@ -444,34 +438,28 @@ function LeadDetailPanel({
           </div>
         </div>
 
-        {/* Rental Interest */}
+        {/* Insurance Interest */}
         <div className="space-y-3 p-3 bg-slate-50 rounded-lg">
-          <h4 className="font-medium text-slate-700 text-sm">Rental Interest</h4>
+          <h4 className="font-medium text-slate-700 text-sm">Insurance Interest</h4>
           <div className="grid grid-cols-2 gap-3 text-sm">
-            {lead.boatTypeInterested && (
+            {lead.categoryInterested && (
               <div>
-                <span className="text-slate-500">Plan Type:</span>
+                <span className="text-slate-500">Plan Category:</span>
                 <p className="font-medium">
-                  {boatTypeEmojis[lead.boatTypeInterested]}{' '}
-                  {lead.specificBoatName || lead.boatTypeInterested.replace('_', ' ')}
+                  {planTypeIcons[lead.categoryInterested] || ''}{' '}
+                  {lead.categoryInterested.replace('_', ' ')}
                 </p>
               </div>
             )}
             {lead.partySize && (
               <div>
-                <span className="text-slate-500">Party Size:</span>
-                <p className="font-medium">{lead.partySize} guests</p>
-              </div>
-            )}
-            {lead.hoursRequested && (
-              <div>
-                <span className="text-slate-500">Duration:</span>
-                <p className="font-medium">{lead.hoursRequested} hours</p>
+                <span className="text-slate-500">Household Size:</span>
+                <p className="font-medium">{lead.partySize} members</p>
               </div>
             )}
             {lead.occasion && (
               <div>
-                <span className="text-slate-500">Occasion:</span>
+                <span className="text-slate-500">Reason:</span>
                 <p className="font-medium capitalize">{lead.occasion.replace('_', ' ')}</p>
               </div>
             )}
@@ -481,24 +469,18 @@ function LeadDetailPanel({
                 <p className="font-medium">{new Date(lead.preferredDate).toLocaleDateString()}</p>
               </div>
             )}
-            {lead.lakePreference && lead.lakePreference !== 'either' && (
-              <div>
-                <span className="text-slate-500">Lake:</span>
-                <p className="font-medium capitalize">{lead.lakePreference.replace('_', ' ')}</p>
-              </div>
-            )}
             {(lead.budgetMin || lead.budgetMax) && (
               <div className="col-span-2">
                 <span className="text-slate-500">Budget:</span>
                 <p className="font-medium">
-                  ${lead.budgetMin || 0} - ${lead.budgetMax || '?'}
+                  ${lead.budgetMin || 0} - ${lead.budgetMax || '?'}/mo
                 </p>
               </div>
             )}
           </div>
           {lead.specialRequests && (
             <div>
-              <span className="text-slate-500 text-sm">Special Requests:</span>
+              <span className="text-slate-500 text-sm">Special Requirements:</span>
               <p className="text-sm mt-1">{lead.specialRequests}</p>
             </div>
           )}
@@ -603,7 +585,7 @@ function NewLeadForm({
   onCancel,
 }: {
   options: any;
-  onSubmit: (data: Partial<BoatLead>) => Promise<void>;
+  onSubmit: (data: Partial<CrmLead>) => Promise<void>;
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState({
@@ -611,12 +593,10 @@ function NewLeadForm({
     lastName: '',
     email: '',
     phone: '',
-    boatTypeInterested: '',
-    hoursRequested: '',
+    categoryInterested: '',
     partySize: '',
     occasion: '',
     preferredDate: '',
-    lakePreference: 'either',
     budgetMin: '',
     budgetMax: '',
     specialRequests: '',
@@ -634,12 +614,10 @@ function NewLeadForm({
         lastName: formData.lastName || undefined,
         email: formData.email || undefined,
         phone: formData.phone,
-        boatTypeInterested: formData.boatTypeInterested || undefined,
-        hoursRequested: formData.hoursRequested ? parseInt(formData.hoursRequested) : undefined,
+        categoryInterested: formData.categoryInterested || undefined,
         partySize: formData.partySize ? parseInt(formData.partySize) : undefined,
         occasion: formData.occasion || undefined,
         preferredDate: formData.preferredDate || undefined,
-        lakePreference: formData.lakePreference as any,
         budgetMin: formData.budgetMin ? parseFloat(formData.budgetMin) : undefined,
         budgetMax: formData.budgetMax ? parseFloat(formData.budgetMax) : undefined,
         specialRequests: formData.specialRequests || undefined,
@@ -690,27 +668,26 @@ function NewLeadForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Boat Type</label>
+          <label className="text-sm font-medium">Plan Category</label>
           <Select
-            value={formData.boatTypeInterested}
-            onValueChange={(v) => setFormData({ ...formData, boatTypeInterested: v })}
+            value={formData.categoryInterested}
+            onValueChange={(v) => setFormData({ ...formData, categoryInterested: v })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="double_decker">Double Decker</SelectItem>
-              <SelectItem value="pink">Medicare Advantage</SelectItem>
-              <SelectItem value="pontoon">Pontoon</SelectItem>
-              <SelectItem value="wakesurfing">Wakesurfing</SelectItem>
-              <SelectItem value="any">Any / Not Sure</SelectItem>
+              <SelectItem value="individual">Individual</SelectItem>
+              <SelectItem value="family">Family</SelectItem>
+              <SelectItem value="group">Group</SelectItem>
+              <SelectItem value="corporate">Corporate</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label className="text-sm font-medium">Party Size</label>
+          <label className="text-sm font-medium">Household Size</label>
           <Input
             type="number"
             min="1"
@@ -718,21 +695,11 @@ function NewLeadForm({
             onChange={(e) => setFormData({ ...formData, partySize: e.target.value })}
           />
         </div>
-        <div>
-          <label className="text-sm font-medium">Hours</label>
-          <Input
-            type="number"
-            min="1"
-            max="12"
-            value={formData.hoursRequested}
-            onChange={(e) => setFormData({ ...formData, hoursRequested: e.target.value })}
-          />
-        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Occasion</label>
+          <label className="text-sm font-medium">Reason</label>
           <Select
             value={formData.occasion}
             onValueChange={(v) => setFormData({ ...formData, occasion: v })}
@@ -741,14 +708,11 @@ function NewLeadForm({
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="birthday">Birthday</SelectItem>
-              <SelectItem value="bachelorette">Bachelorette</SelectItem>
-              <SelectItem value="bachelor">Bachelor</SelectItem>
-              <SelectItem value="corporate">Corporate</SelectItem>
-              <SelectItem value="family">Family</SelectItem>
-              <SelectItem value="date">Date</SelectItem>
-              <SelectItem value="wedding">Wedding</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
+              <SelectItem value="new_policy">New Policy</SelectItem>
+              <SelectItem value="renewal">Renewal</SelectItem>
+              <SelectItem value="upgrade">Plan Upgrade</SelectItem>
+              <SelectItem value="group_enrollment">Group Enrollment</SelectItem>
+              <SelectItem value="consultation">Consultation</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -764,22 +728,6 @@ function NewLeadForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Lake Preference</label>
-          <Select
-            value={formData.lakePreference}
-            onValueChange={(v) => setFormData({ ...formData, lakePreference: v })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="either">Either Lake</SelectItem>
-              <SelectItem value="lake_travis">Lake Travis</SelectItem>
-              <SelectItem value="lake_austin">Lake Austin</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
           <label className="text-sm font-medium">Source</label>
           <Select
             value={formData.source}
@@ -792,7 +740,7 @@ function NewLeadForm({
               <SelectItem value="website">Website</SelectItem>
               <SelectItem value="phone">Phone</SelectItem>
               <SelectItem value="sms">SMS</SelectItem>
-              <SelectItem value="walk_in">Walk-In</SelectItem>
+              <SelectItem value="walk_in">Walk-in</SelectItem>
               <SelectItem value="referral">Referral</SelectItem>
               <SelectItem value="google">Google</SelectItem>
               <SelectItem value="facebook">Facebook</SelectItem>
@@ -803,7 +751,7 @@ function NewLeadForm({
       </div>
 
       <div>
-        <label className="text-sm font-medium">Special Requests / Notes</label>
+        <label className="text-sm font-medium">Special Requirements / Notes</label>
         <textarea
           className="w-full px-3 py-2 border rounded-md text-sm"
           rows={3}

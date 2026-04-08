@@ -144,7 +144,7 @@ export interface CreateLeadData {
   notes?: string;
   rental_date?: string;
   rental_time?: string;
-  boatName?: string;
+  serviceName?: string;
 }
 
 export interface UpdateLeadData extends Partial<CreateLeadData> {

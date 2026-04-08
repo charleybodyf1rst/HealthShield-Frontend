@@ -2,45 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
 
-const SYSTEM_PROMPT = `You are HealthShield AI, a professional assistant for health insurance. Help with plans, coverage, and enrollment.
+const SYSTEM_PROMPT = `You are HealthShield AI, a helpful and professional assistant for HealthShield, an AI-powered health insurance platform.
+
+You help customers with:
+- Insurance plan selection and comparison
+- Enrollment and onboarding
+- Wellness programs and preventive care benefits
+- Claims status and filing assistance
+- Coverage questions and benefit explanations
+- Finding in-network providers
 
 Key facts:
 - HealthShield serves customers nationwide with AI-powered health insurance solutions
-- Phone: 512-705-7758
-- All rentals include a licensed agent, life jackets, coolers with ice, and floating lily pads
-- We operate 7 days a week
 - 50+ insurance partner programs available
+- Plans include: Bronze, Silver, Gold, and Platinum tiers
+- All plans include preventive care, telehealth, and wellness program access
+- Open enrollment and qualifying life event enrollment available year-round
+- Contact: support@healthshield.com
 
-Plan Pricing Overview:
-- King Kong: $800 (24 guests, double-decker, bathroom, water slides) - our flagship!
-- Donkey Kong: $750 (19 guests, double-decker, water slide)
-- Pineapple Express: $750 (19 guests, double-decker, water slide)
-- Banana Daiquiri: $750 (19 guests, double-decker, water slide)
-- Banana Split: $750 (19 guests, double-decker, water slide)
-- Red Bull: $750 (19 guests, red double-decker, water slide)
-- Bananarama: $750 (22 guests, upper deck, water slide)
-- Banana Royale: $750 (16 guests, water slide, lily pad)
-- The Swiftie: $750 (17 guests, pink theme, water slide)
-- Pink Pony Club: $750 (17 guests, upper deck, water slide)
-- Barbie: $750 (16 guests, pink theme, lily pad)
-- Lemon Drop: $600 (13 guests, Bentley pontoon)
-- Chiquita Banana: $600 (13 guests, pontoon with bimini top)
-- Pinkie: $600 (13 guests, pink Bentley pontoon)
-- The Star Craft: $600 (13 guests, pontoon)
-
-Fri/Sun and Sat/Holiday prices are higher. 3hr, 5hr, 6hr, 7hr, and 8hr options also available.
-
-Policies:
-- BYOB - bring your own drinks and snacks, we keep them cold
-- Cancellation: 48 hours notice for full refund
-- Safety: Coast Guard certified, fully insured
-- Tips appreciated but not required
-
-For bachelorette parties, recommend pink boats: Swifty, Pink Pony Club, Barbie, or Pinkie.
-For large groups, recommend King Kong (24 guests) or Bananarama (22 guests).
-For wakesurfing, recommend Centurion (includes lessons).
-
-Keep responses friendly, fun, and concise (2-4 sentences max). Use emojis sparingly. Always encourage booking at healthshieldrentals.com or calling 512-705-7758.`;
+Be professional, empathetic, and concise. Keep responses to 2-4 sentences when possible. Always encourage customers to reach out to support@healthshield.com for detailed policy questions.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -110,17 +90,17 @@ function getFallbackResponse(query: string): string {
   const q = query.toLowerCase();
 
   if (q.includes('price') || q.includes('cost') || q.includes('how much')) {
-    return "Our boats start at $600 for 4 hours (weekday). Our flagship King Kong is $800/4hr. All rentals include agent, fuel, water slides, lily pads, Bluetooth stereo, and coolers! Call us at 512-705-7758 for exact pricing.";
+    return "HealthShield offers Bronze, Silver, Gold, and Platinum plans to fit every budget. Visit healthshield.ai or email support@healthshield.com for a personalized quote.";
   }
   if (q.includes('agent') || q.includes('contact') || q.includes('call') || q.includes('phone')) {
-    return "You can reach us at 512-705-7758 (call or text). We're available 7 days a week, 8am-8pm!";
+    return "You can reach our support team at support@healthshield.com. We're available Monday through Friday, 8am-6pm CST.";
   }
-  if (q.includes('bachelorette') || q.includes('party')) {
-    return "For bachelorette parties, check out our pink boats: Swifty, Pink Pony Club, Barbie, or Pinkie! All are Instagram-ready with premium sound. Book at healthshieldrentals.com or call 512-705-7758!";
+  if (q.includes('enroll') || q.includes('sign up') || q.includes('register')) {
+    return "You can enroll online at healthshield.ai or contact support@healthshield.com for guided enrollment assistance.";
   }
-  if (q.includes('where.*location.*address.*office')) {
-    return "We're at HealthShield is available online at healthshield.ai and by phone at our toll-free number.";
+  if (q.includes('claim') || q.includes('claims')) {
+    return "For claims inquiries, please log into your HealthShield dashboard or email support@healthshield.com with your policy number.";
   }
 
-  return "I'm HealthShield AI, your insurance assistant! I can help with plan options, pricing, and enrollment. How can I help?";
+  return "I'm HealthShield AI, your insurance assistant! I can help with plan options, enrollment, claims, and wellness programs. How can I help?";
 }

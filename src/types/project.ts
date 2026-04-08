@@ -1,4 +1,4 @@
-// Project/Kanban Management Types for Boat Rental CRM
+// Project/Kanban Management Types for HealthShield CRM
 
 export type ProjectStatus = 'active' | 'on-hold' | 'completed' | 'archived';
 export type ProjectCategory = 'maintenance' | 'marketing' | 'operations' | 'hr' | 'finance' | 'general';
@@ -74,7 +74,7 @@ export interface ProjectCard {
   assignees?: CardAssignee[];
 
   // Related entities
-  boatId?: string;
+  serviceId?: string;
   employeeId?: string;
   bookingId?: string;
 
@@ -189,8 +189,8 @@ export interface ProjectTemplate {
 export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     id: 'maintenance',
-    name: 'Boat Maintenance',
-    description: 'Track boat maintenance and repairs',
+    name: 'Policy Review',
+    description: 'Track policy reviews and renewals',
     category: 'maintenance',
     columns: [
       { name: 'To Do', order: 0 },
@@ -199,9 +199,9 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
       { name: 'Completed', order: 3 },
     ],
     sampleCards: [
-      { title: 'Engine oil change', columnIndex: 0 },
-      { title: 'Safety inspection', columnIndex: 0 },
-      { title: 'Hull cleaning', columnIndex: 0 },
+      { title: 'Q2 policy renewals', columnIndex: 0 },
+      { title: 'Compliance audit', columnIndex: 0 },
+      { title: 'Provider network update', columnIndex: 0 },
     ],
   },
   {
@@ -230,9 +230,9 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     ],
     sampleCards: [
       { title: 'Background check', columnIndex: 0 },
-      { title: 'USCG license verification', columnIndex: 0 },
-      { title: 'Safety training', columnIndex: 1 },
-      { title: 'Boat familiarization', columnIndex: 1 },
+      { title: 'Insurance license verification', columnIndex: 0 },
+      { title: 'HIPAA training', columnIndex: 1 },
+      { title: 'CRM system training', columnIndex: 1 },
     ],
   },
   {
@@ -294,7 +294,7 @@ export interface CreateCardData {
   estimatedHours?: number;
   assigneeIds?: string[];
   labels?: string[];
-  boatId?: string;
+  serviceId?: string;
   employeeId?: string;
   bookingId?: string;
 }

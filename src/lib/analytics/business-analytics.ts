@@ -25,9 +25,9 @@ export interface BookingAnalytics {
   avgLeadTime: number; // days between booking and trip
 }
 
-export interface BoatPerformance {
-  boatSlug: string;
-  boatName: string;
+export interface ServicePerformance {
+  serviceSlug: string;
+  serviceName: string;
   totalRevenue: number;
   bookingCount: number;
   avgRating: number;
@@ -55,7 +55,7 @@ export interface FinancialSummary {
   grossRevenue: number;
   netRevenue: number;
   expenses: {
-    fuel: number;
+    operations: number;
     agentWages: number;
     insurance: number;
     maintenance: number;
@@ -141,11 +141,11 @@ export function generateMonthlyRevenueData(): RevenueData[] {
   return data;
 }
 
-export function getBoatPerformance(): BoatPerformance[] {
+export function getServicePerformance(): ServicePerformance[] {
   return [
     {
-      boatSlug: 'king-kong',
-      boatName: 'King Kong',
+      serviceSlug: 'health-consultation',
+      serviceName: 'Health Consultation',
       totalRevenue: 45000,
       bookingCount: 52,
       avgRating: 4.9,
@@ -153,8 +153,8 @@ export function getBoatPerformance(): BoatPerformance[] {
       mostPopularDuration: '4hr',
     },
     {
-      boatSlug: 'bananarama',
-      boatName: 'Bananarama',
+      serviceSlug: 'plan-enrollment',
+      serviceName: 'Plan Enrollment',
       totalRevenue: 38000,
       bookingCount: 48,
       avgRating: 4.8,
@@ -162,8 +162,8 @@ export function getBoatPerformance(): BoatPerformance[] {
       mostPopularDuration: '4hr',
     },
     {
-      boatSlug: 'lemon-drop',
-      boatName: 'Lemon Drop',
+      serviceSlug: 'claims-review',
+      serviceName: 'Claims Review',
       totalRevenue: 32000,
       bookingCount: 42,
       avgRating: 4.7,
@@ -171,8 +171,8 @@ export function getBoatPerformance(): BoatPerformance[] {
       mostPopularDuration: '3hr',
     },
     {
-      boatSlug: 'banana-split',
-      boatName: 'Banana Split',
+      serviceSlug: 'wellness-program',
+      serviceName: 'Wellness Program',
       totalRevenue: 28000,
       bookingCount: 38,
       avgRating: 4.9,
@@ -180,8 +180,8 @@ export function getBoatPerformance(): BoatPerformance[] {
       mostPopularDuration: '4hr',
     },
     {
-      boatSlug: 'pineapple-express',
-      boatName: 'Pineapple Express',
+      serviceSlug: 'benefits-review',
+      serviceName: 'Benefits Review',
       totalRevenue: 26000,
       bookingCount: 35,
       avgRating: 4.8,
@@ -189,8 +189,8 @@ export function getBoatPerformance(): BoatPerformance[] {
       mostPopularDuration: '3hr',
     },
     {
-      boatSlug: 'the-swiftie',
-      boatName: 'The Swiftie!',
+      serviceSlug: 'policy-renewal',
+      serviceName: 'Policy Renewal',
       totalRevenue: 24000,
       bookingCount: 32,
       avgRating: 4.9,
@@ -203,35 +203,35 @@ export function getBoatPerformance(): BoatPerformance[] {
 export function getCustomerSegments(): CustomerSegment[] {
   return [
     {
-      name: 'Bachelor/Bachelorette Parties',
+      name: 'Individual Plans',
       count: 85,
       totalRevenue: 72000,
       avgBookingValue: 847,
       repeatRate: 15,
     },
     {
-      name: 'Birthday Celebrations',
+      name: 'Family Plans',
       count: 62,
       totalRevenue: 48000,
       avgBookingValue: 774,
       repeatRate: 25,
     },
     {
-      name: 'Corporate Events',
+      name: 'Corporate / Group Plans',
       count: 28,
       totalRevenue: 42000,
       avgBookingValue: 1500,
       repeatRate: 45,
     },
     {
-      name: 'Family Gatherings',
+      name: 'Medicare Supplement',
       count: 45,
       totalRevenue: 32000,
       avgBookingValue: 711,
       repeatRate: 35,
     },
     {
-      name: 'Casual Day Trips',
+      name: 'Wellness Programs',
       count: 72,
       totalRevenue: 38000,
       avgBookingValue: 528,
@@ -290,7 +290,7 @@ export function getMarketingMetrics(): MarketingMetrics[] {
 export function getFinancialSummary(): FinancialSummary {
   const grossRevenue = 193000;
   const expenses = {
-    fuel: 12000,
+    operations: 12000,
     agentWages: 45000,
     insurance: 18000,
     maintenance: 8500,
@@ -334,7 +334,7 @@ export function getGrowthRecommendations(data: {
 
   if (data.utilizationRate < 70) {
     recommendations.push(
-      'Consider weekday promotions to increase utilization rate. Target corporate events and team-building activities for Tue-Thu.'
+      'Consider weekday promotions to increase utilization rate. Target corporate group plans and wellness programs for Tue-Thu.'
     );
   }
 
@@ -357,11 +357,11 @@ export function getGrowthRecommendations(data: {
   }
 
   recommendations.push(
-    'Peak season (May-Aug) drives 60% of revenue. Build cash reserves during this time for off-season operations.'
+    'Open enrollment season drives 60% of revenue. Build cash reserves during this time for off-season operations.'
   );
 
   recommendations.push(
-    'Bachelor/bachelorette parties are your highest value segment. Partner with wedding planners and engagement venues.'
+    'Corporate group plans are your highest value segment. Partner with HR departments and benefits brokers.'
   );
 
   return recommendations;
@@ -401,7 +401,7 @@ export function formatBookingsForChart(data: RevenueData[]): {
   };
 }
 
-export function formatBoatPerformanceForChart(data: BoatPerformance[]): {
+export function formatServicePerformanceForChart(data: ServicePerformance[]): {
   labels: string[];
   datasets: { label: string; data: number[]; backgroundColor: string[] }[];
 } {
@@ -415,7 +415,7 @@ export function formatBoatPerformanceForChart(data: BoatPerformance[]): {
   ];
 
   return {
-    labels: data.map(d => d.boatName),
+    labels: data.map(d => d.serviceName),
     datasets: [
       {
         label: 'Revenue ($)',

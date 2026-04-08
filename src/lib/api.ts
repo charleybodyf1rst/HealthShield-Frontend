@@ -276,7 +276,7 @@ export const authApi = {
 
 // ==================== LEADS API ====================
 
-// Valid backend sources for BoatLeadController
+// Valid backend sources for CrmLeadController
 const VALID_BACKEND_SOURCES = ['website', 'phone', 'sms', 'walk_in', 'referral', 'google', 'facebook', 'instagram', 'yelp', 'other'];
 
 function mapLeadSource(source: string): string {
@@ -284,7 +284,7 @@ function mapLeadSource(source: string): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapBoatLeadToLead(raw: any): Lead {
+function mapCrmLeadToLead(raw: any): Lead {
   return {
     id: String(raw.id),
     firstName: raw.contact_first_name || raw.first_name || raw.firstName || '',
@@ -317,7 +317,7 @@ export const leadsApi = {
       ...response,
       data: {
         ...paginated,
-        data: rawLeads.map(mapBoatLeadToLead),
+        data: rawLeads.map(mapCrmLeadToLead),
       },
     };
   },
@@ -326,19 +326,19 @@ export const leadsApi = {
     const response = await api.get<{ success: boolean; data: unknown }>(`/api/v1/crm/leads/${id}`);
     return {
       ...response,
-      data: mapBoatLeadToLead(response.data),
+      data: mapCrmLeadToLead(response.data),
     };
   },
 
   create: async (data: CreateLeadData) => {
     const payload = {
-      company_name: data.boatName || `${data.firstName} ${data.lastName}`.trim(),
+      company_name: data.serviceName || `${data.firstName} ${data.lastName}`.trim(),
       contact_first_name: data.firstName,
       contact_last_name: data.lastName,
       contact_email: data.email,
       contact_phone: data.phone,
       lead_source: mapLeadSource(data.source),
-      industry: data.boatName || undefined,
+      industry: data.serviceName || undefined,
       deal_value: data.value,
       notes: data.notes,
     };
@@ -348,7 +348,7 @@ export const leadsApi = {
     );
     return {
       ...response,
-      data: mapBoatLeadToLead(response.data),
+      data: mapCrmLeadToLead(response.data),
     };
   },
 
@@ -368,7 +368,7 @@ export const leadsApi = {
 
     const response = await api.put<unknown>(`/api/v1/crm/leads/${id}`, payload);
     return {
-      data: mapBoatLeadToLead(response),
+      data: mapCrmLeadToLead(response),
     };
   },
 
@@ -1921,8 +1921,8 @@ export interface SalesAppointment {
   outcome?: string;
   next_steps?: string;
   agent_name?: string;
-  boat_id?: number;
-  boat_name?: string;
+  service_id?: number;
+  service_name?: string;
   created_at: string;
   updated_at: string;
 }
@@ -1940,7 +1940,7 @@ export interface CreateSalesAppointmentData {
   meeting_link?: string;
   notes?: string;
   agent_name?: string;
-  boat_id?: number;
+  service_id?: number;
 }
 
 export interface UpdateSalesAppointmentData {
@@ -1959,7 +1959,7 @@ export interface UpdateSalesAppointmentData {
   outcome?: string;
   next_steps?: string;
   agent_name?: string;
-  boat_id?: number;
+  service_id?: number;
 }
 
 export const salesCalendarApi = {

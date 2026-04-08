@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
-import type { PendingApproval } from '@/types/plan-crm';
+import type { PendingApproval } from '@/types/crm';
 import { toast } from 'sonner';
 
 const actionTypeIcons: Record<string, React.ReactNode> = {

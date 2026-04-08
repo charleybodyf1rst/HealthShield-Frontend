@@ -24,7 +24,7 @@ export function getEcho(): Echo<any> | null {
   }
 
   // Reverb is not yet configured for HealthShield — disable WebSocket entirely.
-  // The app falls back to polling via useBoatCrmRealtime.ts.
+  // The app falls back to polling via useCrmRealtime.ts.
   // Re-enable once Reverb server accepts this app's key.
   return null;
 }

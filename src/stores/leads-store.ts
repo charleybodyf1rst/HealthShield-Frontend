@@ -123,7 +123,7 @@ export const useLeadsStore = create<LeadsStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await leadsApi.update(id, data);
-      const updatedLead = response.data?.lead || response.data;
+      const updatedLead = response.data;
       set((state) => ({
         leads: state.leads.map((lead) => (lead.id === id ? updatedLead : lead)),
         selectedLead: state.selectedLead?.id === id ? updatedLead : state.selectedLead,

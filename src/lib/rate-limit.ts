@@ -73,7 +73,7 @@ export function checkRateLimit(key: string, config: RateLimitConfig): RateLimitR
 
 export const RATE_LIMIT_TIERS: Record<string, RateLimitConfig> = {
   '/api/ai': { windowMs: 60_000, max: 20 },
-  '/api/boat-rentals': { windowMs: 60_000, max: 60 },
+  '/api/crm': { windowMs: 60_000, max: 60 },
   '/api/sales': { windowMs: 60_000, max: 80 },
   '/api/': { windowMs: 60_000, max: 100 },
 };

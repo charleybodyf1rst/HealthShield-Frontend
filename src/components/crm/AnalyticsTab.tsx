@@ -86,7 +86,7 @@ function StatCard({
   );
 }
 
-function BoatPerformanceRow({ name, bookings, revenue }: {
+function PlanPerformanceRow({ name, bookings, revenue }: {
   name: string;
   bookings: number;
   revenue: number;
@@ -264,13 +264,13 @@ export function AnalyticsTab() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {bookings?.bookingsByBoat && Object.keys(bookings.bookingsByBoat).length > 0 ? (
+                {bookings?.enrollmentsByPlan && Object.keys(bookings.enrollmentsByPlan).length > 0 ? (
                   <div className="space-y-1">
-                    {Object.entries(bookings.bookingsByBoat)
+                    {Object.entries(bookings.enrollmentsByPlan)
                       .sort(([, a], [, b]) => b - a)
                       .slice(0, 5)
                       .map(([plan, count]) => (
-                        <BoatPerformanceRow
+                        <PlanPerformanceRow
                           key={plan}
                           name={plan}
                           bookings={count}

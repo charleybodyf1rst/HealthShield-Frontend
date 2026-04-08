@@ -40,7 +40,7 @@ interface PaymentProvider {
 
 async function createPaymentViaBackend(request: PaymentRequest): Promise<PaymentResult> {
   try {
-    const response = await fetch(`${API_URL}/api/v1/boat-rentals/public/process-payment`, {
+    const response = await fetch(`${API_URL}/api/v1/insurance/public/process-payment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,8 +59,8 @@ async function createPaymentViaBackend(request: PaymentRequest): Promise<Payment
         card_holder_name: request.card.cardHolderName,
         card_zip: request.card.zipCode,
         card_street: request.metadata?.billingStreet || '',
-        boat_name: request.metadata?.boatName,
-        trip_date: request.metadata?.tripDate,
+        service_name: request.metadata?.serviceName,
+        appointment_date: request.metadata?.appointmentDate,
         duration: request.metadata?.duration,
       }),
     });

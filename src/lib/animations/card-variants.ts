@@ -1,5 +1,5 @@
 /**
- * Boat Card Animation Variants for Framer Motion
+ * Card Animation Variants for Framer Motion
  * Full Immersive Aura Effects with Party Mode Intensity
  */
 
@@ -37,7 +37,7 @@ export const auraColors = {
   },
 } as const;
 
-export type BoatColor = keyof typeof auraColors;
+export type AuraColor = keyof typeof auraColors;
 
 // Party mode configuration
 export const partyModeConfig = {
@@ -51,7 +51,7 @@ export const partyModeConfig = {
 };
 
 // Base card animation variants
-export const boatCardVariants: Variants = {
+export const cardVariants: Variants = {
   initial: {
     scale: 1,
     y: 0,
@@ -203,12 +203,12 @@ export const colorGradients = {
   },
 } as const;
 
-// Get the aura card class based on boat color
-export function getAuraCardClass(color: BoatColor): string {
-  return `card-boat-aura card-boat-${color}-aura`;
+// Get the aura card class based on color
+export function getAuraCardClass(color: AuraColor): string {
+  return `card-aura card-${color}-aura`;
 }
 
 // Get color gradient config
-export function getColorGradient(color: BoatColor) {
+export function getColorGradient(color: AuraColor) {
   return colorGradients[color];
 }

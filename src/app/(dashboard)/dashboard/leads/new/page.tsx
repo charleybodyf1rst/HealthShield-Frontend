@@ -44,7 +44,7 @@ export default function NewLeadPage() {
     notes: '',
     rental_date: '',
     rental_time: '',
-    boatName: undefined,
+    serviceName: undefined,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -173,8 +173,8 @@ export default function NewLeadPage() {
               <div className="space-y-2">
                 <Label htmlFor="planType">Insurance Plan</Label>
                 <Select
-                  value={formData.boatName || 'none'}
-                  onValueChange={(value) => updateField('boatName', value === 'none' ? undefined : value)}
+                  value={formData.serviceName || 'none'}
+                  onValueChange={(value) => updateField('serviceName', value === 'none' ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select plan..." />

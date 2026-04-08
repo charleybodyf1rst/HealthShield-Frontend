@@ -4,7 +4,7 @@
  * HealthShield - Premium AI Chat Widget
  *
  * Intelligent chatbot powered by RAG (Retrieval Augmented Generation)
- * Provides instant answers about boats, pricing, availability, and more
+ * Provides instant answers about plans, pricing, enrollment, and more
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -215,7 +215,7 @@ export function AIChatWidget() {
                     >
                       <p className="whitespace-pre-wrap">{message.content}</p>
 
-                      {/* Suggested Boats */}
+                      {/* Suggested Plans */}
                       {message.suggestedPlans && message.suggestedPlans.length > 0 && (
                         <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
                           <p className="text-xs font-medium text-gray-500 flex items-center gap-1">

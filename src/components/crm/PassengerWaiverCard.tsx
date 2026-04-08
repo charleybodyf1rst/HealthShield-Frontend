@@ -14,9 +14,9 @@ import {
   PenTool,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { PassengerWaiverStatus } from '@/types/plan-crm';
+import type { PassengerWaiverStatus } from '@/types/crm';
 
-interface PassengerWaiverCardProps {
+interface ClientConsentCardProps {
   passenger: PassengerWaiverStatus;
   onSendReminder?: () => void;
   onCollectSignature?: () => void;
@@ -24,13 +24,16 @@ interface PassengerWaiverCardProps {
   showActions?: boolean;
 }
 
-export function PassengerWaiverCard({
+/** @deprecated Alias for ClientConsentCard */
+export const PassengerWaiverCard = ClientConsentCard;
+
+export function ClientConsentCard({
   passenger,
   onSendReminder,
   onCollectSignature,
   isLoading = false,
   showActions = true,
-}: PassengerWaiverCardProps) {
+}: ClientConsentCardProps) {
   const hasContact = passenger.email || passenger.phone;
 
   return (
@@ -57,7 +60,7 @@ export function PassengerWaiverCard({
           )}
         </div>
 
-        {/* Passenger Info */}
+        {/* Client Info */}
         <div>
           <div className="flex items-center gap-2">
             <span className="font-medium text-slate-900">{passenger.fullName}</span>

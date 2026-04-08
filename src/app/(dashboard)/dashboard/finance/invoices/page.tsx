@@ -284,7 +284,7 @@ export default function InvoicesPage() {
                     <tr key={inv.id} className="border-b last:border-0 hover:bg-muted/50">
                       <td className="py-3 font-medium">{inv.invoice_number || `INV-${inv.id}`}</td>
                       <td className="py-3">{inv.customer_name || '--'}</td>
-                      <td className="py-3">{inv.plan_name || inv.boat_name || '--'}</td>
+                      <td className="py-3">{inv.plan_name || inv.service_name || '--'}</td>
                       <td className="py-3 text-muted-foreground">{inv.due_date || inv.created_at?.slice(0, 10) || '--'}</td>
                       <td className="py-3 font-semibold">{formatCurrency(inv.amount)}</td>
                       <td className="py-3">

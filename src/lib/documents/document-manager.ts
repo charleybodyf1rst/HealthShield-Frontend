@@ -4,7 +4,7 @@
  * Comprehensive document organization for:
  * - Tax documents & receipts
  * - Insurance documents
- * - Boat maintenance records
+ * - Service records
  * - Customer contracts
  * - Agent certifications
  * - Business licenses
@@ -46,12 +46,12 @@ export type DocumentCategory =
   | 'hr'
   | 'marketing'
   | 'customer'
-  | 'boat_records';
+  | 'service_records';
 
 export interface DocumentMetadata {
   amount?: number;
   vendor?: string;
-  boatSlug?: string;
+  serviceSlug?: string;
   agentId?: string;
   taxYear?: number;
   taxCategory?: TaxCategory;
@@ -109,16 +109,16 @@ export const documentFolders: DocumentFolder[] = [
     name: 'Insurance Documents',
     category: 'insurance',
     icon: '🛡️',
-    description: 'Boat insurance, liability, and workers comp policies',
+    description: 'Health insurance, liability, and compliance policies',
     documentCount: 0,
     totalSize: 0,
   },
   {
-    id: 'boat-records',
-    name: 'Boat Records',
-    category: 'boat_records',
-    icon: '🚤',
-    description: 'Maintenance logs, registrations, and inspections',
+    id: 'service-records',
+    name: 'Service Records',
+    category: 'service_records',
+    icon: '📋',
+    description: 'Consultation logs, service records, and audit trails',
     documentCount: 0,
     totalSize: 0,
   },
@@ -145,7 +145,7 @@ export const documentFolders: DocumentFolder[] = [
     name: 'Customer Contracts',
     category: 'customer',
     icon: '📝',
-    description: 'Rental agreements and waivers',
+    description: 'Enrollment agreements and consent forms',
     documentCount: 0,
     totalSize: 0,
   },
@@ -171,23 +171,23 @@ export const taxCategories: {
   {
     category: 'fuel',
     name: 'Fuel & Gas',
-    description: 'Marine fuel and gas for boats',
+    description: 'Operational fuel and transportation costs',
     deductionRate: 100,
-    examples: ['Gas station receipts', 'Marina fuel purchases'],
+    examples: ['Transportation receipts', 'Office supply purchases'],
   },
   {
     category: 'maintenance',
-    name: 'Boat Maintenance',
+    name: 'Office Maintenance',
     description: 'Repairs, cleaning, and upkeep',
     deductionRate: 100,
-    examples: ['Engine repairs', 'Hull cleaning', 'Parts replacement'],
+    examples: ['Office repairs', 'Equipment servicing', 'Parts replacement'],
   },
   {
     category: 'insurance',
     name: 'Insurance',
-    description: 'Business and boat insurance premiums',
+    description: 'Business and professional insurance premiums',
     deductionRate: 100,
-    examples: ['Boat insurance', 'Liability insurance', 'Workers comp'],
+    examples: ['E&O insurance', 'Liability insurance', 'Workers comp'],
   },
   {
     category: 'marketing',
@@ -201,7 +201,7 @@ export const taxCategories: {
     name: 'Equipment',
     description: 'Business equipment and supplies',
     deductionRate: 100,
-    examples: ['Life jackets', 'Coolers', 'Sound systems', 'Lily pads'],
+    examples: ['Computers', 'Monitors', 'Headsets', 'Office furniture'],
   },
   {
     category: 'professional_services',
@@ -244,7 +244,7 @@ export const taxCategories: {
 export const sampleDocuments: Document[] = [
   {
     id: 'doc-001',
-    name: 'Marina Fuel Receipt - June 2024',
+    name: 'Office Supply Receipt - June 2024',
     type: 'receipt',
     category: 'tax_deductible',
     fileUrl: '/documents/fuel-receipt-june.pdf',
@@ -255,7 +255,7 @@ export const sampleDocuments: Document[] = [
     tags: ['fuel', '2024', 'june'],
     metadata: {
       amount: 485.50,
-      vendor: 'Highland Lakes Marina',
+      vendor: 'Office Depot',
       taxYear: 2024,
       taxCategory: 'fuel',
     },
@@ -263,7 +263,7 @@ export const sampleDocuments: Document[] = [
   },
   {
     id: 'doc-002',
-    name: 'Boat Insurance Policy - 2024',
+    name: 'Business Insurance Policy - 2024',
     type: 'insurance',
     category: 'insurance',
     fileUrl: '/documents/insurance-2024.pdf',
@@ -275,7 +275,7 @@ export const sampleDocuments: Document[] = [
     tags: ['insurance', '2024', 'annual'],
     metadata: {
       amount: 18500,
-      vendor: 'Marine Insurance Co',
+      vendor: 'Business Insurance Co',
       taxYear: 2024,
       taxCategory: 'insurance',
     },
@@ -283,19 +283,19 @@ export const sampleDocuments: Document[] = [
   },
   {
     id: 'doc-003',
-    name: 'King Kong Engine Service',
+    name: 'Office HVAC Service',
     type: 'maintenance',
-    category: 'boat_records',
-    fileUrl: '/documents/king-kong-service.pdf',
+    category: 'service_records',
+    fileUrl: '/documents/office-hvac-service.pdf',
     fileSize: 350000,
     mimeType: 'application/pdf',
     uploadedAt: new Date('2024-05-20'),
     updatedAt: new Date('2024-05-20'),
-    tags: ['maintenance', 'king-kong', 'engine'],
+    tags: ['maintenance', 'office', 'hvac'],
     metadata: {
       amount: 1250,
-      vendor: 'Austin Marine Services',
-      boatSlug: 'king-kong',
+      vendor: 'Austin Office Services',
+      serviceSlug: 'office-maintenance',
       taxYear: 2024,
       taxCategory: 'maintenance',
     },
@@ -303,19 +303,19 @@ export const sampleDocuments: Document[] = [
   },
   {
     id: 'doc-004',
-    name: 'Agent Jason License',
+    name: 'Agent Insurance License',
     type: 'certification',
     category: 'hr',
-    fileUrl: '/documents/agent-jason-license.pdf',
+    fileUrl: '/documents/agent-insurance-license.pdf',
     fileSize: 180000,
     mimeType: 'application/pdf',
     uploadedAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-01'),
     expiresAt: new Date('2026-02-01'),
-    tags: ['license', 'agent', 'uscg'],
+    tags: ['license', 'agent', 'insurance'],
     metadata: {
-      agentId: 'agent-jason',
-      notes: 'USCG Master License - 100 Ton',
+      agentId: 'agent-001',
+      notes: 'State Licensed Insurance Agent',
     },
     isArchived: false,
   },

@@ -19,10 +19,10 @@ import {
   User,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
-import type { BoatCustomer } from '@/types/plan-crm';
+import type { Contact } from '@/types/crm';
 
 function CustomerCard({ customer, onSelect }: {
-  customer: BoatCustomer;
+  customer: Contact;
   onSelect: () => void;
 }) {
   return (

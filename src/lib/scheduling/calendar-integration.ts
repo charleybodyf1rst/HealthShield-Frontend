@@ -1,6 +1,6 @@
 // =============================================================================
-// BANANA BOAT RENTALS - CALENDAR & SCHEDULING INTEGRATION
-// Full calendar system with Google Calendar sync, booking management
+// HEALTHSHIELD - CALENDAR & SCHEDULING INTEGRATION
+// Full calendar system with Google Calendar sync, appointment management
 // =============================================================================
 
 export interface TimeSlot {
@@ -13,8 +13,8 @@ export interface TimeSlot {
 
 export interface BookingSlot {
   id: string;
-  boatId: string;
-  boatName: string;
+  serviceId: string;
+  serviceName: string;
   date: string; // YYYY-MM-DD
   timeSlot: TimeSlot;
   status: 'available' | 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
@@ -41,11 +41,11 @@ export interface Agent {
   phone: string;
   avatar?: string;
   certifications: string[];
-  assignedBoats: string[];
+  assignedServices: string[];
   availability: AgentAvailability[];
   rating: number;
-  totalTrips: number;
-  status: 'active' | 'on-trip' | 'off-duty' | 'vacation';
+  totalConsultations: number;
+  status: 'active' | 'in-session' | 'off-duty' | 'vacation';
 }
 
 export interface AgentAvailability {
@@ -62,8 +62,8 @@ export interface CalendarEvent {
   start: Date;
   end: Date;
   allDay: boolean;
-  type: 'booking' | 'maintenance' | 'weather-hold' | 'private-event' | 'blocked';
-  boatId?: string;
+  type: 'booking' | 'maintenance' | 'hold' | 'private-event' | 'blocked';
+  serviceId?: string;
   agentId?: string;
   color: string;
   metadata?: Record<string, unknown>;
@@ -84,68 +84,68 @@ export const defaultTimeSlots: TimeSlot[] = [
 ];
 
 // =============================================================================
-// CAPTAIN DATA
+// AGENT / ADVISOR DATA
 // =============================================================================
 
 export const agents: Agent[] = [
   {
-    id: 'agent-jason',
-    name: 'Agent Jason',
-    email: 'jason@healthshieldrentals.com',
-    phone: '512-705-7758',
-    certifications: ['USCG Licensed', 'CPR/First Aid', 'Water Safety'],
-    assignedBoats: ['king-kong', 'lemon-drop', 'bananarama'],
+    id: 'agent-001',
+    name: 'Sarah Mitchell',
+    email: 'sarah.mitchell@healthshield.com',
+    phone: '(555) 100-0001',
+    certifications: ['Licensed Insurance Agent', 'Health Insurance Specialist', 'Medicare Certified'],
+    assignedServices: ['enrollment', 'claims', 'general'],
     availability: [
-      { dayOfWeek: 0, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 1, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 2, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 3, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 4, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 5, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 6, startTime: '09:00', endTime: '21:00', isAvailable: true },
+      { dayOfWeek: 0, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 1, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 2, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 3, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 4, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 5, startTime: '08:00', endTime: '17:00', isAvailable: true },
+      { dayOfWeek: 6, startTime: '09:00', endTime: '13:00', isAvailable: false },
     ],
     rating: 4.9,
-    totalTrips: 487,
+    totalConsultations: 487,
     status: 'active',
   },
   {
-    id: 'agent-mike',
-    name: 'Agent Mike',
-    email: 'mike@healthshieldrentals.com',
-    phone: '(512) 555-0102',
-    certifications: ['USCG Licensed', 'CPR/First Aid'],
-    assignedBoats: ['banana-daiquiri', 'pineapple-express'],
+    id: 'agent-002',
+    name: 'James Rodriguez',
+    email: 'james.rodriguez@healthshield.com',
+    phone: '(555) 100-0002',
+    certifications: ['Licensed Insurance Agent', 'Wellness Program Coordinator'],
+    assignedServices: ['wellness', 'enrollment'],
     availability: [
-      { dayOfWeek: 0, startTime: '09:00', endTime: '18:00', isAvailable: true },
-      { dayOfWeek: 1, startTime: '09:00', endTime: '18:00', isAvailable: false },
-      { dayOfWeek: 2, startTime: '09:00', endTime: '18:00', isAvailable: true },
-      { dayOfWeek: 3, startTime: '09:00', endTime: '18:00', isAvailable: true },
-      { dayOfWeek: 4, startTime: '09:00', endTime: '18:00', isAvailable: true },
-      { dayOfWeek: 5, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 6, startTime: '09:00', endTime: '21:00', isAvailable: true },
+      { dayOfWeek: 0, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 1, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 2, startTime: '08:00', endTime: '18:00', isAvailable: false },
+      { dayOfWeek: 3, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 4, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 5, startTime: '08:00', endTime: '17:00', isAvailable: true },
+      { dayOfWeek: 6, startTime: '09:00', endTime: '13:00', isAvailable: false },
     ],
     rating: 4.8,
-    totalTrips: 312,
+    totalConsultations: 312,
     status: 'active',
   },
   {
-    id: 'agent-sarah',
-    name: 'Agent Sarah',
-    email: 'sarah@healthshieldrentals.com',
-    phone: '(512) 555-0103',
-    certifications: ['USCG Licensed', 'CPR/First Aid', 'Water Safety', 'Party Host Certified'],
-    assignedBoats: ['banana-split', 'bananarama'],
+    id: 'agent-003',
+    name: 'Emily Chen',
+    email: 'emily.chen@healthshield.com',
+    phone: '(555) 100-0003',
+    certifications: ['Licensed Insurance Agent', 'Claims Specialist', 'Customer Advocacy Certified'],
+    assignedServices: ['claims', 'general'],
     availability: [
-      { dayOfWeek: 0, startTime: '12:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 1, startTime: '12:00', endTime: '21:00', isAvailable: false },
-      { dayOfWeek: 2, startTime: '12:00', endTime: '21:00', isAvailable: false },
-      { dayOfWeek: 3, startTime: '12:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 4, startTime: '12:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 5, startTime: '09:00', endTime: '21:00', isAvailable: true },
-      { dayOfWeek: 6, startTime: '09:00', endTime: '21:00', isAvailable: true },
+      { dayOfWeek: 0, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 1, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 2, startTime: '09:00', endTime: '17:00', isAvailable: false },
+      { dayOfWeek: 3, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 4, startTime: '08:00', endTime: '18:00', isAvailable: true },
+      { dayOfWeek: 5, startTime: '08:00', endTime: '17:00', isAvailable: true },
+      { dayOfWeek: 6, startTime: '09:00', endTime: '13:00', isAvailable: true },
     ],
     rating: 5.0,
-    totalTrips: 156,
+    totalConsultations: 156,
     status: 'active',
   },
 ];
@@ -155,19 +155,19 @@ export const agents: Agent[] = [
 // =============================================================================
 
 /**
- * Get available time slots for a specific boat on a specific date
+ * Get available time slots for a specific service on a specific date
  */
 export function getAvailableSlots(
-  boatId: string,
+  serviceId: string,
   date: string,
   existingBookings: BookingSlot[]
 ): TimeSlot[] {
   const dayOfWeek = new Date(date).getDay();
   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-  // Get bookings for this boat on this date
+  // Get bookings for this service on this date
   const bookedSlots = existingBookings
-    .filter(b => b.boatId === boatId && b.date === date && b.status !== 'cancelled')
+    .filter(b => b.serviceId === serviceId && b.date === date && b.status !== 'cancelled')
     .map(b => b.timeSlot.id);
 
   // Filter out booked slots
@@ -232,13 +232,13 @@ function timeSlotsOverlap(slot1: TimeSlot, slot2: TimeSlot): boolean {
  * Auto-assign best available agent for a booking
  */
 export function autoAssignAgent(
-  boatId: string,
+  serviceId: string,
   date: string,
   timeSlot: TimeSlot,
   existingBookings: BookingSlot[]
 ): Agent | null {
-  // Find agents assigned to this boat
-  const eligibleAgents = agents.filter(c => c.assignedBoats.includes(boatId));
+  // Find agents assigned to this service
+  const eligibleAgents = agents.filter(c => c.assignedServices.includes(serviceId));
 
   // Check availability and sort by rating
   const availableAgents = eligibleAgents
@@ -271,13 +271,13 @@ export function generateCalendarEvents(bookings: BookingSlot[]): CalendarEvent[]
 
     return {
       id: booking.id,
-      title: `${booking.boatName} - ${booking.customerName || 'Pending'}`,
-      description: `Party size: ${booking.partySize || 'TBD'}\nAgent: ${booking.agentName || 'TBD'}`,
+      title: `${booking.serviceName} - ${booking.customerName || 'Pending'}`,
+      description: `Party size: ${booking.partySize || 'TBD'}\nAdvisor: ${booking.agentName || 'TBD'}`,
       start,
       end,
       allDay: false,
       type: 'booking',
-      boatId: booking.boatId,
+      serviceId: booking.serviceId,
       agentId: booking.agentId,
       color: statusColors[booking.status] || '#6b7280',
       metadata: {
@@ -297,7 +297,7 @@ export function getDailySchedule(date: string, bookings: BookingSlot[]): {
   confirmedBookings: number;
   pendingBookings: number;
   revenue: number;
-  boatUtilization: Record<string, number>;
+  serviceUtilization: Record<string, number>;
   agentSchedule: { agent: Agent; bookings: BookingSlot[] }[];
 } {
   const dayBookings = bookings.filter(b => b.date === date && b.status !== 'cancelled');
@@ -307,14 +307,14 @@ export function getDailySchedule(date: string, bookings: BookingSlot[]): {
 
   const revenue = confirmedBookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
 
-  // Calculate boat utilization (hours booked / available hours)
-  const boatUtilization: Record<string, number> = {};
-  const boatIds = ['king-kong', 'lemon-drop', 'bananarama', 'banana-daiquiri', 'pineapple-express', 'banana-split'];
+  // Calculate service utilization (hours booked / available hours)
+  const serviceUtilization: Record<string, number> = {};
+  const serviceIds = ['enrollment', 'claims', 'wellness', 'general', 'follow-up', 'consultation'];
 
-  for (const boatId of boatIds) {
-    const boatBookings = dayBookings.filter(b => b.boatId === boatId);
-    const hoursBooked = boatBookings.reduce((sum, b) => sum + b.timeSlot.duration, 0);
-    boatUtilization[boatId] = Math.round((hoursBooked / 12) * 100); // 12 hours max per day
+  for (const svcId of serviceIds) {
+    const svcBookings = dayBookings.filter(b => b.serviceId === svcId);
+    const hoursBooked = svcBookings.reduce((sum, b) => sum + b.timeSlot.duration, 0);
+    serviceUtilization[svcId] = Math.round((hoursBooked / 12) * 100); // 12 hours max per day
   }
 
   // Agent schedule
@@ -328,7 +328,7 @@ export function getDailySchedule(date: string, bookings: BookingSlot[]): {
     confirmedBookings: confirmedBookings.length,
     pendingBookings: pendingBookings.length,
     revenue,
-    boatUtilization,
+    serviceUtilization,
     agentSchedule,
   };
 }
@@ -412,11 +412,11 @@ export async function syncToGoogleCalendar(
   // For now, return a mock response
 
   const event = {
-    summary: `${booking.boatName} - ${booking.customerName}`,
+    summary: `${booking.serviceName} - ${booking.customerName}`,
     description: `
 Party Size: ${booking.partySize}
 Phone: ${booking.customerPhone}
-Agent: ${booking.agentName}
+Advisor: ${booking.agentName}
 Total: $${booking.totalPrice}
 Notes: ${booking.notes || 'None'}
 Special Requests: ${booking.specialRequests?.join(', ') || 'None'}
@@ -450,7 +450,7 @@ export function generateICalEvent(booking: BookingSlot): string {
     return `${year}${month}${day}T${hour}${min}00`;
   };
 
-  const uid = `${booking.id}@healthshieldrentals.com`;
+  const uid = `${booking.id}@healthshield.com`;
   const dtstart = formatDate(booking.date, booking.timeSlot.startTime);
   const dtend = formatDate(booking.date, booking.timeSlot.endTime);
   const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
@@ -463,9 +463,9 @@ UID:${uid}
 DTSTAMP:${now}
 DTSTART;TZID=America/Chicago:${dtstart}
 DTEND;TZID=America/Chicago:${dtend}
-SUMMARY:${booking.boatName} - ${booking.customerName || 'Booking'}
-DESCRIPTION:Party Size: ${booking.partySize || 'TBD'}\\nAgent: ${booking.agentName || 'TBD'}\\nPhone: ${booking.customerPhone || 'TBD'}
-LOCATION:Lake Travis, TX
+SUMMARY:${booking.serviceName} - ${booking.customerName || 'Booking'}
+DESCRIPTION:Party Size: ${booking.partySize || 'TBD'}\\nAdvisor: ${booking.agentName || 'TBD'}\\nPhone: ${booking.customerPhone || 'TBD'}
+LOCATION:HealthShield Office
 STATUS:${booking.status === 'confirmed' ? 'CONFIRMED' : 'TENTATIVE'}
 END:VEVENT
 END:VCALENDAR`;
@@ -508,7 +508,7 @@ export function generateRecurringInstances(
 
     // Check if slot is available
     const available = getAvailableSlots(
-      recurring.baseBooking.boatId,
+      recurring.baseBooking.serviceId,
       dateStr,
       existingBookings
     );

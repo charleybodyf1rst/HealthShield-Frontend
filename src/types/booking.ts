@@ -1,9 +1,9 @@
-// Booking/Reservation Management Types for Boat Rental CRM
+// Booking/Reservation Management Types for Insurance CRM
 
 export type BookingStatus = 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show';
 export type PaymentStatus = 'pending' | 'partial' | 'paid' | 'refunded' | 'failed';
 export type BookingSource = 'website' | 'phone' | 'walk-in' | 'referral' | 'repeat' | 'partner';
-export type PartyType = 'birthday' | 'bachelor' | 'bachelorette' | 'corporate' | 'family' | 'reunion' | 'anniversary' | 'other';
+export type PartyType = 'consultation' | 'enrollment' | 'review' | 'claim' | 'wellness_check';
 
 export interface Booking {
   id: string;
@@ -17,9 +17,9 @@ export interface Booking {
   customerNotes?: string;
   isRepeatCustomer?: boolean;
 
-  // Boat & Crew
-  boatId: string;
-  boatName?: string;
+  // Service & Crew
+  serviceId: string;
+  serviceName?: string;
   agentId?: string;
   agentName?: string;
   crewIds?: string[];
@@ -40,7 +40,6 @@ export interface Booking {
   dietaryRestrictions?: string;
 
   // Location
-  location: 'lake-travis';
   pickupLocation?: string;
   dropoffLocation?: string;
 
@@ -106,18 +105,17 @@ export interface BookingAddOn {
 export interface BookingCalendarEvent {
   id: string;
   bookingId: string;
-  title: string; // e.g., "King Kong - Sarah's Birthday"
+  title: string; // e.g., "Premium Plan - Sarah's Birthday"
   start: string; // ISO datetime
   end: string; // ISO datetime
-  boatId: string;
-  boatName: string;
-  boatColor: 'yellow' | 'pink' | 'blue';
+  serviceId: string;
+  serviceName: string;
+  serviceColor: 'yellow' | 'pink' | 'blue';
   agentId?: string;
   agentName?: string;
   status: BookingStatus;
   partySize: number;
   customerName: string;
-  location: 'lake-travis';
 }
 
 export interface BookingStats {
@@ -156,12 +154,11 @@ export interface BookingStats {
 
   // By Party Type
   byPartyType: {
-    birthday: number;
-    bachelor: number;
-    bachelorette: number;
-    corporate: number;
-    family: number;
-    other: number;
+    consultation: number;
+    enrollment: number;
+    review: number;
+    claim: number;
+    wellness_check: number;
   };
 
   // Customer Satisfaction
@@ -171,7 +168,7 @@ export interface BookingStats {
 
 export interface TimeSlot {
   id: string;
-  boatId: string;
+  serviceId: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -185,9 +182,8 @@ export interface TimeSlot {
 export interface BookingFilters {
   status?: BookingStatus;
   paymentStatus?: PaymentStatus;
-  boatId?: string;
+  serviceId?: string;
   agentId?: string;
-  location?: 'lake-travis';
   partyType?: PartyType;
   source?: BookingSource;
   dateFrom?: string;
@@ -203,7 +199,7 @@ export interface CreateBookingData {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  boatId: string;
+  serviceId: string;
   date: string;
   startTime: string;
   duration: number;
@@ -219,7 +215,7 @@ export interface CreateBookingData {
 }
 
 export interface UpdateBookingData {
-  boatId?: string;
+  serviceId?: string;
   agentId?: string;
   date?: string;
   startTime?: string;
@@ -247,8 +243,7 @@ export interface CancelBookingData {
 export interface CalendarQuery {
   startDate: string;
   endDate: string;
-  boatIds?: string[];
+  serviceIds?: string[];
   agentIds?: string[];
-  location?: 'lake-travis';
   status?: BookingStatus[];
 }
