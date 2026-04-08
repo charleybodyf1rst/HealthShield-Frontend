@@ -68,6 +68,61 @@ import { useUser } from '@/stores/auth-store';
 
 type CallerMode = 'scripted' | 'conversational';
 
+// Insurance AI Agent Personas with pre-loaded questions
+const INSURANCE_PERSONAS = [
+  {
+    id: 'insurance_sales',
+    name: 'Sales Agent',
+    description: 'New quotes, plan comparisons, enrollment assistance',
+    icon: '💼',
+    voice: 'Sarah',
+    color: 'from-blue-500 to-blue-600',
+    borderColor: 'border-blue-500/30',
+    bgColor: 'bg-blue-500/10',
+    textColor: 'text-blue-600',
+    questions: [
+      'What health plans do you offer?',
+      'Can you compare Bronze vs Gold coverage?',
+      'How much would a family plan cost?',
+      'What wellness benefits are included?',
+    ],
+  },
+  {
+    id: 'insurance_claims',
+    name: 'Claims Agent',
+    description: 'File claims, check status, documentation help',
+    icon: '📋',
+    voice: 'Drew',
+    color: 'from-amber-500 to-amber-600',
+    borderColor: 'border-amber-500/30',
+    bgColor: 'bg-amber-500/10',
+    textColor: 'text-amber-600',
+    questions: [
+      'I need to file a new claim',
+      "What's the status of my claim?",
+      'What documents do I need for my claim?',
+      'How long does claims processing take?',
+    ],
+  },
+  {
+    id: 'insurance_service',
+    name: 'Service Agent',
+    description: 'Policy changes, renewals, billing questions',
+    icon: '🛡️',
+    voice: 'Adam',
+    color: 'from-emerald-500 to-emerald-600',
+    borderColor: 'border-emerald-500/30',
+    bgColor: 'bg-emerald-500/10',
+    textColor: 'text-emerald-600',
+    questions: [
+      'I need to update my coverage',
+      'When is my policy renewal date?',
+      'Can you explain my deductible?',
+      'I have a billing question',
+    ],
+  },
+];
+
 export default function AiCallerPage() {
   // Current user (for Call Me mode)
   const authUser = useUser();
@@ -95,6 +150,9 @@ export default function AiCallerPage() {
     remaining: number;
     usage_percentage: number;
   } | null>(null);
+
+  // Insurance persona selection
+  const [selectedPersona, setSelectedPersona] = useState<string>('insurance_sales');
 
   // Manual phone entry state
   const [manualPhone, setManualPhone] = useState('');
@@ -458,6 +516,67 @@ export default function AiCallerPage() {
             </>
           )}
         </div>
+
+        {/* Insurance AI Agent Personas */}
+        {callerMode === 'conversational' && (
+          <div className="mt-6 space-y-4">
+            <h2 className="text-lg font-semibold">Choose Your AI Agent</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {INSURANCE_PERSONAS.map((persona) => (
+                <Card
+                  key={persona.id}
+                  className={cn(
+                    'cursor-pointer transition-all hover:shadow-md',
+                    selectedPersona === persona.id
+                      ? `${persona.borderColor} border-2 ${persona.bgColor}`
+                      : 'hover:border-muted-foreground/30'
+                  )}
+                  onClick={() => setSelectedPersona(persona.id)}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={cn('h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-xl', persona.color)}>
+                          {persona.icon}
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">{persona.name}</CardTitle>
+                          <p className="text-xs text-muted-foreground">Voice: {persona.voice}</p>
+                        </div>
+                      </div>
+                      {selectedPersona === persona.id && (
+                        <CheckCircle2 className={cn('h-5 w-5', persona.textColor)} />
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-sm text-muted-foreground mb-3">{persona.description}</p>
+                    <div className="space-y-1.5">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Quick Questions</p>
+                      {persona.questions.map((q, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPersona(persona.id);
+                            // Set the question as custom prompt context
+                            toast.info(`Topic: "${q}" — Select a lead or click Call Me to start`);
+                          }}
+                          className={cn(
+                            'w-full text-left text-xs px-3 py-1.5 rounded-md transition-colors',
+                            'bg-muted/50 hover:bg-muted text-foreground/80 hover:text-foreground'
+                          )}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
@@ -840,6 +959,7 @@ export default function AiCallerPage() {
                   leadEmail={selectedLead?.email}
                   leadSource={selectedLead?.source}
                   leadNotes={selectedLead?.notes}
+                  persona={selectedPersona}
                   onCallStarted={handleConvCallStarted}
                   onCallEnded={handleConvCallEnded}
                 />
