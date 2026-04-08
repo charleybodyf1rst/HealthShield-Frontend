@@ -110,10 +110,9 @@ export default function NewProgramPage() {
                     <SelectValue placeholder="Select tier..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="bronze">Bronze</SelectItem>
-                    <SelectItem value="silver">Silver</SelectItem>
-                    <SelectItem value="gold">Gold</SelectItem>
-                    <SelectItem value="platinum">Platinum</SelectItem>
+                    <SelectItem value="basic">Basic ($25/mo PEPM)</SelectItem>
+                    <SelectItem value="standard">Standard ($45/mo PEPM)</SelectItem>
+                    <SelectItem value="premium">Premium ($65/mo PEPM)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

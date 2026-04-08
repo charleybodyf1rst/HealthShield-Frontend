@@ -44,9 +44,9 @@ export default function EnrollmentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   useEffect(() => {
-    // Fetch all enrollments (pass empty string for all programs)
-    fetchEnrollments('');
-  }, [fetchEnrollments]);
+    // Enrollments are loaded when a program is selected
+    // For now show empty state — enrollments need a program context
+  }, []);
 
   const filteredEnrollments =
     statusFilter === 'all'

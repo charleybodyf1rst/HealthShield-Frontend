@@ -17,10 +17,12 @@ export default function NewProposalPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    leadId: '',
-    leadName: '',
-    planType: '',
-    premium: '',
+    employer_name: '',
+    contact_name: '',
+    contact_email: '',
+    employee_count: '',
+    proposed_tier: '',
+    proposed_pepm: '',
     notes: '',
   });
 
@@ -33,11 +35,13 @@ export default function NewProposalPage() {
     setIsSubmitting(true);
     try {
       await insuranceApi.createProposal({
-        lead_id: formData.leadId,
-        lead_name: formData.leadName,
-        plan_type: formData.planType,
-        premium: parseFloat(formData.premium) || 0,
-        notes: formData.notes,
+        employer_name: formData.employer_name,
+        contact_name: formData.contact_name || undefined,
+        contact_email: formData.contact_email || undefined,
+        employee_count: parseInt(formData.employee_count) || 1,
+        proposed_tier: formData.proposed_tier,
+        proposed_pepm: parseFloat(formData.proposed_pepm) || undefined,
+        notes: formData.notes || undefined,
       });
       toast.success('Proposal created successfully');
       router.push('/dashboard/proposals');
@@ -66,36 +70,37 @@ export default function NewProposalPage() {
             <CardTitle>Proposal Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="employer_name">Employer / Organization Name *</Label>
+              <Input id="employer_name" value={formData.employer_name} onChange={(e) => updateField('employer_name', e.target.value)} placeholder="e.g., Acme Corporation" required />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="leadName">Lead Name</Label>
-                <Input id="leadName" value={formData.leadName} onChange={(e) => updateField('leadName', e.target.value)} placeholder="e.g., John Smith" required />
+                <Label htmlFor="contact_name">Contact Name</Label>
+                <Input id="contact_name" value={formData.contact_name} onChange={(e) => updateField('contact_name', e.target.value)} placeholder="e.g., John Smith" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="leadId">Lead ID (optional)</Label>
-                <Input id="leadId" value={formData.leadId} onChange={(e) => updateField('leadId', e.target.value)} placeholder="e.g., 123" />
+                <Label htmlFor="contact_email">Contact Email</Label>
+                <Input id="contact_email" type="email" value={formData.contact_email} onChange={(e) => updateField('contact_email', e.target.value)} placeholder="e.g., john@acme.com" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="planType">Plan Type</Label>
-                <Select value={formData.planType} onValueChange={(v) => updateField('planType', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select plan type..." /></SelectTrigger>
+                <Label htmlFor="proposed_tier">Proposed Tier *</Label>
+                <Select value={formData.proposed_tier} onValueChange={(v) => updateField('proposed_tier', v)}>
+                  <SelectTrigger><SelectValue placeholder="Select tier..." /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="individual_health">Individual Health</SelectItem>
-                    <SelectItem value="family_health">Family Health</SelectItem>
-                    <SelectItem value="medicare_advantage">Medicare Advantage</SelectItem>
-                    <SelectItem value="medicare_supplement">Medicare Supplement</SelectItem>
-                    <SelectItem value="dental_vision">Dental & Vision</SelectItem>
-                    <SelectItem value="group_health">Group / Employer</SelectItem>
-                    <SelectItem value="life_insurance">Life Insurance</SelectItem>
+                    <SelectItem value="basic">Basic ($25/mo PEPM)</SelectItem>
+                    <SelectItem value="standard">Standard ($45/mo PEPM)</SelectItem>
+                    <SelectItem value="premium">Premium ($65/mo PEPM)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="premium">Monthly Premium ($)</Label>
-                <Input id="premium" type="number" value={formData.premium} onChange={(e) => updateField('premium', e.target.value)} placeholder="e.g., 299" />
+                <Label htmlFor="employee_count">Employee Count *</Label>
+                <Input id="employee_count" type="number" value={formData.employee_count} onChange={(e) => updateField('employee_count', e.target.value)} placeholder="e.g., 50" required />
               </div>
             </div>
 
