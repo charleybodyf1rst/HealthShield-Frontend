@@ -1454,6 +1454,8 @@ export const conversationalAiApi = {
     phone?: string;
     persona: ConversationalPersona;
     llm?: ConversationalLlm;
+    voice_id?: string;
+    voice_provider?: string;
     custom_prompt?: string;
     first_message?: string;
     context?: Record<string, unknown>;

@@ -97,6 +97,7 @@ export function ConversationalAiPanel({
   }, [parentPersona]);
 
   const [selectedLlm, setSelectedLlm] = useState<ConversationalLlm>('gpt-4o');
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string>('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [firstMessage, setFirstMessage] = useState('');
   const [manualPhone, setManualPhone] = useState('');
@@ -249,6 +250,7 @@ export function ConversationalAiPanel({
         lead_id: leadId,
         phone,
         voice_provider: 'elevenlabs',
+        voice_id: selectedVoiceId || undefined,
         persona: selectedPersona,
         llm: selectedLlm,
         custom_prompt: customPrompt || undefined,
@@ -573,6 +575,48 @@ export function ConversationalAiPanel({
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Most capable — best for complex insurance conversations
+                </p>
+              </div>
+
+              {/* ElevenLabs Voice Selector */}
+              <div className="space-y-2">
+                <Label>ElevenLabs Voice</Label>
+                <Select
+                  value={selectedVoiceId || 'default'}
+                  onValueChange={(v) => setSelectedVoiceId(v === 'default' ? '' : v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Use persona default voice" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">
+                      <span>Default (persona voice)</span>
+                    </SelectItem>
+                    <SelectItem value="EXAVITQu4vr4xnSDxMaL">
+                      <span>Sarah — Professional, friendly</span>
+                    </SelectItem>
+                    <SelectItem value="29vD33N1CtxCmqQRPOHJ">
+                      <span>Drew — Calm, reassuring</span>
+                    </SelectItem>
+                    <SelectItem value="pNInz6obpgDQGcFmaJgB">
+                      <span>Adam — Professional, efficient</span>
+                    </SelectItem>
+                    <SelectItem value="21m00Tcm4TlvDq8ikWAM">
+                      <span>Rachel — Clear, professional</span>
+                    </SelectItem>
+                    <SelectItem value="TxGEqnHWrfWFTfGW9XjX">
+                      <span>Josh — Warm, conversational</span>
+                    </SelectItem>
+                    <SelectItem value="ErXwobaYiN019PkySvjV">
+                      <span>Antoni — Well-rounded, expressive</span>
+                    </SelectItem>
+                    <SelectItem value="MF3mGyEYCl7XYWbV9V6O">
+                      <span>Emily — Calm, professional</span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {selectedVoiceId ? 'Custom voice override' : 'Each persona has a matched default voice'}
                 </p>
               </div>
             </TabsContent>
