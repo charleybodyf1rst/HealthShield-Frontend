@@ -180,6 +180,21 @@ function ContactDialog({
     lead_source: '',
     birthday: '',
     notes: '',
+    // Insurance-specific fields
+    policy_type: '',
+    policy_number: '',
+    insurance_carrier: '',
+    group_number: '',
+    coverage_start_date: '',
+    coverage_end_date: '',
+    plan_tier: '',
+    monthly_premium: '',
+    deductible: '',
+    copay: '',
+    dependents_count: '',
+    pre_existing_conditions: '',
+    primary_care_physician: '',
+    pharmacy_preference: '',
   });
 
   useEffect(() => {
@@ -395,6 +410,89 @@ function ContactDialog({
                 value={formData.birthday}
                 onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
               />
+            </div>
+
+            {/* Insurance Information */}
+            <div className="pt-4 border-t">
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">Insurance Information</h3>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="policy_type">Policy Type</Label>
+                <Select value={formData.policy_type} onValueChange={(v) => setFormData({ ...formData, policy_type: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select type..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="individual">Individual</SelectItem>
+                    <SelectItem value="family">Family</SelectItem>
+                    <SelectItem value="medicare_advantage">Medicare Advantage</SelectItem>
+                    <SelectItem value="medicare_supplement">Medicare Supplement</SelectItem>
+                    <SelectItem value="dental_vision">Dental & Vision</SelectItem>
+                    <SelectItem value="group_employer">Group / Employer</SelectItem>
+                    <SelectItem value="life">Life Insurance</SelectItem>
+                    <SelectItem value="short_term">Short-Term</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="policy_number">Policy Number</Label>
+                <Input id="policy_number" value={formData.policy_number} onChange={(e) => setFormData({ ...formData, policy_number: e.target.value })} placeholder="e.g., POL-2026-001234" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="insurance_carrier">Insurance Carrier</Label>
+                <Input id="insurance_carrier" value={formData.insurance_carrier} onChange={(e) => setFormData({ ...formData, insurance_carrier: e.target.value })} placeholder="e.g., BlueCross BlueShield" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="group_number">Group Number</Label>
+                <Input id="group_number" value={formData.group_number} onChange={(e) => setFormData({ ...formData, group_number: e.target.value })} placeholder="e.g., GRP-5678" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="coverage_start_date">Coverage Start Date</Label>
+                <Input id="coverage_start_date" type="date" value={formData.coverage_start_date} onChange={(e) => setFormData({ ...formData, coverage_start_date: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="coverage_end_date">Coverage End Date</Label>
+                <Input id="coverage_end_date" type="date" value={formData.coverage_end_date} onChange={(e) => setFormData({ ...formData, coverage_end_date: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="plan_tier">Plan Tier</Label>
+                <Select value={formData.plan_tier} onValueChange={(v) => setFormData({ ...formData, plan_tier: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select tier..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="basic">Basic</SelectItem>
+                    <SelectItem value="standard">Standard</SelectItem>
+                    <SelectItem value="premium">Premium</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="monthly_premium">Monthly Premium ($)</Label>
+                <Input id="monthly_premium" type="number" value={formData.monthly_premium} onChange={(e) => setFormData({ ...formData, monthly_premium: e.target.value })} placeholder="e.g., 350" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="deductible">Deductible ($)</Label>
+                <Input id="deductible" type="number" value={formData.deductible} onChange={(e) => setFormData({ ...formData, deductible: e.target.value })} placeholder="e.g., 1500" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="primary_care_physician">Primary Care Physician</Label>
+                <Input id="primary_care_physician" value={formData.primary_care_physician} onChange={(e) => setFormData({ ...formData, primary_care_physician: e.target.value })} placeholder="e.g., Dr. Sarah Johnson" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dependents_count">Number of Dependents</Label>
+                <Input id="dependents_count" type="number" value={formData.dependents_count} onChange={(e) => setFormData({ ...formData, dependents_count: e.target.value })} placeholder="e.g., 3" />
+              </div>
             </div>
 
             <div className="space-y-2">

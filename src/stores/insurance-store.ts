@@ -53,8 +53,10 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getPrograms();
-      const data = response.data || response;
-      set({ programs: Array.isArray(data) ? data : [], isLoading: false });
+      // Backend returns { success, data: { current_page, data: [...programs], total } }
+      const wrapper = response.data || response;
+      const items = Array.isArray(wrapper) ? wrapper : (wrapper.data || []);
+      set({ programs: Array.isArray(items) ? items : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch programs', isLoading: false });
     }
@@ -117,7 +119,9 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getEnrollments(programId);
-      const eData = response.data || response; set({ enrollments: Array.isArray(eData) ? eData : [], isLoading: false });
+      const eWrapper = response.data || response;
+      const eData = Array.isArray(eWrapper) ? eWrapper : (eWrapper.data || []);
+      set({ enrollments: Array.isArray(eData) ? eData : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch enrollments', isLoading: false });
     }
@@ -138,7 +142,9 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getProposals();
-      const pData = response.data || response; set({ proposals: Array.isArray(pData) ? pData : [], isLoading: false });
+      const pWrapper = response.data || response;
+      const pData = Array.isArray(pWrapper) ? pWrapper : (pWrapper.data || []);
+      set({ proposals: Array.isArray(pData) ? pData : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch proposals', isLoading: false });
     }
@@ -161,7 +167,9 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getWellnessMetrics();
-      const wData = response.data || response; set({ wellnessMetrics: Array.isArray(wData) ? wData : [], isLoading: false });
+      const wWrapper = response.data || response;
+      const wData = Array.isArray(wWrapper) ? wWrapper : (wWrapper.data || []);
+      set({ wellnessMetrics: Array.isArray(wData) ? wData : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch wellness metrics', isLoading: false });
     }
