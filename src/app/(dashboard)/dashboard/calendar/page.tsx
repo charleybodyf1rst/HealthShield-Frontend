@@ -456,12 +456,34 @@ export default function CalendarPage() {
       return;
     }
 
+    // Ensure time is in 24h HH:mm format (backend requires date_format:H:i)
+    const formatTime24 = (t: string) => {
+      if (!t) return t;
+      // Already HH:mm format
+      if (/^\d{2}:\d{2}$/.test(t)) return t;
+      // Handle "9:00 AM" / "10:06 PM" format
+      const match = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (match) {
+        let h = parseInt(match[1]);
+        const m = match[2];
+        const period = (match[3] || '').toUpperCase();
+        if (period === 'PM' && h < 12) h += 12;
+        if (period === 'AM' && h === 12) h = 0;
+        return `${h.toString().padStart(2, '0')}:${m}`;
+      }
+      return t;
+    };
+
+    const startTime24 = formatTime24(formData.start_time);
+    const endTime24 = formatTime24(formData.end_time);
+
     // Clean form data: convert empty strings to null, cast IDs to integers
     const cleanData: Record<string, unknown> = {
       title: formData.title,
       type: formData.type,
       date: formData.date,
-      start_time: formData.start_time,
+      start_time: startTime24,
+      end_time: endTime24,
       duration,
       lead_id: formData.lead_id ? Number(formData.lead_id) : null,
       location: formData.location || null,
