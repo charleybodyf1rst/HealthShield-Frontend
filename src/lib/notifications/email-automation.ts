@@ -202,7 +202,7 @@ export const emailTemplates: Record<string, EmailTemplate> = {
     <!-- Footer -->
     <div style="text-align:center;color:#64748b;font-size:14px;border-top:1px solid #fed7aa;padding-top:30px;">
       <p style="margin:0 0 10px;">Questions? We're here to help!</p>
-      <p style="margin:0;"><a href="tel:+15127057758" style="color:#ea580c;text-decoration:none;">512-705-7758</a> | <a href="mailto:hello@healthshield.com" style="color:#ea580c;text-decoration:none;">hello@healthshield.com</a></p>
+      <p style="margin:0;"><a href="tel:+18334325841" style="color:#ea580c;text-decoration:none;">(833) 432-5841</a> | <a href="mailto:hello@healthshield.com" style="color:#ea580c;text-decoration:none;">hello@healthshield.com</a></p>
       <p style="margin:20px 0 0;font-size:12px;color:#94a3b8;">HealthShield | Austin, TX</p>
     </div>
   </div>
@@ -240,7 +240,7 @@ Rideshare / Bus Drop-Off: Uber, Lyft, and buses are not charged the vehicle entr
 COOLERS & ICE:
 Each plan includes a welcome packet, and we do not provide ice. Please review your coverage details.
 
-Questions? Call or text 512-705-7758
+Questions? Call or text (833) 432-5841
 
 We look forward to having you on the water! 🌊
 - HealthShield

@@ -107,7 +107,7 @@ export function AIChatWidget() {
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        content: "I apologize, but I'm having trouble processing your request right now. Please try again or call us at 512-705-7758 for immediate assistance!",
+        content: "I apologize, but I'm having trouble processing your request right now. Please try again or call us at (833) 432-5841 for immediate assistance!",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -314,7 +314,7 @@ export function AIChatWidget() {
                 </button>
               </div>
               <p className="text-[10px] text-gray-400 mt-2 text-center">
-                Powered by HealthShield AI - 512-705-7758
+                Powered by HealthShield AI - (833) 432-5841
               </p>
             </div>
           </motion.div>

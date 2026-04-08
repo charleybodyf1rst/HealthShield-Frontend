@@ -4,7 +4,7 @@
  */
 
 const DEFAULT_BACKEND_URL = 'https://systemsf1rst-backend-887571186773.us-central1.run.app';
-const DEFAULT_APP_URL = 'https://healthshieldrentals.com';
+const DEFAULT_APP_URL = 'https://healthshield.ai';
 
 const API_KEY = process.env.SYSTEMSF1RST_API_KEY || '';
 

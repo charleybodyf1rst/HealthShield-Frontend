@@ -322,7 +322,7 @@ export const sampleTasks: Task[] = [
   {
     id: 'task-001',
     title: 'Follow up with Johnson wedding inquiry',
-    description: 'Potential 25-person bachelorette party for June 15th',
+    description: 'Potential 25-member group enrollment for June 15th',
     status: 'in_progress',
     priority: 'high',
     category: 'customer',

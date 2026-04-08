@@ -16,28 +16,28 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 const teamMembers = [
   {
     name: 'Charley Williams',
-    email: 'charley@healthshieldrentals.com',
+    email: 'charley@healthshield.ai',
     role: 'Owner',
     initials: 'CW',
     status: 'Active',
   },
   {
     name: 'Jake Torres',
-    email: 'jake@healthshieldrentals.com',
+    email: 'jake@healthshield.ai',
     role: 'Agent',
     initials: 'JT',
     status: 'Active',
   },
   {
     name: 'Maria Santos',
-    email: 'maria@healthshieldrentals.com',
+    email: 'maria@healthshield.ai',
     role: 'Agent',
     initials: 'MS',
     status: 'Active',
   },
   {
     name: 'Dylan Reed',
-    email: 'dylan@healthshieldrentals.com',
+    email: 'dylan@healthshield.ai',
     role: 'Sales',
     initials: 'DR',
     status: 'Invited',

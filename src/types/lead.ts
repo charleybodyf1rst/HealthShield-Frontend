@@ -142,8 +142,8 @@ export interface CreateLeadData {
   source: LeadSource;
   value?: number;
   notes?: string;
-  rental_date?: string;
-  rental_time?: string;
+  consultation_date?: string;
+  consultation_time?: string;
   serviceName?: string;
 }
 

@@ -23,10 +23,10 @@ import { cn } from '@/lib/utils';
 import type { TodaySchedule, PendingApproval, CrmActivity } from '@/types/crm';
 
 function ScheduleCard({ schedule }: { schedule: TodaySchedule }) {
-  const waiversComplete = schedule.waiversRequired > 0
-    ? schedule.waiversCollected >= schedule.waiversRequired
+  const consentsComplete = schedule.consentsRequired > 0
+    ? schedule.consentsCollected >= schedule.consentsRequired
     : true;
-  const waiversPartial = schedule.waiversCollected > 0 && schedule.waiversCollected < schedule.waiversRequired;
+  const consentsPartial = schedule.consentsCollected > 0 && schedule.consentsCollected < schedule.consentsRequired;
 
   return (
     <div className={cn(
@@ -54,18 +54,18 @@ function ScheduleCard({ schedule }: { schedule: TodaySchedule }) {
           <span>{schedule.partySize} guests</span>
         </div>
       </div>
-      {/* Waiver Status */}
-      {schedule.waiversRequired > 0 && (
+      {/* Consent Status */}
+      {schedule.consentsRequired > 0 && (
         <div className={cn(
           "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium",
-          waiversComplete
+          consentsComplete
             ? "bg-emerald-100 text-emerald-700"
-            : waiversPartial
+            : consentsPartial
               ? "bg-yellow-100 text-yellow-700"
               : "bg-red-100 text-red-700"
         )}>
           <FileSignature className="w-3.5 h-3.5" />
-          <span>{schedule.waiversCollected}/{schedule.waiversRequired}</span>
+          <span>{schedule.consentsCollected}/{schedule.consentsRequired}</span>
         </div>
       )}
       <Badge

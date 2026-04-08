@@ -15,8 +15,8 @@ import type {
   ApprovalResponse,
   CrmCallType,
   CrmFilters,
-  BookingWaiverStatus,
-  WaiverSignatureData,
+  AppointmentConsentStatus,
+  ConsentSignatureData,
   HeadCountRecord,
   CrmLead,
   CrmInteraction,
@@ -30,11 +30,11 @@ import type {
   LeadOptions,
   InteractionOptions,
   AgentContext,
-  ArchivedWaiver,
-  WaiverArchiveFilters,
-  WaiverArchivePagination,
+  ArchivedConsent,
+  ConsentArchiveFilters,
+  ConsentArchivePagination,
   QuickSignSearchResult,
-  WaiverTemplate,
+  ConsentTemplate,
 } from '@/types/crm';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://systemsf1rst-backend-887571186773.us-central1.run.app';
@@ -133,25 +133,25 @@ interface CrmState {
   analyticsLoading: boolean;
   analyticsPeriod: 'day' | 'week' | 'month' | 'year';
 
-  // Waivers
-  todayWaiverStatus: BookingWaiverStatus[];
-  waiversLoading: boolean;
-  selectedBookingWaiver: BookingWaiverStatus | null;
-  pendingWaiversCount: number;
-  isNotAgent: boolean; // Set to true after first 404 on waivers — skips future calls
+  // Consents
+  todayConsentStatus: AppointmentConsentStatus[];
+  consentsLoading: boolean;
+  selectedAppointmentConsent: AppointmentConsentStatus | null;
+  pendingConsentsCount: number;
+  isNotAgent: boolean; // Set to true after first 404 on consents — skips future calls
 
-  // Waiver Administration
+  // Consent Administration
   agentContext: AgentContext | null;
   agentContextLoading: boolean;
-  archivedWaivers: ArchivedWaiver[];
+  archivedConsents: ArchivedConsent[];
   archiveLoading: boolean;
-  archiveFilters: WaiverArchiveFilters;
-  archivePagination: WaiverArchivePagination;
+  archiveFilters: ConsentArchiveFilters;
+  archivePagination: ConsentArchivePagination;
   quickSignResults: QuickSignSearchResult[];
   quickSignLoading: boolean;
-  waiverTemplates: WaiverTemplate[];
+  consentTemplates: ConsentTemplate[];
   templatesLoading: boolean;
-  selectedArchivedWaiver: ArchivedWaiver | null;
+  selectedArchivedConsent: ArchivedConsent | null;
 
   // Leads
   leads: CrmLead[];
@@ -228,13 +228,13 @@ interface CrmState {
   fetchAnalytics: (period?: 'day' | 'week' | 'month' | 'year') => Promise<void>;
   setAnalyticsPeriod: (period: 'day' | 'week' | 'month' | 'year') => void;
 
-  // Actions - Waivers
-  fetchTodayWaivers: () => Promise<void>;
-  fetchBookingWaivers: (bookingId: number) => Promise<BookingWaiverStatus | null>;
-  selectBookingWaiver: (booking: BookingWaiverStatus | null) => void;
-  sendWaiverReminder: (bookingId: number, passengerId: number) => Promise<void>;
+  // Actions - Consents
+  fetchTodayConsents: () => Promise<void>;
+  fetchAppointmentConsents: (bookingId: number) => Promise<AppointmentConsentStatus | null>;
+  selectAppointmentConsent: (booking: AppointmentConsentStatus | null) => void;
+  sendConsentReminder: (bookingId: number, passengerId: number) => Promise<void>;
   addWalkupPassenger: (bookingId: number, data: { fullName: string; email?: string; phone?: string; isMinor?: boolean }) => Promise<void>;
-  collectSignature: (bookingId: number, passengerId: number, data: WaiverSignatureData) => Promise<void>;
+  collectSignature: (bookingId: number, passengerId: number, data: ConsentSignatureData) => Promise<void>;
   recordHeadCount: (bookingId: number, actualCount: number, notes?: string) => Promise<HeadCountRecord>;
   approveDeparture: (bookingId: number, forceDepart?: boolean) => Promise<void>;
 
@@ -318,10 +318,10 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
   analyticsLoading: false,
   analyticsPeriod: 'week',
 
-  todayWaiverStatus: [],
-  waiversLoading: false,
-  selectedBookingWaiver: null,
-  pendingWaiversCount: 0,
+  todayConsentStatus: [],
+  consentsLoading: false,
+  selectedAppointmentConsent: null,
+  pendingConsentsCount: 0,
   isNotAgent: false,
 
   leads: [],
@@ -850,84 +850,84 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
   },
 
   // ============================================================================
-  // Waiver Actions
+  // Consent Actions
   // ============================================================================
 
-  fetchTodayWaivers: async () => {
+  fetchTodayConsents: async () => {
     // Skip API call if we already know user is not a agent (got 404 before)
     if (get().isNotAgent) {
-      set({ todayWaiverStatus: [], pendingWaiversCount: 0, waiversLoading: false });
+      set({ todayConsentStatus: [], pendingConsentsCount: 0, consentsLoading: false });
       return;
     }
 
-    set({ waiversLoading: true, error: null });
+    set({ consentsLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/crm/waivers/today`);
+      const response = await api.get(`${API_URL}/api/v1/crm/consents/today`);
       const bookings = response.data.bookings || response.data || [];
 
-      // Calculate pending waivers count
-      const pendingCount = bookings.reduce((acc: number, booking: BookingWaiverStatus) => {
-        return acc + (booking.waiversRequired - booking.waiversCollected);
+      // Calculate pending consents count
+      const pendingCount = bookings.reduce((acc: number, booking: AppointmentConsentStatus) => {
+        return acc + (booking.consentsRequired - booking.consentsCollected);
       }, 0);
 
       set({
-        todayWaiverStatus: bookings,
-        pendingWaiversCount: pendingCount,
-        waiversLoading: false,
+        todayConsentStatus: bookings,
+        pendingConsentsCount: pendingCount,
+        consentsLoading: false,
       });
     } catch (error) {
       // 404 = user is not a agent — cache this to skip future API calls
       if (axios.isAxiosError(error) && error.response?.status === 404) {
-        set({ todayWaiverStatus: [], pendingWaiversCount: 0, waiversLoading: false, isNotAgent: true });
+        set({ todayConsentStatus: [], pendingConsentsCount: 0, consentsLoading: false, isNotAgent: true });
         return;
       }
 
       set({
-        todayWaiverStatus: [],
-        pendingWaiversCount: 0,
-        waiversLoading: false,
+        todayConsentStatus: [],
+        pendingConsentsCount: 0,
+        consentsLoading: false,
       });
     }
   },
 
-  fetchBookingWaivers: async (bookingId: number) => {
-    set({ waiversLoading: true, error: null });
+  fetchAppointmentConsents: async (bookingId: number) => {
+    set({ consentsLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/crm/waivers/booking/${bookingId}`);
+      const response = await api.get(`${API_URL}/api/v1/crm/consents/booking/${bookingId}`);
       const booking = response.data.booking ? {
         ...response.data.booking,
         passengers: response.data.passengers || [],
-        waiversRequired: response.data.waiver_status?.required || 0,
-        waiversCollected: response.data.waiver_status?.collected || 0,
-        status: response.data.waiver_status?.complete ? 'complete' : 'partial',
+        consentsRequired: response.data.consent_status?.required || 0,
+        consentsCollected: response.data.consent_status?.collected || 0,
+        status: response.data.consent_status?.complete ? 'complete' : 'partial',
       } : null;
 
       set({
-        selectedBookingWaiver: booking,
-        waiversLoading: false,
+        selectedAppointmentConsent: booking,
+        consentsLoading: false,
       });
 
       return booking;
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? error.response?.data?.message || 'Failed to fetch booking waivers'
-        : 'Failed to fetch booking waivers';
-      set({ error: message, waiversLoading: false });
+        ? error.response?.data?.message || 'Failed to fetch appointment consents'
+        : 'Failed to fetch appointment consents';
+      set({ error: message, consentsLoading: false });
       return null;
     }
   },
 
-  selectBookingWaiver: (booking: BookingWaiverStatus | null) => {
-    set({ selectedBookingWaiver: booking });
+  selectAppointmentConsent: (booking: AppointmentConsentStatus | null) => {
+    set({ selectedAppointmentConsent: booking });
   },
 
-  sendWaiverReminder: async (bookingId: number, passengerId: number) => {
+  sendConsentReminder: async (bookingId: number, passengerId: number) => {
     try {
-      await api.post(`${API_URL}/api/v1/crm/waivers/booking/${bookingId}/passenger/${passengerId}/remind`);
-      // Refresh the booking waivers
-      await get().fetchBookingWaivers(bookingId);
+      await api.post(`${API_URL}/api/v1/crm/consents/booking/${bookingId}/passenger/${passengerId}/remind`);
+      // Refresh the appointment consents
+      await get().fetchAppointmentConsents(bookingId);
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message || 'Failed to send reminder'
@@ -939,10 +939,10 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
 
   addWalkupPassenger: async (bookingId: number, data) => {
     try {
-      await api.post(`${API_URL}/api/v1/crm/waivers/booking/${bookingId}/passenger`, data);
-      // Refresh the booking waivers
-      await get().fetchBookingWaivers(bookingId);
-      await get().fetchTodayWaivers();
+      await api.post(`${API_URL}/api/v1/crm/consents/booking/${bookingId}/passenger`, data);
+      // Refresh the appointment consents
+      await get().fetchAppointmentConsents(bookingId);
+      await get().fetchTodayConsents();
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message || 'Failed to add passenger'
@@ -952,9 +952,9 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     }
   },
 
-  collectSignature: async (bookingId: number, passengerId: number, data: WaiverSignatureData) => {
+  collectSignature: async (bookingId: number, passengerId: number, data: ConsentSignatureData) => {
     try {
-      await api.post(`${API_URL}/api/v1/crm/waivers/booking/${bookingId}/passenger/${passengerId}/sign`, {
+      await api.post(`${API_URL}/api/v1/crm/consents/booking/${bookingId}/passenger/${passengerId}/sign`, {
         full_name: data.fullName,
         email: data.email,
         phone: data.phone,
@@ -970,9 +970,9 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
         guardian_name: data.guardianName,
         guardian_relationship: data.guardianRelationship,
       });
-      // Refresh the booking waivers
-      await get().fetchBookingWaivers(bookingId);
-      await get().fetchTodayWaivers();
+      // Refresh the appointment consents
+      await get().fetchAppointmentConsents(bookingId);
+      await get().fetchTodayConsents();
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message || 'Failed to collect signature'
@@ -984,7 +984,7 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
 
   recordHeadCount: async (bookingId: number, actualCount: number, notes?: string): Promise<HeadCountRecord> => {
     try {
-      const response = await api.post(`${API_URL}/api/v1/crm/waivers/booking/${bookingId}/head-count`, {
+      const response = await api.post(`${API_URL}/api/v1/crm/consents/booking/${bookingId}/head-count`, {
         actual_count: actualCount,
         notes,
       });
@@ -1000,11 +1000,11 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
 
   approveDeparture: async (bookingId: number, forceDepart = false) => {
     try {
-      await api.post(`${API_URL}/api/v1/crm/waivers/booking/${bookingId}/depart`, {
+      await api.post(`${API_URL}/api/v1/crm/consents/booking/${bookingId}/depart`, {
         force_depart: forceDepart,
       });
       // Refresh data
-      await get().fetchTodayWaivers();
+      await get().fetchTodayConsents();
       await get().fetchTodaySchedule();
     } catch (error) {
       const message = axios.isAxiosError(error)

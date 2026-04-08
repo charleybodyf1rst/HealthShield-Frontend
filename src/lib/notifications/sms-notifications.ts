@@ -201,7 +201,7 @@ Receipt sent to: ${data.email}
 
 Confirmation #: ${data.confirmationCode}
 
-Questions? 512-705-7758
+Questions? (833) 432-5841
   `.trim(),
 
   'cancellation': (data) => `
@@ -231,7 +231,7 @@ ${data.isCancelled ?
   `Due to unsafe conditions, we need to reschedule. Reply with your preferred new date.` :
   `We'll update you if anything changes. Trip is still ON for now!`}
 
-Questions? Call 512-705-7758
+Questions? Call (833) 432-5841
   `.trim(),
 
   'reschedule-offer': (data) => `
@@ -241,7 +241,7 @@ ${data.customerName}, we have these openings for your rain check:
 
 ${data.availableDates}
 
-Reply with your preferred date/time or call 512-705-7758
+Reply with your preferred date/time or call (833) 432-5841
 
 Your credit of $${data.creditAmount} never expires!
   `.trim(),
@@ -295,7 +295,7 @@ export async function sendSMS(
   const message: SMSMessage = {
     id: `sms_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     to: formattedPhone,
-    from: config?.fromNumber || '+15127057758',
+    from: config?.fromNumber || '+18334325841',
     body,
     status: 'queued',
     type,

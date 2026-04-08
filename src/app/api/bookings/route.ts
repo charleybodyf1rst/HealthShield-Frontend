@@ -57,12 +57,12 @@ export async function POST(request: NextRequest) {
     const errorData = await response.json().catch(() => null);
     return NextResponse.json({
       success: false,
-      error: errorData?.message || 'Failed to create booking. Please call us at 512-705-7758.',
+      error: errorData?.message || 'Failed to create booking. Please call us at (833) 432-5841.',
     }, { status: response.status });
   } catch {
     return NextResponse.json({
       success: false,
-      error: 'Something went wrong. Please call us at 512-705-7758 to complete your booking.',
+      error: 'Something went wrong. Please call us at (833) 432-5841 to complete your booking.',
     }, { status: 500 });
   }
 }

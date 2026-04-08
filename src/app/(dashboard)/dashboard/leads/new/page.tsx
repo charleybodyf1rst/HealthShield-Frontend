@@ -42,8 +42,8 @@ export default function NewLeadPage() {
     source: 'website',
     value: undefined,
     notes: '',
-    rental_date: '',
-    rental_time: '',
+    consultation_date: '',
+    consultation_time: '',
     serviceName: undefined,
   });
 
@@ -193,19 +193,19 @@ export default function NewLeadPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="rental_date">Consultation Date</Label>
+                <Label htmlFor="consultation_date">Consultation Date</Label>
                 <Input
-                  id="rental_date"
+                  id="consultation_date"
                   type="date"
-                  value={formData.rental_date || ''}
-                  onChange={(e) => updateField('rental_date', e.target.value)}
+                  value={formData.consultation_date || ''}
+                  onChange={(e) => updateField('consultation_date', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="rental_time">Consultation Time Slot</Label>
+                <Label htmlFor="consultation_time">Consultation Time Slot</Label>
                 <Select
-                  value={formData.rental_time || 'none'}
-                  onValueChange={(value) => updateField('rental_time', value === 'none' ? undefined : value)}
+                  value={formData.consultation_time || 'none'}
+                  onValueChange={(value) => updateField('consultation_time', value === 'none' ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select time slot..." />

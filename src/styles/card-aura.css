@@ -1,10 +1,10 @@
 /* =============================================================================
-   BOAT AURA EFFECTS - Party Mode Full Immersive Styling
+   CARD AURA EFFECTS - Immersive Styling
    Animated pulse on hover with border glow, background halo, and color gradients
    ============================================================================= */
 
 /* Base Aura Card Styling */
-.card-boat-aura {
+.card-aura {
   position: relative;
   border-radius: 1.5rem;
   overflow: visible;
@@ -12,7 +12,7 @@
 }
 
 /* Background Halo Effect - Outer Glow */
-.card-boat-aura::before {
+.card-aura::before {
   content: '';
   position: absolute;
   inset: -12px;
@@ -25,7 +25,7 @@
 }
 
 /* Border Glow Ring Effect */
-.card-boat-aura::after {
+.card-aura::after {
   content: '';
   position: absolute;
   inset: -3px;
@@ -41,8 +41,8 @@
   mask-composite: exclude;
 }
 
-/* ==================== YELLOW AURA - Banana Gold ==================== */
-.card-boat-yellow-aura {
+/* ==================== YELLOW AURA - Gold ==================== */
+.card-yellow-aura {
   background: linear-gradient(180deg, #ffffff 0%, #fffef5 100%);
   border: 2px solid rgba(250, 204, 21, 0.3);
   box-shadow:
@@ -50,7 +50,7 @@
     0 0 0 1px rgba(250, 204, 21, 0.1);
 }
 
-.card-boat-yellow-aura::before {
+.card-yellow-aura::before {
   background: radial-gradient(
     ellipse at center,
     rgba(253, 224, 71, 0.4) 0%,
@@ -59,7 +59,7 @@
   );
 }
 
-.card-boat-yellow-aura::after {
+.card-yellow-aura::after {
   background: linear-gradient(
     135deg,
     #facc15 0%,
@@ -68,7 +68,7 @@
   );
 }
 
-.card-boat-yellow-aura:hover {
+.card-yellow-aura:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(250, 204, 21, 0.6);
   box-shadow:
@@ -78,17 +78,17 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.card-boat-yellow-aura:hover::before {
+.card-yellow-aura:hover::before {
   opacity: 1;
   transform: scale(1.15);
 }
 
-.card-boat-yellow-aura:hover::after {
+.card-yellow-aura:hover::after {
   opacity: 0.9;
 }
 
 /* Yellow Internal Gradient Overlay */
-.card-boat-yellow-aura .card-gradient-overlay {
+.card-yellow-aura .card-gradient-overlay {
   background: linear-gradient(
     180deg,
     transparent 0%,
@@ -98,7 +98,7 @@
 }
 
 /* ==================== PINK AURA - Hot Pink Party ==================== */
-.card-boat-pink-aura {
+.card-pink-aura {
   background: linear-gradient(180deg, #ffffff 0%, #fff5f9 100%);
   border: 2px solid rgba(236, 72, 153, 0.3);
   box-shadow:
@@ -106,7 +106,7 @@
     0 0 0 1px rgba(236, 72, 153, 0.1);
 }
 
-.card-boat-pink-aura::before {
+.card-pink-aura::before {
   background: radial-gradient(
     ellipse at center,
     rgba(244, 114, 182, 0.4) 0%,
@@ -115,7 +115,7 @@
   );
 }
 
-.card-boat-pink-aura::after {
+.card-pink-aura::after {
   background: linear-gradient(
     135deg,
     #ec4899 0%,
@@ -124,7 +124,7 @@
   );
 }
 
-.card-boat-pink-aura:hover {
+.card-pink-aura:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(236, 72, 153, 0.6);
   box-shadow:
@@ -134,16 +134,16 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.card-boat-pink-aura:hover::before {
+.card-pink-aura:hover::before {
   opacity: 1;
   transform: scale(1.15);
 }
 
-.card-boat-pink-aura:hover::after {
+.card-pink-aura:hover::after {
   opacity: 0.9;
 }
 
-.card-boat-pink-aura .card-gradient-overlay {
+.card-pink-aura .card-gradient-overlay {
   background: linear-gradient(
     180deg,
     transparent 0%,
@@ -153,7 +153,7 @@
 }
 
 /* ==================== BLUE AURA - Lake Vibes ==================== */
-.card-boat-blue-aura {
+.card-blue-aura {
   background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
   border: 2px solid rgba(14, 165, 233, 0.3);
   box-shadow:
@@ -161,7 +161,7 @@
     0 0 0 1px rgba(14, 165, 233, 0.1);
 }
 
-.card-boat-blue-aura::before {
+.card-blue-aura::before {
   background: radial-gradient(
     ellipse at center,
     rgba(56, 189, 248, 0.4) 0%,
@@ -170,7 +170,7 @@
   );
 }
 
-.card-boat-blue-aura::after {
+.card-blue-aura::after {
   background: linear-gradient(
     135deg,
     #0ea5e9 0%,
@@ -179,7 +179,7 @@
   );
 }
 
-.card-boat-blue-aura:hover {
+.card-blue-aura:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(14, 165, 233, 0.6);
   box-shadow:
@@ -189,16 +189,16 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.card-boat-blue-aura:hover::before {
+.card-blue-aura:hover::before {
   opacity: 1;
   transform: scale(1.15);
 }
 
-.card-boat-blue-aura:hover::after {
+.card-blue-aura:hover::after {
   opacity: 0.9;
 }
 
-.card-boat-blue-aura .card-gradient-overlay {
+.card-blue-aura .card-gradient-overlay {
   background: linear-gradient(
     180deg,
     transparent 0%,
@@ -208,7 +208,7 @@
 }
 
 /* ==================== RED AURA - Energy Bull ==================== */
-.card-boat-red-aura {
+.card-red-aura {
   background: linear-gradient(180deg, #ffffff 0%, #fef5f5 100%);
   border: 2px solid rgba(239, 68, 68, 0.3);
   box-shadow:
@@ -216,7 +216,7 @@
     0 0 0 1px rgba(239, 68, 68, 0.1);
 }
 
-.card-boat-red-aura::before {
+.card-red-aura::before {
   background: radial-gradient(
     ellipse at center,
     rgba(248, 113, 113, 0.4) 0%,
@@ -225,7 +225,7 @@
   );
 }
 
-.card-boat-red-aura::after {
+.card-red-aura::after {
   background: linear-gradient(
     135deg,
     #ef4444 0%,
@@ -234,7 +234,7 @@
   );
 }
 
-.card-boat-red-aura:hover {
+.card-red-aura:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(239, 68, 68, 0.6);
   box-shadow:
@@ -244,16 +244,16 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.card-boat-red-aura:hover::before {
+.card-red-aura:hover::before {
   opacity: 1;
   transform: scale(1.15);
 }
 
-.card-boat-red-aura:hover::after {
+.card-red-aura:hover::after {
   opacity: 0.9;
 }
 
-.card-boat-red-aura .card-gradient-overlay {
+.card-red-aura .card-gradient-overlay {
   background: linear-gradient(
     180deg,
     transparent 0%,
@@ -324,19 +324,19 @@
 }
 
 /* Apply pulse animation on hover */
-.card-boat-yellow-aura:hover {
+.card-yellow-aura:hover {
   animation: aura-pulse-yellow 1.5s ease-in-out infinite;
 }
 
-.card-boat-pink-aura:hover {
+.card-pink-aura:hover {
   animation: aura-pulse-pink 1.5s ease-in-out infinite;
 }
 
-.card-boat-blue-aura:hover {
+.card-blue-aura:hover {
   animation: aura-pulse-blue 1.5s ease-in-out infinite;
 }
 
-.card-boat-red-aura:hover {
+.card-red-aura:hover {
   animation: aura-pulse-red 1.5s ease-in-out infinite;
 }
 

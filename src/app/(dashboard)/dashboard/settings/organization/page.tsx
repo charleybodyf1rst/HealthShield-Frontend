@@ -52,7 +52,7 @@ export default function OrganizationSettingsPage() {
               <Label htmlFor="website">Website</Label>
               <Input
                 id="website"
-                defaultValue="https://healthshieldrentals.com"
+                defaultValue="https://healthshield.ai"
                 placeholder="https://yourcompany.com"
               />
             </div>

@@ -70,11 +70,11 @@ Best,
     subject: 'HealthShield - Booking Options',
     body: `Hi {name},
 
-As requested, here's an overview of our rental options:
+As requested, here's an overview of our plan options:
 
 - Individual Plan: Flexible health coverage for individuals
 - Standard Plan: AI calling with dedicated agent included
-- Full-Day Adventure: All-day rental with gear and refreshments
+- Comprehensive Plan: Full coverage with wellness benefits included
 
 I'd be happy to discuss which option would be the best fit for your group.
 

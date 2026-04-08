@@ -54,13 +54,13 @@ import {
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { SignaturePad } from './SignaturePad';
-import { ClientConsentCard } from './PassengerWaiverCard';
+import { ClientConsentCard } from './ClientConsentCard';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { BookingWaiverStatus, PassengerWaiverStatus, WaiverSignatureData } from '@/types/crm';
+import type { AppointmentConsentStatus, ClientConsentStatus, ConsentSignatureData } from '@/types/crm';
 
 interface AgentCheckinProps {
-  initialBooking?: BookingWaiverStatus | null;
+  initialBooking?: AppointmentConsentStatus | null;
   onBack: () => void;
 }
 
@@ -68,11 +68,11 @@ type Step = 'select' | 'passengers' | 'headcount' | 'depart';
 
 export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
   const [currentStep, setCurrentStep] = useState<Step>(initialBooking ? 'passengers' : 'select');
-  const [selectedBooking, setSelectedBooking] = useState<BookingWaiverStatus | null>(initialBooking || null);
+  const [selectedBooking, setSelectedBooking] = useState<AppointmentConsentStatus | null>(initialBooking || null);
   const [headCount, setHeadCount] = useState<number>(0);
   const [headCountNotes, setHeadCountNotes] = useState('');
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
-  const [signingPassenger, setSigningPassenger] = useState<PassengerWaiverStatus | null>(null);
+  const [signingPassenger, setSigningPassenger] = useState<ClientConsentStatus | null>(null);
   const [showAddPassengerDialog, setShowAddPassengerDialog] = useState(false);
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,7 +80,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
   const [agentVerified, setAgentVerified] = useState<Record<number, boolean>>({});
 
   // Form state for signature collection
-  const [signatureForm, setSignatureForm] = useState<Partial<WaiverSignatureData>>({
+  const [signatureForm, setSignatureForm] = useState<Partial<ConsentSignatureData>>({
     acknowledgedRisks: false,
     acknowledgedRules: false,
     signatureType: 'drawn',
@@ -95,11 +95,11 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
   });
 
   const {
-    todayWaiverStatus,
-    waiversLoading,
-    fetchTodayWaivers,
-    fetchBookingWaivers,
-    sendWaiverReminder,
+    todayConsentStatus,
+    consentsLoading,
+    fetchTodayConsents,
+    fetchAppointmentConsents,
+    sendConsentReminder,
     addWalkupPassenger,
     collectSignature,
     recordHeadCount,
@@ -108,18 +108,18 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
 
   useEffect(() => {
     if (!initialBooking) {
-      fetchTodayWaivers();
+      fetchTodayConsents();
     }
-  }, [fetchTodayWaivers, initialBooking]);
+  }, [fetchTodayConsents, initialBooking]);
 
   useEffect(() => {
     if (selectedBooking) {
-      setHeadCount(selectedBooking.waiversRequired);
+      setHeadCount(selectedBooking.consentsRequired);
     }
   }, [selectedBooking]);
 
   const handleSelectBooking = async (bookingId: number) => {
-    const booking = await fetchBookingWaivers(bookingId);
+    const booking = await fetchAppointmentConsents(bookingId);
     if (booking) {
       setSelectedBooking(booking);
       setCurrentStep('passengers');
@@ -129,17 +129,17 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
   const handleSendReminder = async (passengerId: number) => {
     if (!selectedBooking) return;
     try {
-      await sendWaiverReminder(selectedBooking.bookingId, passengerId);
+      await sendConsentReminder(selectedBooking.bookingId, passengerId);
       toast.success('Reminder sent');
       // Refresh booking data
-      const updated = await fetchBookingWaivers(selectedBooking.bookingId);
+      const updated = await fetchAppointmentConsents(selectedBooking.bookingId);
       if (updated) setSelectedBooking(updated);
     } catch {
       toast.error('Failed to send reminder');
     }
   };
 
-  const handleOpenSignature = (passenger: PassengerWaiverStatus) => {
+  const handleOpenSignature = (passenger: ClientConsentStatus) => {
     setSigningPassenger(passenger);
     setSignatureForm({
       fullName: passenger.fullName,
@@ -186,11 +186,11 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
         guardianRelationship: signatureForm.guardianRelationship,
       });
 
-      toast.success('Waiver signed successfully');
+      toast.success('Consent signed successfully');
       setShowSignatureDialog(false);
 
       // Refresh booking data
-      const updated = await fetchBookingWaivers(selectedBooking.bookingId);
+      const updated = await fetchAppointmentConsents(selectedBooking.bookingId);
       if (updated) setSelectedBooking(updated);
     } catch {
       toast.error('Failed to save signature');
@@ -216,7 +216,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
       setNewPassengerForm({ fullName: '', email: '', phone: '', isMinor: false });
 
       // Refresh booking data
-      const updated = await fetchBookingWaivers(selectedBooking.bookingId);
+      const updated = await fetchAppointmentConsents(selectedBooking.bookingId);
       if (updated) setSelectedBooking(updated);
     } catch {
       toast.error('Failed to add client');
@@ -249,9 +249,9 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
   const handleApproveDeparture = async (forceDepart = false) => {
     if (!selectedBooking) return;
 
-    const allSigned = selectedBooking.waiversCollected >= selectedBooking.waiversRequired;
+    const allSigned = selectedBooking.consentsCollected >= selectedBooking.consentsRequired;
 
-    // If waivers missing and not forcing, show confirmation dialog
+    // If consents missing and not forcing, show confirmation dialog
     if (!allSigned && !forceDepart) {
       setShowForceDialog(true);
       return;
@@ -281,11 +281,11 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
     }));
   };
 
-  const unsignedPassengers = selectedBooking?.passengers.filter(p => !p.waiverSigned) || [];
+  const unsignedPassengers = selectedBooking?.passengers.filter(p => !p.consentSigned) || [];
   const missingCount = unsignedPassengers.length;
 
   const progress = selectedBooking
-    ? (selectedBooking.waiversCollected / selectedBooking.waiversRequired) * 100
+    ? (selectedBooking.consentsCollected / selectedBooking.consentsRequired) * 100
     : 0;
 
   // Step 1: Select Booking
@@ -299,7 +299,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
           </Button>
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Agent Check-in</h2>
-            <p className="text-slate-500">Select a booking to begin waiver verification</p>
+            <p className="text-slate-500">Select a booking to begin consent verification</p>
           </div>
         </div>
 
@@ -311,13 +311,13 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {waiversLoading ? (
+            {consentsLoading ? (
               <div className="flex items-center justify-center py-8">
                 <RefreshCw className="w-6 h-6 animate-spin text-slate-400" />
               </div>
-            ) : todayWaiverStatus.length > 0 ? (
+            ) : todayConsentStatus.length > 0 ? (
               <div className="space-y-3">
-                {todayWaiverStatus.map((booking) => (
+                {todayConsentStatus.map((booking) => (
                   <button
                     key={booking.bookingId}
                     onClick={() => handleSelectBooking(booking.bookingId)}
@@ -353,7 +353,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                               : 'bg-yellow-100 text-yellow-700'
                           )}
                         >
-                          {booking.waiversCollected}/{booking.waiversRequired} waivers
+                          {booking.consentsCollected}/{booking.consentsRequired} consents
                         </Badge>
                       </div>
                     </div>
@@ -396,7 +396,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               : 'bg-yellow-100 text-yellow-700'
           )}
         >
-          {selectedBooking.waiversCollected}/{selectedBooking.waiversRequired} Waivers
+          {selectedBooking.consentsCollected}/{selectedBooking.consentsRequired} Consents
         </Badge>
       </div>
 
@@ -404,7 +404,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between text-sm mb-2">
-            <span>Waiver Progress</span>
+            <span>Consent Progress</span>
             <span className="font-medium">{Math.round(progress)}%</span>
           </div>
           <Progress
@@ -478,7 +478,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                         'flex items-center gap-4 p-4 rounded-xl border-2 transition-all',
                         isVerified
                           ? 'bg-emerald-50 border-emerald-300'
-                          : passenger.waiverSigned
+                          : passenger.consentSigned
                             ? 'bg-yellow-50 border-yellow-300'
                             : 'bg-red-50 border-red-300'
                       )}
@@ -500,15 +500,15 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-lg truncate">{passenger.fullName}</p>
                         <div className="flex items-center gap-2 text-sm">
-                          {passenger.waiverSigned ? (
+                          {passenger.consentSigned ? (
                             <span className="text-emerald-600 flex items-center gap-1">
                               <CheckCircle className="w-4 h-4" />
-                              Waiver Signed
+                              Consent Signed
                             </span>
                           ) : (
                             <span className="text-red-600 flex items-center gap-1">
                               <AlertTriangle className="w-4 h-4" />
-                              Waiver Missing
+                              Consent Missing
                             </span>
                           )}
                           {passenger.isMinor && (
@@ -518,7 +518,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                             </Badge>
                           )}
                         </div>
-                        {!passenger.waiverSigned && (
+                        {!passenger.consentSigned && (
                           <div className="flex gap-2 mt-2">
                             <Button
                               size="sm"
@@ -590,19 +590,19 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               <Card className="bg-slate-50">
                 <CardContent className="p-4 text-center">
                   <p className="text-sm text-slate-500">Expected</p>
-                  <p className="text-3xl font-bold">{selectedBooking.waiversRequired}</p>
+                  <p className="text-3xl font-bold">{selectedBooking.consentsRequired}</p>
                 </CardContent>
               </Card>
               <Card className="bg-emerald-50">
                 <CardContent className="p-4 text-center">
-                  <p className="text-sm text-emerald-600">Waivers Signed</p>
+                  <p className="text-sm text-emerald-600">Consents Signed</p>
                   <p className="text-3xl font-bold text-emerald-700">
-                    {selectedBooking.waiversCollected}
+                    {selectedBooking.consentsCollected}
                   </p>
                 </CardContent>
               </Card>
               <Card className={cn(
-                headCount !== selectedBooking.waiversRequired ? 'bg-yellow-50' : 'bg-blue-50'
+                headCount !== selectedBooking.consentsRequired ? 'bg-yellow-50' : 'bg-blue-50'
               )}>
                 <CardContent className="p-4 text-center">
                   <p className="text-sm text-slate-500">Actual Count</p>
@@ -618,16 +618,16 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               </Card>
             </div>
 
-            {headCount !== selectedBooking.waiversRequired && (
+            {headCount !== selectedBooking.consentsRequired && (
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
                 <div>
                   <p className="font-medium text-yellow-800">Head count mismatch</p>
                   <p className="text-sm text-yellow-700">
-                    Expected {selectedBooking.waiversRequired} clients, counted {headCount}.
-                    {headCount > selectedBooking.waiversCollected && (
+                    Expected {selectedBooking.consentsRequired} clients, counted {headCount}.
+                    {headCount > selectedBooking.consentsCollected && (
                       <span className="block mt-1">
-                        {headCount - selectedBooking.waiversCollected} clients need to sign consent forms.
+                        {headCount - selectedBooking.consentsCollected} clients need to sign consent forms.
                       </span>
                     )}
                   </p>
@@ -685,9 +685,9 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
                 <p className="text-2xl font-bold">{headCount}</p>
               </div>
               <div className="p-4 bg-emerald-50 rounded-lg">
-                <p className="text-sm text-emerald-600">Waivers Signed</p>
+                <p className="text-sm text-emerald-600">Consents Signed</p>
                 <p className="text-2xl font-bold text-emerald-700">
-                  {selectedBooking.waiversCollected}
+                  {selectedBooking.consentsCollected}
                 </p>
               </div>
             </div>
@@ -749,7 +749,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <PenTool className="w-5 h-5" />
-              Collect Waiver Signature
+              Collect Consent Signature
             </DialogTitle>
             <DialogDescription>
               {signingPassenger?.fullName} - Sign consent form on agent&apos;s device
@@ -909,7 +909,7 @@ export function AgentCheckin({ initialBooking, onBack }: AgentCheckinProps) {
               ) : (
                 <CheckCircle className="w-4 h-4" />
               )}
-              Submit Waiver
+              Submit Consent
             </Button>
           </DialogFooter>
         </DialogContent>

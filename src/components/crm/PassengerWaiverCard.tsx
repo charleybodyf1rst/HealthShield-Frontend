@@ -14,10 +14,10 @@ import {
   PenTool,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { PassengerWaiverStatus } from '@/types/crm';
+import type { ClientConsentStatus } from '@/types/crm';
 
 interface ClientConsentCardProps {
-  passenger: PassengerWaiverStatus;
+  passenger: ClientConsentStatus;
   onSendReminder?: () => void;
   onCollectSignature?: () => void;
   isLoading?: boolean;
@@ -25,7 +25,7 @@ interface ClientConsentCardProps {
 }
 
 /** @deprecated Alias for ClientConsentCard */
-export const PassengerWaiverCard = ClientConsentCard;
+export const ClientConsentCard = ClientConsentCard;
 
 export function ClientConsentCard({
   passenger,
@@ -40,7 +40,7 @@ export function ClientConsentCard({
     <div
       className={cn(
         'flex items-center justify-between p-4 rounded-lg border transition-colors',
-        passenger.waiverSigned
+        passenger.consentSigned
           ? 'bg-emerald-50 border-emerald-200'
           : 'bg-white border-slate-200 hover:border-slate-300'
       )}
@@ -50,10 +50,10 @@ export function ClientConsentCard({
         <div
           className={cn(
             'p-2 rounded-full',
-            passenger.waiverSigned ? 'bg-emerald-100' : 'bg-slate-100'
+            passenger.consentSigned ? 'bg-emerald-100' : 'bg-slate-100'
           )}
         >
-          {passenger.waiverSigned ? (
+          {passenger.consentSigned ? (
             <CheckCircle className="w-5 h-5 text-emerald-600" />
           ) : (
             <Clock className="w-5 h-5 text-slate-400" />
@@ -99,7 +99,7 @@ export function ClientConsentCard({
             )}
           </div>
 
-          {passenger.waiverSigned && passenger.signedAt && (
+          {passenger.consentSigned && passenger.signedAt && (
             <div className="mt-1 text-xs text-emerald-600">
               Signed {new Date(passenger.signedAt).toLocaleString()}
               {passenger.collectionMethod && (
@@ -113,7 +113,7 @@ export function ClientConsentCard({
       </div>
 
       {/* Actions */}
-      {showActions && !passenger.waiverSigned && (
+      {showActions && !passenger.consentSigned && (
         <div className="flex items-center gap-2">
           {hasContact && onSendReminder && (
             <Button
@@ -142,7 +142,7 @@ export function ClientConsentCard({
       )}
 
       {/* Signed Badge */}
-      {passenger.waiverSigned && (
+      {passenger.consentSigned && (
         <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
           <CheckCircle className="w-3 h-3 mr-1" />
           Signed

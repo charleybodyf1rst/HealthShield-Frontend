@@ -372,8 +372,8 @@ export interface TodaySchedule {
   customerName: string;
   partySize: number;
   status: 'upcoming' | 'in_progress' | 'completed';
-  waiversRequired: number;
-  waiversCollected: number;
+  consentsRequired: number;
+  consentsCollected: number;
 }
 
 // =============================================================================
@@ -408,7 +408,7 @@ export interface ApprovalResponse {
 // =============================================================================
 
 export interface CrmTab {
-  id: 'overview' | 'customers' | 'approvals' | 'ai-caller' | 'analytics' | 'waivers';
+  id: 'overview' | 'customers' | 'approvals' | 'ai-caller' | 'analytics' | 'consents';
   label: string;
   icon: string;
   badge?: number;
@@ -448,10 +448,10 @@ export interface WeatherAlert {
 }
 
 // =============================================================================
-// Waiver Types
+// Consent Types
 // =============================================================================
 
-export interface PassengerWaiverStatus {
+export interface ClientConsentStatus {
   id: number;
   fullName: string;
   email?: string;
@@ -459,27 +459,27 @@ export interface PassengerWaiverStatus {
   photoUrl?: string;
   isPrimaryRenter: boolean;
   isMinor: boolean;
-  waiverSigned: boolean;
+  consentSigned: boolean;
   signedAt?: string;
   collectionMethod?: 'online' | 'agent_device' | 'in_person';
   agentVerified?: boolean;
 }
 
-export interface BookingWaiverStatus {
+export interface AppointmentConsentStatus {
   bookingId: number;
   bookingNumber: string;
-  rentalDate: string;
+  appointmentDate: string;
   startTime: string;
   serviceName: string;
   customerName: string;
   customerPhone?: string;
-  waiversRequired: number;
-  waiversCollected: number;
-  passengers: PassengerWaiverStatus[];
+  consentsRequired: number;
+  consentsCollected: number;
+  passengers: ClientConsentStatus[];
   status: 'pending' | 'partial' | 'complete';
 }
 
-export interface WaiverSignatureData {
+export interface ConsentSignatureData {
   fullName: string;
   email?: string;
   phone?: string;
@@ -496,7 +496,7 @@ export interface WaiverSignatureData {
   guardianRelationship?: string;
 }
 
-export interface WaiverTemplate {
+export interface ConsentTemplate {
   id: number;
   name: string;
   version: string;
@@ -515,10 +515,10 @@ export interface HeadCountRecord {
   bookingId: number;
   agentId: number;
   expectedCount: number;
-  waiversSignedCount: number;
+  consentsSignedCount: number;
   actualCount: number;
   discrepancy: number;
-  allWaiversCollected: boolean;
+  allConsentsCollected: boolean;
   departureApproved: boolean;
   notes?: string;
   recordedAt: string;
@@ -691,7 +691,7 @@ export interface InteractionOptions {
 }
 
 // =============================================================================
-// Waiver Administration Types
+// Consent Administration Types
 // =============================================================================
 
 export interface AgentContext {
@@ -708,13 +708,13 @@ export interface AgentContext {
   } | null;
   todayStats: {
     totalBookings: number;
-    pendingWaivers: number;
-    completedWaivers: number;
+    pendingConsents: number;
+    completedConsents: number;
     readyToDepartCount: number;
   };
 }
 
-export interface ArchivedWaiver {
+export interface ArchivedConsent {
   id: number;
   bookingId: number;
   bookingNumber: string;
@@ -730,7 +730,7 @@ export interface ArchivedWaiver {
   pdfUrl?: string;
 }
 
-export interface WaiverArchiveFilters {
+export interface ConsentArchiveFilters {
   dateFrom: string | null;
   dateTo: string | null;
   bookingNumber: string;
@@ -747,7 +747,7 @@ export interface QuickSignSearchResult {
   bookingNumber: string;
   customerName: string;
   phone?: string;
-  rentalDate: string;
+  appointmentDate: string;
   startTime: string;
   serviceName: string;
   unsignedPassengers: Array<{
@@ -757,14 +757,14 @@ export interface QuickSignSearchResult {
   }>;
 }
 
-export interface WaiverArchivePagination {
+export interface ConsentArchivePagination {
   page: number;
   lastPage: number;
   total: number;
   perPage: number;
 }
 
-export type WaiverSubTab = 'today' | 'archive' | 'quick-sign' | 'templates';
+export type ConsentSubTab = 'today' | 'archive' | 'quick-sign' | 'templates';
 
 // =============================================================================
 // Legacy Aliases (for backward compatibility during migration)
