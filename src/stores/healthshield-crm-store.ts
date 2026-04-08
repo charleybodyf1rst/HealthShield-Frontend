@@ -1042,8 +1042,9 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
   fetchLead: async (id: number) => {
     try {
       const response = await api.get(`${API_URL}/api/v1/crm/leads/${id}`);
-      const raw = response.data.data;
-      if (!raw) return null;
+      // CRM controller returns lead at top level, not in {data: {data: lead}}
+      const raw = response.data?.data || response.data || response;
+      if (!raw || !raw.id) return null;
       const lead = snakeToCamel(raw as Record<string, any>);
       if (raw.interactions) {
         lead.interactions = raw.interactions.map((i: Record<string, any>) => snakeToCamel(i));
