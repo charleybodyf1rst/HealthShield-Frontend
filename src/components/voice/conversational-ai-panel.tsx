@@ -547,7 +547,7 @@ export function ConversationalAiPanel({
                     <SelectValue placeholder="Select a persona" />
                   </SelectTrigger>
                   <SelectContent>
-                    {personas.map((persona) => (
+                    {personas.filter((p) => p.key.startsWith('insurance_')).map((persona) => (
                       <SelectItem key={persona.key} value={persona.key}>
                         <div className="flex items-center gap-2">
                           <span>{persona.name}</span>
@@ -563,34 +563,17 @@ export function ConversationalAiPanel({
                 )}
               </div>
 
-              {/* LLM selector */}
+              {/* AI Model — locked to GPT-4o + ElevenLabs */}
               <div className="space-y-2">
                 <Label>AI Model</Label>
-                <Select
-                  value={selectedLlm}
-                  onValueChange={(v) => setSelectedLlm(v as ConversationalLlm)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select AI model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {llmOptions.map((llm) => (
-                      <SelectItem key={llm.key} value={llm.key}>
-                        <div className="flex items-center gap-2">
-                          <span>{llm.model}</span>
-                          {llm.recommended && (
-                            <Badge variant="secondary" className="text-xs">Recommended</Badge>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {selectedLlmData && (
-                  <p className="text-xs text-muted-foreground">
-                    {selectedLlmData.description}
-                  </p>
-                )}
+                <div className="flex items-center gap-2 p-2.5 border rounded-md bg-muted/30">
+                  <span className="text-sm font-medium">GPT-4o</span>
+                  <Badge variant="secondary" className="text-xs">Recommended</Badge>
+                  <span className="text-xs text-muted-foreground">+ ElevenLabs Voices</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Most capable — best for complex insurance conversations
+                </p>
               </div>
             </TabsContent>
 
