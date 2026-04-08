@@ -1,7 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  DndContext,
+  closestCorners,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -23,373 +39,721 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
-  ClipboardList,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Plus,
   RefreshCw,
-  CheckCircle,
-  Clock,
-  Circle,
-  Play,
-  Trash2,
   Calendar,
-  AlertTriangle,
-  Filter,
-  Search,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  GripVertical,
+  Loader2,
+  Inbox,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://systemsf1rst-backend-887571186773.us-central1.run.app';
+// ---------------------------------------------------------------------------
+// Constants & Helpers
+// ---------------------------------------------------------------------------
 
-function getAuthToken(): string | null {
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://systemsf1rst-backend-887571186773.us-central1.run.app';
+
+function getToken(): string | null {
   if (typeof window === 'undefined') return null;
   const stored = localStorage.getItem('healthshield-crm-auth');
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
       return parsed?.state?.tokens?.accessToken || null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
   return null;
 }
 
-function authHeaders(): Record<string, string> {
-  const token = getAuthToken();
-  const headers: Record<string, string> = { Accept: 'application/json', 'Content-Type': 'application/json' };
+function apiHeaders(): Record<string, string> {
+  const token = getToken();
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'X-Organization-ID': '12',
+  };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   return headers;
 }
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface Task {
   id: number;
   title: string;
   description: string | null;
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'low' | 'medium' | 'high';
   due_date: string | null;
   category: string | null;
-  assigned_to: string | null;
-  completed_at: string | null;
   created_at: string;
 }
 
-const priorityConfig = {
-  urgent: { label: 'Urgent', color: 'bg-red-100 text-red-700 border-red-200', icon: AlertTriangle },
-  high: { label: 'High', color: 'bg-orange-100 text-orange-700 border-orange-200', icon: AlertTriangle },
-  medium: { label: 'Medium', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: Clock },
-  low: { label: 'Low', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Circle },
+type ColumnId = 'pending' | 'in_progress' | 'completed';
+
+interface ColumnDef {
+  id: ColumnId;
+  label: string;
+  borderClass: string;
+  headerBg: string;
+  dotColor: string;
+}
+
+const COLUMNS: ColumnDef[] = [
+  {
+    id: 'pending',
+    label: 'TO DO',
+    borderClass: 'border-blue-500/30',
+    headerBg: 'bg-blue-500/10',
+    dotColor: 'bg-blue-500',
+  },
+  {
+    id: 'in_progress',
+    label: 'IN PROGRESS',
+    borderClass: 'border-orange-500/30',
+    headerBg: 'bg-orange-500/10',
+    dotColor: 'bg-orange-500',
+  },
+  {
+    id: 'completed',
+    label: 'DONE',
+    borderClass: 'border-green-500/30',
+    headerBg: 'bg-green-500/10',
+    dotColor: 'bg-green-500',
+  },
+];
+
+const PRIORITY_STYLES: Record<string, string> = {
+  high: 'bg-red-500/15 text-red-400 border-red-500/30',
+  medium: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+  low: 'bg-green-500/15 text-green-400 border-green-500/30',
 };
 
-const statusConfig = {
-  pending: { label: 'To Do', color: 'bg-slate-100 text-slate-700', icon: Circle },
-  in_progress: { label: 'In Progress', color: 'bg-orange-100 text-orange-700', icon: Play },
-  completed: { label: 'Done', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-100 text-gray-500', icon: Trash2 },
-};
+const CATEGORY_STYLES = 'bg-muted text-muted-foreground border-border';
 
-// Categories mapped to backend-accepted values (DB enum constraint)
 const CATEGORIES = [
-  { label: 'Follow Up', value: 'follow_up' },
-  { label: 'Call', value: 'call' },
   { label: 'Email', value: 'email' },
+  { label: 'Call', value: 'call' },
   { label: 'Meeting', value: 'meeting' },
-  { label: 'Check-in', value: 'check_in' },
+  { label: 'Follow-up', value: 'follow_up' },
   { label: 'Other', value: 'other' },
 ];
+
+// ---------------------------------------------------------------------------
+// Sortable Task Card
+// ---------------------------------------------------------------------------
+
+function SortableTaskCard({
+  task,
+  onEdit,
+  onDelete,
+}: {
+  task: Task;
+  onEdit: (task: Task) => void;
+  onDelete: (id: number) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(isDragging && 'opacity-40')}
+    >
+      <TaskCardContent
+        task={task}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        dragAttributes={attributes}
+        dragListeners={listeners}
+      />
+    </div>
+  );
+}
+
+function TaskCardContent({
+  task,
+  onEdit,
+  onDelete,
+  dragAttributes,
+  dragListeners,
+  isOverlay = false,
+}: {
+  task: Task;
+  onEdit: (task: Task) => void;
+  onDelete: (id: number) => void;
+  dragAttributes?: Record<string, unknown>;
+  dragListeners?: Record<string, unknown>;
+  isOverlay?: boolean;
+}) {
+  const isOverdue =
+    task.due_date &&
+    new Date(task.due_date) < new Date() &&
+    task.status !== 'completed';
+
+  const categoryLabel =
+    CATEGORIES.find((c) => c.value === task.category)?.label || task.category;
+
+  return (
+    <Card
+      className={cn(
+        'group transition-all cursor-default',
+        isOverlay
+          ? 'shadow-2xl rotate-2 scale-105 border-orange-500/50'
+          : 'hover:shadow-md',
+        isOverdue && !isOverlay && 'border-red-500/40'
+      )}
+    >
+      <CardContent className="p-3">
+        {/* Top row: drag handle + title + menu */}
+        <div className="flex items-start gap-2">
+          <button
+            type="button"
+            className="mt-0.5 cursor-grab text-muted-foreground/50 hover:text-muted-foreground shrink-0"
+            {...(dragAttributes as React.HTMLAttributes<HTMLButtonElement>)}
+            {...(dragListeners as React.HTMLAttributes<HTMLButtonElement>)}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+
+          <h4 className="font-semibold text-sm leading-tight flex-1 min-w-0 truncate">
+            {task.title}
+          </h4>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                title="Task actions"
+                aria-label="Task actions"
+                className="shrink-0 p-1 rounded hover:bg-muted opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem onClick={() => onEdit(task)}>
+                <Pencil className="h-3.5 w-3.5 mr-2" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(task.id)}
+                className="text-red-500 focus:text-red-500"
+              >
+                <Trash2 className="h-3.5 w-3.5 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Description preview */}
+        {task.description && (
+          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 pl-6">
+            {task.description}
+          </p>
+        )}
+
+        {/* Badges row */}
+        <div className="flex items-center gap-1.5 flex-wrap mt-2.5 pl-6">
+          <Badge
+            variant="outline"
+            className={cn('text-[10px] capitalize', PRIORITY_STYLES[task.priority])}
+          >
+            {task.priority}
+          </Badge>
+
+          {task.category && (
+            <Badge
+              variant="outline"
+              className={cn('text-[10px] capitalize', CATEGORY_STYLES)}
+            >
+              {categoryLabel}
+            </Badge>
+          )}
+
+          {task.due_date && (
+            <span
+              className={cn(
+                'text-[10px] flex items-center gap-0.5 ml-auto',
+                isOverdue
+                  ? 'text-red-400 font-medium'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <Calendar className="h-3 w-3" />
+              {new Date(task.due_date).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Kanban Column
+// ---------------------------------------------------------------------------
+
+function KanbanColumn({
+  column,
+  tasks,
+  onEdit,
+  onDelete,
+}: {
+  column: ColumnDef;
+  tasks: Task[];
+  onEdit: (task: Task) => void;
+  onDelete: (id: number) => void;
+}) {
+  const taskIds = tasks.map((t) => t.id);
+
+  return (
+    <div className="flex flex-col min-h-0">
+      {/* Column header */}
+      <div
+        className={cn(
+          'flex items-center justify-between px-3 py-2.5 rounded-t-lg border-b-2',
+          column.headerBg,
+          column.borderClass
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <div className={cn('h-2.5 w-2.5 rounded-full', column.dotColor)} />
+          <span className="text-xs font-bold tracking-wider text-foreground">
+            {column.label}
+          </span>
+        </div>
+        <Badge
+          variant="secondary"
+          className="text-[10px] h-5 min-w-[20px] justify-center"
+        >
+          {tasks.length}
+        </Badge>
+      </div>
+
+      {/* Cards area */}
+      <div className="flex-1 bg-muted/30 rounded-b-lg p-2 space-y-2 min-h-[300px]">
+        <SortableContext
+          items={taskIds}
+          strategy={verticalListSortingStrategy}
+        >
+          {tasks.map((task) => (
+            <SortableTaskCard
+              key={task.id}
+              task={task}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
+        </SortableContext>
+
+        {tasks.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <Inbox className="h-8 w-8 mb-2 opacity-40" />
+            <p className="text-xs">No tasks</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main Page
+// ---------------------------------------------------------------------------
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  // Create dialog
-  const [showCreate, setShowCreate] = useState(false);
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
-    priority: 'medium' as Task['priority'],
-    due_date: '',
+    priority: 'medium',
     category: '',
-    assigned_to: '',
+    due_date: '',
   });
 
-  const fetchTasks = async () => {
+  // DnD sensors - require 8px of movement before drag starts (prevents accidental drags)
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  );
+
+  // ---------- API calls ----------
+
+  const fetchTasks = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/v1/crm/todos`, { headers: authHeaders() });
-      if (response.ok) {
-        const data = await response.json();
-        setTasks(Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []);
+      const res = await fetch(`${API_URL}/api/v1/crm/todos`, {
+        headers: apiHeaders(),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const list: Task[] = Array.isArray(data.data)
+          ? data.data
+          : Array.isArray(data)
+            ? data
+            : [];
+        setTasks(list);
+      } else {
+        toast.error('Failed to load tasks');
       }
-    } catch { /* silent */ }
-    setIsLoading(false);
-  };
+    } catch {
+      toast.error('Network error loading tasks');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  useEffect(() => { fetchTasks(); }, []);
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const createTask = async () => {
-    if (!form.title) { toast.error('Title is required'); return; }
+    if (!form.title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
     setIsSaving(true);
     try {
-      const response = await fetch(`${API_URL}/api/v1/crm/todos`, {
+      const body: Record<string, string> = {
+        title: form.title.trim(),
+        priority: form.priority,
+        status: 'pending',
+      };
+      if (form.description.trim()) body.description = form.description.trim();
+      if (form.category) body.category = form.category;
+      if (form.due_date) body.due_date = form.due_date;
+
+      const res = await fetch(`${API_URL}/api/v1/crm/todos`, {
         method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify(form),
+        headers: apiHeaders(),
+        body: JSON.stringify(body),
       });
-      if (response.ok) {
+
+      if (res.ok) {
         toast.success('Task created');
-        setShowCreate(false);
-        setForm({ title: '', description: '', priority: 'medium', due_date: '', category: '', assigned_to: '' });
+        closeDialog();
         fetchTasks();
       } else {
-        const err = await response.json().catch(() => ({ message: 'Failed' }));
+        const err = await res.json().catch(() => ({ message: 'Failed' }));
         toast.error(err.message || 'Failed to create task');
       }
-    } catch { toast.error('Network error'); }
-    finally { setIsSaving(false); }
+    } catch {
+      toast.error('Network error');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const updateTaskStatus = async (id: number, action: 'complete' | 'start') => {
+  const updateTask = async () => {
+    if (!editingTask || !form.title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+    setIsSaving(true);
     try {
-      await fetch(`${API_URL}/api/v1/crm/todos/${id}/${action}`, { method: 'POST', headers: authHeaders() });
-      toast.success(action === 'complete' ? 'Task completed!' : 'Task started');
-      fetchTasks();
-    } catch { toast.error('Failed to update task'); }
+      const body: Record<string, string> = {
+        title: form.title.trim(),
+        priority: form.priority,
+      };
+      if (form.description.trim()) body.description = form.description.trim();
+      if (form.category) body.category = form.category;
+      if (form.due_date) body.due_date = form.due_date;
+
+      const res = await fetch(`${API_URL}/api/v1/crm/todos/${editingTask.id}`, {
+        method: 'PUT',
+        headers: apiHeaders(),
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        toast.success('Task updated');
+        closeDialog();
+        fetchTasks();
+      } else {
+        const err = await res.json().catch(() => ({ message: 'Failed' }));
+        toast.error(err.message || 'Failed to update task');
+      }
+    } catch {
+      toast.error('Network error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const updateTaskStatus = async (id: number, newStatus: ColumnId) => {
+    // Optimistic update
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
+    );
+
+    try {
+      const res = await fetch(`${API_URL}/api/v1/crm/todos/${id}`, {
+        method: 'PUT',
+        headers: apiHeaders(),
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        toast.success('Task moved');
+      } else {
+        toast.error('Failed to update task');
+        fetchTasks(); // revert
+      }
+    } catch {
+      toast.error('Network error');
+      fetchTasks(); // revert
+    }
   };
 
   const deleteTask = async (id: number) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
     try {
-      await fetch(`${API_URL}/api/v1/crm/todos/${id}`, { method: 'DELETE', headers: authHeaders() });
-      toast.success('Task deleted');
-      setTasks(prev => prev.filter(t => t.id !== id));
-    } catch { toast.error('Failed to delete task'); }
+      const res = await fetch(`${API_URL}/api/v1/crm/todos/${id}`, {
+        method: 'DELETE',
+        headers: apiHeaders(),
+      });
+      if (res.ok) {
+        toast.success('Task deleted');
+      } else {
+        toast.error('Failed to delete task');
+        fetchTasks();
+      }
+    } catch {
+      toast.error('Network error');
+      fetchTasks();
+    }
   };
 
-  // Filtered tasks
-  const filtered = tasks.filter(t => {
-    if (statusFilter !== 'all' && t.status !== statusFilter) return false;
-    if (priorityFilter !== 'all' && t.priority !== priorityFilter) return false;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      return t.title.toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q);
+  // ---------- Dialog helpers ----------
+
+  const openCreateDialog = () => {
+    setEditingTask(null);
+    setForm({
+      title: '',
+      description: '',
+      priority: 'medium',
+      category: '',
+      due_date: '',
+    });
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (task: Task) => {
+    setEditingTask(task);
+    setForm({
+      title: task.title,
+      description: task.description || '',
+      priority: task.priority,
+      category: task.category || '',
+      due_date: task.due_date ? task.due_date.split('T')[0] : '',
+    });
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setEditingTask(null);
+  };
+
+  // ---------- DnD handlers ----------
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const task = tasks.find((t) => t.id === event.active.id);
+    setActiveTask(task || null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveTask(null);
+    const { active, over } = event;
+    if (!over) return;
+
+    const taskId = active.id as number;
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    // Determine which column the task was dropped on.
+    // `over.id` could be a task id or a column id (if dropped on empty area).
+    let targetColumn: ColumnId | null = null;
+
+    // Check if dropped over a column directly
+    const columnIds: ColumnId[] = ['pending', 'in_progress', 'completed'];
+    if (columnIds.includes(over.id as ColumnId)) {
+      targetColumn = over.id as ColumnId;
+    } else {
+      // Dropped over another task - find that task's column
+      const overTask = tasks.find((t) => t.id === over.id);
+      if (overTask) {
+        targetColumn = overTask.status as ColumnId;
+      }
     }
-    return true;
-  });
 
-  // Stats
-  const totalTasks = tasks.length;
-  const todoCount = tasks.filter(t => t.status === 'pending').length;
-  const inProgressCount = tasks.filter(t => t.status === 'in_progress').length;
-  const completedCount = tasks.filter(t => t.status === 'completed').length;
+    if (targetColumn && targetColumn !== task.status) {
+      updateTaskStatus(taskId, targetColumn);
+    }
+  };
 
-  // Group by status for columns
-  const columns = [
-    { key: 'pending', label: 'To Do', tasks: filtered.filter(t => t.status === 'pending') },
-    { key: 'in_progress', label: 'In Progress', tasks: filtered.filter(t => t.status === 'in_progress') },
-    { key: 'completed', label: 'Done', tasks: filtered.filter(t => t.status === 'completed') },
-  ];
+  // ---------- Derived data ----------
+
+  const tasksByColumn: Record<ColumnId, Task[]> = {
+    pending: tasks.filter((t) => t.status === 'pending'),
+    in_progress: tasks.filter((t) => t.status === 'in_progress'),
+    completed: tasks.filter((t) => t.status === 'completed'),
+  };
+
+  // ---------- Render ----------
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-600/25">
-              <ClipboardList className="h-5 w-5 text-white" />
-            </div>
-            Tasks
-          </h1>
-          <p className="text-muted-foreground mt-1">Manage your team tasks and to-dos</p>
-        </div>
+        <h1 className="text-2xl font-bold tracking-tight">Tasks</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={fetchTasks} disabled={isLoading}>
-            <RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={fetchTasks}
+            disabled={isLoading}
+          >
+            <RefreshCw
+              className={cn('h-4 w-4', isLoading && 'animate-spin')}
+            />
           </Button>
-          <Button onClick={() => setShowCreate(true)} className="btn-premium">
-            <Plus className="w-4 h-4 mr-2" />
+          <Button onClick={openCreateDialog}>
+            <Plus className="h-4 w-4 mr-2" />
             New Task
           </Button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <Card className="stat-card-orange">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <ClipboardList className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total</p>
-              <p className="text-xl font-bold">{totalTasks}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="stat-card-orange">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 bg-slate-100 rounded-lg">
-              <Circle className="w-5 h-5 text-slate-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">To Do</p>
-              <p className="text-xl font-bold">{todoCount}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="stat-card-orange">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Play className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">In Progress</p>
-              <p className="text-xl font-bold text-orange-600">{inProgressCount}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="stat-card-orange">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 rounded-lg">
-              <CheckCircle className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Completed</p>
-              <p className="text-xl font-bold text-emerald-600">{completedCount}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search tasks..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
-        </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="pending">To Do</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="completed">Done</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Priority" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Priorities</SelectItem>
-            <SelectItem value="urgent">Urgent</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="low">Low</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Kanban Columns */}
+      {/* Kanban Board */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" />
+        <div className="flex items-center justify-center py-24">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
-          {columns.map((col) => (
-            <div key={col.key} className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">{col.label}</h3>
-                <Badge variant="secondary" className="text-xs">{col.tasks.length}</Badge>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {COLUMNS.map((col) => (
+              <KanbanColumn
+                key={col.id}
+                column={col}
+                tasks={tasksByColumn[col.id]}
+                onEdit={openEditDialog}
+                onDelete={deleteTask}
+              />
+            ))}
+          </div>
+
+          {/* Drag overlay - shows a floating copy of the card while dragging */}
+          <DragOverlay>
+            {activeTask ? (
+              <div className="w-[340px]">
+                <TaskCardContent
+                  task={activeTask}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                  isOverlay
+                />
               </div>
-              <div className="space-y-2 min-h-[200px]">
-                {col.tasks.map((task) => {
-                  const pCfg = priorityConfig[task.priority] || priorityConfig.medium;
-                  const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
-                  return (
-                    <Card key={task.id} className={cn('group hover:shadow-md transition-all', isOverdue && 'border-red-300')}>
-                      <CardContent className="p-3">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-medium text-sm leading-tight flex-1">{task.title}</h4>
-                          <button
-                            type="button"
-                            onClick={() => deleteTask(task.id)}
-                            className="hidden group-hover:block p-1 rounded hover:bg-red-100"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-red-500" />
-                          </button>
-                        </div>
-                        {task.description && (
-                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{task.description}</p>
-                        )}
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Badge variant="outline" className={cn('text-[10px]', pCfg.color)}>{pCfg.label}</Badge>
-                          {task.category && (
-                            <Badge variant="outline" className="text-[10px]">{task.category}</Badge>
-                          )}
-                          {task.due_date && (
-                            <span className={cn('text-[10px] flex items-center gap-0.5', isOverdue ? 'text-red-600 font-medium' : 'text-muted-foreground')}>
-                              <Calendar className="w-3 h-3" />
-                              {new Date(task.due_date).toLocaleDateString()}
-                            </span>
-                          )}
-                        </div>
-                        {/* Action buttons */}
-                        <div className="flex items-center gap-1 mt-2 pt-2 border-t">
-                          {task.status === 'pending' && (
-                            <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => updateTaskStatus(task.id, 'start')}>
-                              <Play className="w-3 h-3 mr-1" /> Start
-                            </Button>
-                          )}
-                          {(task.status === 'pending' || task.status === 'in_progress') && (
-                            <Button size="sm" variant="ghost" className="h-7 text-xs text-emerald-600" onClick={() => updateTaskStatus(task.id, 'complete')}>
-                              <CheckCircle className="w-3 h-3 mr-1" /> Done
-                            </Button>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-                {col.tasks.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground text-sm border border-dashed rounded-lg">
-                    No tasks
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       )}
 
-      {/* Create Task Dialog */}
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+      {/* Create / Edit Task Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ClipboardList className="w-5 h-5 text-orange-500" />
-              New Task
+            <DialogTitle>
+              {editingTask ? 'Edit Task' : 'New Task'}
             </DialogTitle>
-            <DialogDescription>Create a new task for your team.</DialogDescription>
+            <DialogDescription>
+              {editingTask
+                ? 'Update the task details below.'
+                : 'Fill in the details to create a new task.'}
+            </DialogDescription>
           </DialogHeader>
+
           <div className="space-y-4">
+            {/* Title */}
             <div className="space-y-2">
-              <Label>Title *</Label>
-              <Input placeholder="e.g., Follow up with Johnson enrollment" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <Label htmlFor="task-title">Title *</Label>
+              <Input
+                id="task-title"
+                placeholder="e.g., Follow up with Johnson enrollment"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+              />
             </div>
+
+            {/* Description */}
             <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea placeholder="Task details..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
+              <Label htmlFor="task-desc">Description</Label>
+              <Textarea
+                id="task-desc"
+                placeholder="Task details..."
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+                rows={3}
+              />
             </div>
+
+            {/* Priority + Category */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Priority</Label>
-                <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v as Task['priority'] })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={form.priority}
+                  onValueChange={(v) => setForm({ ...form, priority: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="urgent">Urgent</SelectItem>
                     <SelectItem value="high">High</SelectItem>
                     <SelectItem value="medium">Medium</SelectItem>
                     <SelectItem value="low">Low</SelectItem>
@@ -398,31 +762,49 @@ export default function TasksPage() {
               </div>
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select value={form.category || '_none'} onValueChange={(v) => setForm({ ...form, category: v === '_none' ? '' : v })}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <Select
+                  value={form.category || '_none'}
+                  onValueChange={(v) =>
+                    setForm({ ...form, category: v === '_none' ? '' : v })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="_none">None</SelectItem>
-                    {CATEGORIES.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                    {CATEGORIES.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Due Date</Label>
-                <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Assigned To</Label>
-                <Input placeholder="Team member name" value={form.assigned_to} onChange={(e) => setForm({ ...form, assigned_to: e.target.value })} />
-              </div>
+
+            {/* Due date */}
+            <div className="space-y-2">
+              <Label htmlFor="task-due">Due Date</Label>
+              <Input
+                id="task-due"
+                type="date"
+                value={form.due_date}
+                onChange={(e) => setForm({ ...form, due_date: e.target.value })}
+              />
             </div>
           </div>
+
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
-            <Button type="button" onClick={createTask} disabled={isSaving || !form.title}>
-              {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-              {isSaving ? 'Creating...' : 'Create Task'}
+            <Button variant="outline" onClick={closeDialog}>
+              Cancel
+            </Button>
+            <Button
+              onClick={editingTask ? updateTask : createTask}
+              disabled={isSaving || !form.title.trim()}
+            >
+              {isSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {editingTask ? 'Save Changes' : 'Create Task'}
             </Button>
           </DialogFooter>
         </DialogContent>
