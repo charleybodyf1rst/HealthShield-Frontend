@@ -377,7 +377,7 @@ export default function TasksPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Title *</Label>
-              <Input placeholder="e.g., Follow up with Johnson booking" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <Input placeholder="e.g., Follow up with Johnson enrollment" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </div>
             <div className="space-y-2">
               <Label>Description</Label>

@@ -204,7 +204,7 @@ export function ContentGeneratorTab({
         {/* Generator Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Generate Booking Content</CardTitle>
+            <CardTitle>Generate Insurance Content</CardTitle>
             <CardDescription>
               Select a lead and describe your goal to generate personalized content
             </CardDescription>

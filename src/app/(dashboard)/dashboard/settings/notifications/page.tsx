@@ -23,9 +23,9 @@ interface NotificationSetting {
 export default function NotificationsSettingsPage() {
   const [emailSettings, setEmailSettings] = useState<NotificationSetting[]>([
     {
-      id: 'email-bookings',
-      label: 'Booking Confirmations',
-      description: 'Receive email notifications for new and updated bookings.',
+      id: 'email-enrollments',
+      label: 'Enrollment Confirmations',
+      description: 'Receive email notifications for new enrollments and policy updates.',
       enabled: true,
     },
     {
@@ -50,9 +50,9 @@ export default function NotificationsSettingsPage() {
 
   const [smsSettings, setSmsSettings] = useState<NotificationSetting[]>([
     {
-      id: 'sms-bookings',
-      label: 'Booking Alerts',
-      description: 'SMS alerts for same-day bookings and cancellations.',
+      id: 'sms-enrollments',
+      label: 'Enrollment Alerts',
+      description: 'SMS alerts for same-day enrollments and cancellations.',
       enabled: true,
     },
     {

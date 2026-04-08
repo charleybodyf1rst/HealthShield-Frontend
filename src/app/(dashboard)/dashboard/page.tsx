@@ -154,7 +154,7 @@ export default function DashboardPage() {
     },
     {
       title: 'AI Calls Today',
-      value: (kpis?.aiCallsToday ?? kpis?.todayBookings ?? 0).toLocaleString(),
+      value: (kpis?.aiCallsToday ?? kpis?.aiCallsToday ?? 0).toLocaleString(),
       change: kpis?.scheduledCalls ? `${kpis.scheduledCalls} scheduled` : '-',
       trend: 'up' as 'up' | 'down',
       icon: Phone,

@@ -75,7 +75,7 @@ export default function SettingsPage() {
             <div className="space-y-0.5">
               <Label>Email Notifications</Label>
               <p className="text-sm text-muted-foreground">
-                Receive booking confirmations and updates via email
+                Receive enrollment confirmations and policy updates via email
               </p>
             </div>
             <Switch defaultChecked />
@@ -85,7 +85,7 @@ export default function SettingsPage() {
             <div className="space-y-0.5">
               <Label>Push Notifications</Label>
               <p className="text-sm text-muted-foreground">
-                Get real-time alerts for new bookings and messages
+                Get real-time alerts for new enrollments and messages
               </p>
             </div>
             <Switch defaultChecked />

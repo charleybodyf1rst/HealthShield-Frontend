@@ -143,7 +143,7 @@ export default function InsuranceCrmPage() {
             </div>
             <div>
               <p className="text-sm text-slate-500">Today&apos;s Enrollments</p>
-              <p className="text-2xl font-bold text-slate-900">{kpis?.todayEnrollments ?? kpis?.todayBookings ?? '-'}</p>
+              <p className="text-2xl font-bold text-slate-900">{kpis?.todayEnrollments ?? kpis?.aiCallsToday ?? '-'}</p>
             </div>
           </CardContent>
         </Card>

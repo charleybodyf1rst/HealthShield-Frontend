@@ -25,7 +25,7 @@ const integrations = [
     description: 'Transactional emails, campaigns, and email template delivery.',
     icon: Mail,
     connected: true,
-    account: 'bookings@healthshieldrentals.com',
+    account: 'admin@healthshield.ai',
   },
   {
     name: 'Stripe',
@@ -36,7 +36,7 @@ const integrations = [
   },
   {
     name: 'Google Calendar',
-    description: 'Sync bookings and availability with Google Calendar.',
+    description: 'Sync appointments and availability with Google Calendar.',
     icon: CalendarDays,
     connected: false,
     account: null,

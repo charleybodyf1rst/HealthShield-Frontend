@@ -211,7 +211,7 @@ export default function CustomerDetailClient() {
                 <span className="text-sm text-muted-foreground flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4" /> Total Enrollments
                 </span>
-                <span className="font-semibold">{customer.totalBookings}</span>
+                <span className="font-semibold">{customer.totalEnrollments}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground flex items-center gap-2">
@@ -219,12 +219,12 @@ export default function CustomerDetailClient() {
                 </span>
                 <span className="font-semibold text-green-600">${customer.totalSpent.toLocaleString()}</span>
               </div>
-              {customer.lastBookingDate && (
+              {customer.lastEnrollmentDate && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <Clock className="h-4 w-4" /> Last Enrollment
                   </span>
-                  <span className="text-sm">{new Date(customer.lastBookingDate).toLocaleDateString()}</span>
+                  <span className="text-sm">{new Date(customer.lastEnrollmentDate).toLocaleDateString()}</span>
                 </div>
               )}
             </div>

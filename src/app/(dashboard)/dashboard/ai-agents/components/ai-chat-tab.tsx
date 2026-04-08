@@ -120,7 +120,7 @@ export function AIChatTab({
               <Bot className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-base">Booking Assistant</CardTitle>
+              <CardTitle className="text-base">Insurance Assistant</CardTitle>
               <p className="text-sm text-muted-foreground">
                 Claude AI - Always learning from your interactions
               </p>
@@ -214,7 +214,7 @@ export function AIChatTab({
           <div className="p-4 border-t">
             <div className="flex gap-2">
               <Input
-                placeholder="Ask about bookings, availability, customers..."
+                placeholder="Ask about plans, coverage, enrollments..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={(e) => {

@@ -162,7 +162,7 @@ const DEMO_APPOINTMENTS: SalesAppointment[] = [
     lead_id: '1',
     lead: { id: '1', first_name: 'John', last_name: 'Smith', email: 'john@example.com', phone: '+1234567890' },
     type: 'discovery_call',
-    title: 'Booking Inquiry - John Smith',
+    title: 'Policy Consultation - John Smith',
     description: 'Initial call about family health insurance options',
     start_time: new Date().toISOString(),
     end_time: new Date(Date.now() + 30 * 60000).toISOString(),
@@ -582,10 +582,10 @@ export default function CalendarPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <CalendarIcon className="h-6 w-6 text-primary" />
-            Booking Calendar
+            Appointments
           </h1>
           <p className="text-muted-foreground">
-            Manage your bookings and appointments
+            Schedule and manage consultations
           </p>
         </div>
         <div className="flex items-center gap-3">

@@ -20,7 +20,7 @@ export default function AIAgentsPage() {
       id: '1',
       role: 'assistant',
       content:
-        "Hello! I'm your AI Booking Assistant powered by Claude. I can help you with:\n\n\u2022 **Booking management** - Check availability and manage reservations\n\u2022 **Lead qualification** - Analyze leads and suggest next actions\n\u2022 **Email drafting** - Create personalized follow-up emails\n\u2022 **Call scripts** - Generate talking points for sales calls\n\u2022 **SMS messages** - Write brief, effective text messages\n\u2022 **Pipeline analysis** - Identify bottlenecks and opportunities\n\nHow can I help you today?",
+        "Hello! I'm your AI Insurance Assistant powered by Claude. I can help you with:\n\n\u2022 **Policy management - Check coverage and manage enrollments\n\u2022 **Lead qualification** - Analyze leads and suggest next actions\n\u2022 **Email drafting** - Create personalized follow-up emails\n\u2022 **Call scripts** - Generate talking points for sales calls\n\u2022 **SMS messages** - Write brief, effective text messages\n\u2022 **Pipeline analysis** - Identify bottlenecks and opportunities\n\nHow can I help you today?",
       timestamp: new Date(),
     },
   ]);
@@ -142,7 +142,7 @@ export default function AIAgentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">AI Booking Assistant</h1>
+          <h1 className="text-2xl font-bold tracking-tight">AI Insurance Assistant</h1>
           <p className="text-muted-foreground">Powered by Claude AI, ElevenLabs & Twilio</p>
         </div>
         <div className="flex gap-2">

@@ -45,7 +45,7 @@ export default function BillingSettingsPage() {
             <div>
               <p className="font-medium">Pro Plan — $49/month</p>
               <p className="text-sm text-muted-foreground">
-                Unlimited bookings, AI caller, advanced analytics
+                Unlimited enrollments, AI caller, advanced analytics
               </p>
             </div>
             <Button variant="outline">Change Plan</Button>
@@ -53,7 +53,7 @@ export default function BillingSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center gap-2 text-sm">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <span>Unlimited Bookings</span>
+              <span>Unlimited Enrollments</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <CheckCircle className="h-4 w-4 text-green-500" />

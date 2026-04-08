@@ -32,7 +32,7 @@ interface CreateAgentDialogProps {
 const AGENT_TYPES = [
   { value: 'sales', label: 'Sales', description: 'Qualify leads and close deals' },
   { value: 'support', label: 'Support', description: 'Handle customer inquiries' },
-  { value: 'booking', label: 'Booking', description: 'Manage reservations and availability' },
+  { value: 'booking', label: 'Insurance', description: 'Manage policies and enrollment' },
 ];
 
 const PERSONAS = [
@@ -164,7 +164,7 @@ export function CreateAgentDialog({ isOpen, onClose, onCreated }: CreateAgentDia
                 <Label htmlFor="agent-name">Agent Name *</Label>
                 <Input
                   id="agent-name"
-                  placeholder="e.g., Booking Assistant, Sales Rep"
+                  placeholder="e.g., Insurance Assistant, Sales Rep"
                   value={form.name}
                   onChange={(e) => updateForm('name', e.target.value)}
                 />

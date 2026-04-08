@@ -91,8 +91,8 @@ interface NotificationLog {
 }
 
 const TRIGGER_LABELS: Record<string, string> = {
-  booking_created: 'Enrollment Created',
-  booking_confirmed: 'Enrollment Confirmed',
+  enrollment_created: 'Enrollment Created',
+  enrollment_confirmed: 'Enrollment Confirmed',
   before_rental: 'Before Appointment',
   rental_start: 'Appointment Start (Check-in)',
   after_rental: 'After Appointment',
@@ -117,7 +117,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
     id: '1',
     name: 'Enrollment Confirmation Email',
     description: 'Send confirmation email with enrollment details, plan information, and next steps',
-    trigger: 'booking_created',
+    trigger: 'enrollment_created',
     channel: 'email',
     is_active: true,
     offset_minutes: 0,
@@ -127,7 +127,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
     id: '2',
     name: 'Enrollment Confirmation SMS',
     description: 'Text confirmation with date, time, plan details, and confirmation code',
-    trigger: 'booking_created',
+    trigger: 'enrollment_created',
     channel: 'sms',
     is_active: true,
     offset_minutes: 0,
@@ -137,7 +137,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
     id: '3',
     name: 'Consent Form SMS',
     description: 'Send digital consent form signing link to customer via SMS',
-    trigger: 'booking_confirmed',
+    trigger: 'enrollment_confirmed',
     channel: 'sms',
     is_active: true,
     offset_minutes: 5,
@@ -167,7 +167,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
     id: '6',
     name: 'Agent Assignment SMS',
     description: 'Notify customer when their insurance agent has been assigned',
-    trigger: 'booking_confirmed',
+    trigger: 'enrollment_confirmed',
     channel: 'sms',
     is_active: true,
     offset_minutes: 0,
@@ -197,7 +197,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
     id: '9',
     name: 'Lead Welcome SMS',
     description: 'Auto-text new leads from website contact form with plan overview',
-    trigger: 'booking_created',
+    trigger: 'enrollment_created',
     channel: 'sms',
     is_active: false,
     offset_minutes: 0,
@@ -207,7 +207,7 @@ const DEFAULT_AUTOMATIONS: Automation[] = [
     id: '10',
     name: 'Lead Follow-Up Email (Day 1)',
     description: 'Welcome email with plan comparison guide and consultation scheduling link',
-    trigger: 'booking_created',
+    trigger: 'enrollment_created',
     channel: 'email',
     is_active: false,
     offset_minutes: 1440,
@@ -225,7 +225,7 @@ export default function AutomationsPage() {
   const [editingAutomation, setEditingAutomation] = useState<Automation | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ name: '', description: '', trigger: 'booking_created', channel: 'sms' as 'email' | 'sms' | 'voice', offset_minutes: 0, template_body: '' });
+  const [formData, setFormData] = useState({ name: '', description: '', trigger: 'enrollment_created', channel: 'sms' as 'email' | 'sms' | 'voice', offset_minutes: 0, template_body: '' });
   const [isSaving, setIsSaving] = useState(false);
 
   const fetchAutomations = async () => {
@@ -325,7 +325,7 @@ export default function AutomationsPage() {
 
   const openCreateDialog = () => {
     setEditingAutomation(null);
-    setFormData({ name: '', description: '', trigger: 'booking_created', channel: 'sms', offset_minutes: 0, template_body: '' });
+    setFormData({ name: '', description: '', trigger: 'enrollment_created', channel: 'sms', offset_minutes: 0, template_body: '' });
     setShowCreateDialog(true);
   };
 
@@ -701,7 +701,7 @@ export default function AutomationsPage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="auto-name">Name</Label>
-              <Input id="auto-name" placeholder="e.g., Booking Confirmation SMS" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+              <Input id="auto-name" placeholder="e.g., Enrollment Confirmation SMS" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="auto-desc">Description</Label>
