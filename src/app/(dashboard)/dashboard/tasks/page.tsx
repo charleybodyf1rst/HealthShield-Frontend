@@ -102,6 +102,22 @@ interface Task {
   due_date: string | null;
   category: string | null;
   created_at: string;
+  cover_image?: string | null;
+}
+
+// Store cover image URL in description as [cover:URL] prefix
+function parseCoverFromDescription(desc: string | null): { cover: string | null; text: string | null } {
+  if (!desc) return { cover: null, text: null };
+  const match = desc.match(/^\[cover:(.*?)\]\s*([\s\S]*)$/);
+  if (match) return { cover: match[1] || null, text: match[2] || null };
+  return { cover: null, text: desc };
+}
+
+function encodeCoverInDescription(coverUrl: string | null, text: string | null): string {
+  const parts: string[] = [];
+  if (coverUrl) parts.push(`[cover:${coverUrl}]`);
+  if (text) parts.push(text);
+  return parts.join(' ');
 }
 
 type ColumnId = 'pending' | 'in_progress' | 'completed';
@@ -253,12 +269,26 @@ function TaskCard({
 
   return (
     <div
-      className={`group relative rounded-xl border border-white/10 p-3 transition-all duration-200 ${
+      className={`group relative rounded-xl border border-white/10 overflow-hidden transition-all duration-200 ${
         isOverlay
           ? 'bg-white/10 shadow-2xl scale-105 rotate-1 border-orange-500/50'
           : 'bg-white/5 hover:bg-white/10 hover:-translate-y-0.5 hover:shadow-lg'
       }`}
     >
+      {/* Cover image */}
+      {task.cover_image && (
+        <div className="w-full h-32 overflow-hidden">
+          <img
+            src={task.cover_image}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        </div>
+      )}
+
+      {/* Card body */}
+      <div className="p-3">
       {/* Top row: grip + title + menu */}
       <div className="flex items-start gap-2">
         <button
@@ -340,6 +370,7 @@ function TaskCard({
           </span>
         )}
       </div>
+      </div>{/* close p-3 body */}
     </div>
   );
 }
@@ -499,6 +530,7 @@ export default function TasksPage() {
     priority: 'medium',
     category: '',
     due_date: '',
+    cover_image: '',
   });
 
   // DnD sensors - require 8px of movement before drag starts
@@ -523,7 +555,12 @@ export default function TasksPage() {
             : Array.isArray(data)
               ? data
               : [];
-        setTasks(list);
+        // Parse cover images from description
+        const enriched = list.map((t: Task) => {
+          const { cover, text } = parseCoverFromDescription(t.description);
+          return { ...t, cover_image: cover, description: text };
+        });
+        setTasks(enriched);
       } else {
         toast.error('Failed to load tasks');
       }
@@ -577,7 +614,8 @@ export default function TasksPage() {
         priority: form.priority,
         status: 'pending',
       };
-      if (form.description.trim()) body.description = form.description.trim();
+      const descWithCover = encodeCoverInDescription(form.cover_image || null, form.description.trim() || null);
+      if (descWithCover) body.description = descWithCover;
       if (form.category) body.category = form.category;
       if (form.due_date) body.due_date = form.due_date;
 
@@ -608,7 +646,8 @@ export default function TasksPage() {
         title: form.title.trim(),
         priority: form.priority,
       };
-      if (form.description.trim()) body.description = form.description.trim();
+      const descWithCover = encodeCoverInDescription(form.cover_image || null, form.description.trim() || null);
+      if (descWithCover) body.description = descWithCover;
       if (form.category) body.category = form.category;
       if (form.due_date) body.due_date = form.due_date;
 
@@ -698,6 +737,7 @@ export default function TasksPage() {
       priority: task.priority,
       category: task.category || '',
       due_date: task.due_date ? task.due_date.split('T')[0] : '',
+      cover_image: task.cover_image || '',
     });
     setDialogOpen(true);
   };
@@ -911,6 +951,26 @@ export default function TasksPage() {
                 onChange={(e) => setForm({ ...form, due_date: e.target.value })}
                 className="bg-white/5 border-white/10 text-white focus:ring-orange-500/50 focus:border-orange-500/30"
               />
+            </div>
+
+            {/* Cover Image URL */}
+            <div className="space-y-2">
+              <Label htmlFor="task-cover" className="text-white/70 text-sm">
+                Cover Image URL
+              </Label>
+              <Input
+                id="task-cover"
+                type="url"
+                placeholder="https://images.unsplash.com/..."
+                value={form.cover_image || ''}
+                onChange={(e) => setForm({ ...form, cover_image: e.target.value })}
+                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:ring-orange-500/50 focus:border-orange-500/30"
+              />
+              {form.cover_image && (
+                <div className="mt-2 rounded-lg overflow-hidden h-24">
+                  <img src={form.cover_image} alt="Preview" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                </div>
+              )}
             </div>
           </div>
 
