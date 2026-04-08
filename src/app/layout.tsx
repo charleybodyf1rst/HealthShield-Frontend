@@ -46,7 +46,7 @@ export const metadata: Metadata = {
       'AI-powered health insurance call center. Automated calling, SMS, and email campaigns for insurance agencies.',
     images: [
       {
-        url: '/logos/healthshield-logo.png',
+        url: '/logos/healthshield-logo.svg',
         width: 1200,
         height: 630,
         alt: 'HealthShield',
@@ -57,12 +57,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'HealthShield',
     description: 'AI-powered health insurance call center.',
-    images: ['/logos/healthshield-logo.png'],
+    images: ['/logos/healthshield-logo.svg'],
   },
   icons: {
-    icon: '/logos/healthshield-logo.png',
-    shortcut: '/logos/healthshield-logo.png',
-    apple: '/logos/healthshield-logo.png',
+    icon: '/logos/healthshield-logo.svg',
+    shortcut: '/logos/healthshield-logo.svg',
+    apple: '/logos/healthshield-logo.svg',
   },
 };
 
