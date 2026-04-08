@@ -592,7 +592,7 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     set({ approvalsLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/crm/approvals`);
+      const response = await api.get(`${API_URL}/api/v1/sales/approvals`);
       set({
         pendingApprovals: toArray(response.data.data || response.data),
         approvalsLoading: false,
@@ -633,7 +633,7 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     set({ approvalsLoading: true, error: null });
 
     try {
-      const response = await api.post<ApprovalResponse>(`${API_URL}/api/v1/crm/approvals/${id}/${approved ? 'approve' : 'reject'}`, {
+      const response = await api.post<ApprovalResponse>(`${API_URL}/api/v1/sales/approvals/${id}/${approved ? 'approve' : 'reject'}`, {
         reason,
       });
 
@@ -669,7 +669,7 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     try {
       const [activeRes, recentRes, scheduledRes] = await Promise.all([
         api.get(`${API_URL}/api/v1/sales/ai-caller/history`, { params: { status: 'in_progress,ringing,dialing' } }),
-        api.get(`${API_URL}/api/v1/sales/ai-caller/history/history`, { params: { limit: 20 } }),
+        api.get(`${API_URL}/api/v1/sales/ai-caller/history`, { params: { limit: 20 } }),
         api.get(`${API_URL}/api/v1/sales/ai-caller/history`, { params: { status: 'scheduled,queued' } }),
       ]);
 
@@ -704,7 +704,7 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     set({ callsLoading: true, error: null });
 
     try {
-      const response = await api.post<CrmCall>(`${API_URL}/api/v1/sales/ai-caller/history/schedule`, {
+      const response = await api.post<CrmCall>(`${API_URL}/api/v1/sales/ai-caller/schedule`, {
         phone_number: phoneNumber,
         type,
         customer_name: options.customerName,
@@ -761,7 +761,7 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     set({ activityLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/crm/activity`, {
+      const response = await api.get(`${API_URL}/api/v1/crm/activities`, {
         params: { limit },
       });
       set({

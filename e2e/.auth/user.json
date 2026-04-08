@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "auth-token",
+      "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1OTMiLCJqdGkiOiJjYzRhNjg5YzYwZGE0NzFiYzRlYzY4YmU0YjU0NzVmNGM4ZTUzMzczMTkwY2M4NDUwZDM4ZGQ0NDM3NjJjNTIxNjFlZWE3YjQ3MjJmZTM0YyIsImlhdCI6MTc3NTY3NDI1Ny4zMzMxNTMsIm5iZiI6MTc3NTY3NDI1Ny4zMzMxNTUsImV4cCI6MTgwNzIxMDI1Ny4xMzgyMzUsInN1YiI6IjUyIiwic2NvcGVzIjpbXX0.T6gCt9ATqshplnf82R4qWB_gyy3CfOsuHwX4GL2W6ZGuVo3aVF2Esspg5Z8grot2s4-77mq96-4nbCIuGRzLl-OuV6NzC5_Ffc8U37fcQRjk-BOP79Q5YH743uvadjQGhFtU4IOWSjvJctIJeI7_nH9mXSX5C8g3k1lCLzgutrl50Cy59uNEuwQyl4kEzSqBDnEOm8RpLucllpQs-k1qNF7Xo0PUF7n3P8sG8svghEr586Q37Ea0AE3UkT9IG4q2xX1cjJcCyUquF0I42xAjnHCa-qPLrOOUH3rjWxWT53hIcln_6uuMVzlZqXEGkTu4sm9z2aQACjDZHmzl7UZ_wD0pjozn0LUbjG-UMhAWrc-I9t8TzlO9Yk049oIQxQVVQkN1sNpt-b5-tBqjKKN4F-E3WdVkqkEdn-73HxlCFOeoQk1NdLsRQ1D7KEXoHkCJNfeu9UnDuwxOkgHR2vQMY-F-W6YKLzWstieizKiax5oDt1z8zMAii0fncMz9s2gIAsCpwUekcQ9MQIt_syPfS_UFmoGCd3YTaMM2eQPOqgowLRPBqpeFZWaGNhAu7na-yuhm9jW66TDSCZHTyzaLBG7QT53xQKoU-bR3VVgK-l0xdnVXldmEc1pv2WFzBGL8f1NkrR11Rnlb986__7puBNC6TqxxV789gY3wcTIi3Tg",
+      "domain": "healthshield-frontend-mdkalcrowq-uc.a.run.app",
+      "path": "/",
+      "expires": 1778266258.387107,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://healthshield-frontend-mdkalcrowq-uc.a.run.app",
+      "localStorage": [
+        {
+          "name": "healthshield-crm-auth",
+          "value": "{\"state\":{\"user\":{\"id\":\"52\",\"email\":\"Charley@bodyf1rst.com\",\"firstName\":\"Charley\",\"lastName\":\"BodyF1rst\",\"role\":\"admin\",\"avatar\":null,\"phone\":\"+15123505372\",\"organizationId\":5,\"createdAt\":\"2026-04-08T18:50:58.384Z\",\"updatedAt\":\"2026-04-08T18:50:58.384Z\"},\"tokens\":{\"accessToken\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI1OTMiLCJqdGkiOiJjYzRhNjg5YzYwZGE0NzFiYzRlYzY4YmU0YjU0NzVmNGM4ZTUzMzczMTkwY2M4NDUwZDM4ZGQ0NDM3NjJjNTIxNjFlZWE3YjQ3MjJmZTM0YyIsImlhdCI6MTc3NTY3NDI1Ny4zMzMxNTMsIm5iZiI6MTc3NTY3NDI1Ny4zMzMxNTUsImV4cCI6MTgwNzIxMDI1Ny4xMzgyMzUsInN1YiI6IjUyIiwic2NvcGVzIjpbXX0.T6gCt9ATqshplnf82R4qWB_gyy3CfOsuHwX4GL2W6ZGuVo3aVF2Esspg5Z8grot2s4-77mq96-4nbCIuGRzLl-OuV6NzC5_Ffc8U37fcQRjk-BOP79Q5YH743uvadjQGhFtU4IOWSjvJctIJeI7_nH9mXSX5C8g3k1lCLzgutrl50Cy59uNEuwQyl4kEzSqBDnEOm8RpLucllpQs-k1qNF7Xo0PUF7n3P8sG8svghEr586Q37Ea0AE3UkT9IG4q2xX1cjJcCyUquF0I42xAjnHCa-qPLrOOUH3rjWxWT53hIcln_6uuMVzlZqXEGkTu4sm9z2aQACjDZHmzl7UZ_wD0pjozn0LUbjG-UMhAWrc-I9t8TzlO9Yk049oIQxQVVQkN1sNpt-b5-tBqjKKN4F-E3WdVkqkEdn-73HxlCFOeoQk1NdLsRQ1D7KEXoHkCJNfeu9UnDuwxOkgHR2vQMY-F-W6YKLzWstieizKiax5oDt1z8zMAii0fncMz9s2gIAsCpwUekcQ9MQIt_syPfS_UFmoGCd3YTaMM2eQPOqgowLRPBqpeFZWaGNhAu7na-yuhm9jW66TDSCZHTyzaLBG7QT53xQKoU-bR3VVgK-l0xdnVXldmEc1pv2WFzBGL8f1NkrR11Rnlb986__7puBNC6TqxxV789gY3wcTIi3Tg\",\"refreshToken\":\"\",\"expiresIn\":86400,\"createdAt\":1775674258384},\"isAuthenticated\":true},\"version\":0}"
+        }
+      ]
+    }
+  ]
+}
