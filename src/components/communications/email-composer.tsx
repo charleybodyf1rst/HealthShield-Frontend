@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { communicationsApi } from '@/lib/api';
+import { communicationApi } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 interface EmailComposerProps {
@@ -141,18 +141,15 @@ export function EmailComposer({
     setError(null);
 
     try {
-      const response = await communicationsApi.logEmail(leadId, {
+      await communicationApi.sendEmail({
         to: leadEmail,
         subject: subject.trim(),
         body: body.trim(),
+        leadId,
       });
 
-      if (response.status === 200) {
-        onSent?.(response.data.log_id);
-        handleClose();
-      } else {
-        throw new Error(response.message || 'Failed to send email');
-      }
+      onSent?.();
+      handleClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to send email';
       setError(message);

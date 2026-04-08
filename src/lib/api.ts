@@ -599,35 +599,111 @@ export interface SMSTemplate {
 }
 
 export const communicationApi = {
-  // Email
-  sendEmail: (data: { to: string; subject: string; body: string; templateId?: string; leadId?: string }) =>
-    api.post<{ status: number; message_id: string }>('/api/v1/sales/communication/email', data),
+  // Email — sends via SendGrid and logs in CRM communications
+  sendEmail: (data: {
+    to: string;
+    subject: string;
+    body: string;
+    bodyHtml?: string;
+    leadId?: string;
+    cc?: string;
+    bcc?: string;
+  }) =>
+    api.post<unknown>('/api/v1/crm/communications', {
+      lead_id: data.leadId || null,
+      type: 'email',
+      direction: 'outbound',
+      subject: data.subject,
+      content: data.body,
+      content_html: data.bodyHtml,
+      email_to: data.to,
+      email_cc: data.cc,
+      email_bcc: data.bcc,
+      send_immediately: true,
+    }),
 
   getEmailTemplates: () =>
-    api.get<{ status: number; templates: EmailTemplate[] }>('/api/v1/sales/communication/templates'),
+    api.get<{ status: number; templates: EmailTemplate[] }>('/api/v1/crm/communications/templates'),
 
   createEmailTemplate: (data: Partial<EmailTemplate>) =>
-    api.post<{ status: number; template: EmailTemplate }>('/api/v1/sales/communication/templates', data),
+    api.post<{ status: number; template: EmailTemplate }>('/api/v1/crm/communications/templates', data),
 
   // SMS
-  sendSMS: (data: { to: string; body: string; templateId?: string; leadId?: string }) =>
-    api.post<{ status: number; message_sid: string }>('/api/v1/sales/communication/sms', data),
+  sendSMS: (data: { to: string; body: string; leadId: string }) =>
+    api.post<unknown>('/api/v1/crm/communications', {
+      lead_id: data.leadId,
+      type: 'sms',
+      direction: 'outbound',
+      content: data.body,
+      sms_to: data.to,
+      send_immediately: true,
+    }),
 
   getSMSTemplates: () =>
-    api.get<{ status: number; templates: SMSTemplate[] }>('/api/v1/sales/communication/sms/templates'),
+    api.get<{ status: number; templates: SMSTemplate[] }>('/api/v1/crm/communications/templates'),
 
   createSMSTemplate: (data: Partial<SMSTemplate>) =>
-    api.post<{ status: number; template: SMSTemplate }>('/api/v1/sales/communication/sms/templates', data),
+    api.post<{ status: number; template: SMSTemplate }>('/api/v1/crm/communications/templates', data),
 
   // Voice (Twilio)
   makeCall: (data: { to: string; from?: string; leadId?: string }) =>
-    api.post<{ status: number; call_sid: string }>('/api/v1/sales/communication/voice/call', data),
+    api.post<unknown>('/api/v1/crm/communications', {
+      lead_id: data.leadId,
+      type: 'voice_call',
+      direction: 'outbound',
+      content: 'Outbound call initiated',
+      call_to: data.to,
+      call_from: data.from,
+    }),
 
   getCallLogs: (params?: { lead_id?: string; limit?: number }) =>
     api.get<{ status: number; calls: Array<{ sid: string; to: string; from: string; status: string; duration: number; created_at: string }> }>(
-      '/api/v1/sales/communication/voice/logs',
-      params as Record<string, string>
+      '/api/v1/crm/communications',
+      { type: 'voice_call', ...(params as Record<string, string>) }
     ),
+
+  // AI Assist
+  aiGenerateDraft: (data: { leadId?: string; purpose: string; tone?: string; context?: string }) =>
+    api.post<{ subject: string; body: string; body_html: string }>('/api/v1/crm/communications/ai/generate-draft', {
+      lead_id: data.leadId,
+      purpose: data.purpose,
+      tone: data.tone,
+      context: data.context,
+    }),
+
+  aiSuggestSubject: (data: { body: string }) =>
+    api.post<{ subjects: string[] }>('/api/v1/crm/communications/ai/suggest-subject', data),
+
+  aiImproveTone: (data: { body: string; targetTone: string }) =>
+    api.post<{ body: string }>('/api/v1/crm/communications/ai/improve-tone', {
+      body: data.body,
+      target_tone: data.targetTone,
+    }),
+
+  // Drafts
+  saveDraft: (data: { leadId?: string; emailTo?: string; subject?: string; content?: string; contentHtml?: string }) =>
+    api.post<CommunicationLog>('/api/v1/crm/communications/drafts', {
+      lead_id: data.leadId,
+      email_to: data.emailTo,
+      subject: data.subject,
+      content: data.content,
+      content_html: data.contentHtml,
+    }),
+
+  updateDraft: (id: string, data: { emailTo?: string; subject?: string; content?: string }) =>
+    api.put<CommunicationLog>(`/api/v1/crm/communications/drafts/${id}`, {
+      email_to: data.emailTo,
+      subject: data.subject,
+      content: data.content,
+    }),
+
+  // Email thread
+  getEmailThread: (threadId: string) =>
+    api.get<{ data: CommunicationLog[] }>(`/api/v1/crm/communications/email-thread/${threadId}`),
+
+  // Single email
+  getEmail: (id: string) =>
+    api.get<CommunicationLog>(`/api/v1/crm/communications/${id}`),
 };
 
 // ==================== ANALYTICS API ====================
@@ -975,22 +1051,25 @@ export interface UnreadCountResponse {
 }
 
 export const inboxApi = {
-  // Get unified inbox
-  getInbox: (params?: { type?: string; unread_only?: boolean; limit?: number; offset?: number }) =>
-    api.get<InboxResponse>('/api/v1/sales/inbox', {
+  // Get unified inbox (CRM communications endpoint)
+  getInbox: (params?: { type?: string; direction?: string; status?: string; unread_only?: boolean; limit?: number; offset?: number; search?: string }) =>
+    api.get<InboxResponse>('/api/v1/crm/communications', {
       ...(params?.type && { type: params.type }),
+      ...(params?.direction && { direction: params.direction }),
+      ...(params?.status && { status: params.status }),
       ...(params?.unread_only !== undefined && { unread_only: String(params.unread_only) }),
       ...(params?.limit && { limit: String(params.limit) }),
       ...(params?.offset && { offset: String(params.offset) }),
+      ...(params?.search && { search: params.search }),
     }),
 
-  // Get unread count
+  // Get inbox stats (unread counts, etc.)
   getUnreadCount: () =>
-    api.get<UnreadCountResponse>('/api/v1/sales/inbox/unread-count'),
+    api.get<UnreadCountResponse>('/api/v1/crm/communications/inbox-stats'),
 
   // Mark communication as read
   markAsRead: (id: string) =>
-    api.patch<{ status: number; message: string }>(`/api/sales/communications/${id}/read`),
+    api.patch<{ status: number; message: string }>(`/api/v1/crm/communications/${id}/read`),
 };
 
 // ==================== COMMUNICATIONS API (Logging) ====================
@@ -998,9 +1077,16 @@ export const inboxApi = {
 export const communicationsApi = {
   // Log an email sent to a lead
   logEmail: (leadId: string, data: { to: string; subject: string; body: string }) =>
-    api.post<{ status: number; message: string; data: { log_id: string } }>(
-      `/api/v1/sales/communication/email`,
-      { ...data, leadId }
+    api.post<unknown>(
+      '/api/v1/crm/communications',
+      {
+        lead_id: leadId,
+        type: 'email',
+        direction: 'outbound',
+        subject: data.subject,
+        content: data.body,
+        email_to: data.to,
+      }
     ),
 
   // Get communication history for a lead
@@ -1012,15 +1098,20 @@ export const communicationsApi = {
         pagination: { total: number; limit: number; offset: number };
       };
     }>(
-      `/api/v1/sales/leads/${leadId}/communications`,
+      `/api/v1/crm/communications/lead/${leadId}/thread`,
       params as Record<string, string>
     ),
 
   // Log a note on a lead
   logNote: (leadId: string, content: string) =>
-    api.post<{ status: number; message: string; data: { log_id: string } }>(
-      `/api/v1/sales/leads/${leadId}/communications/note`,
-      { content }
+    api.post<unknown>(
+      '/api/v1/crm/communications',
+      {
+        lead_id: leadId,
+        type: 'note',
+        direction: 'outbound',
+        content,
+      }
     ),
 };
 

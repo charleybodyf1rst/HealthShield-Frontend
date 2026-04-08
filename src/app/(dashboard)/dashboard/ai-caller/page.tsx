@@ -50,6 +50,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { AiCallerPanel, VoiceSelector, VoicePlayer, ConversationalAiPanel } from '@/components/voice';
+import { CallFlowTree } from '@/components/voice/call-flow-tree';
+import { CallEventLog } from '@/components/voice/call-event-log';
+import { useCallFlowStore } from '@/stores/call-flow-store';
+import { useEventLogStore } from '@/stores/call-event-log-store';
 import {
   aiCallerApi,
   elevenLabsApi,
@@ -265,7 +269,7 @@ export default function AiCallerPage() {
     try {
       const formatted = phoneNumber.replace(/[^+\d]/g, '');
       const to = formatted.startsWith('+') ? formatted : '+1' + formatted.replace(/^1/, '');
-      await communicationApi.sendSMS(to, smsMessage.trim());
+      await communicationApi.sendSMS({ to, body: smsMessage.trim(), leadId: selectedLead?.id || '' });
       toast.success('SMS sent successfully');
       setSmsMessage('');
     } catch (err: any) {
@@ -284,7 +288,7 @@ export default function AiCallerPage() {
     setSendingEmail(true);
     try {
       const to = selectedLead?.email || '';
-      await communicationApi.sendEmail(to, emailSubject.trim(), emailBody.trim());
+      await communicationApi.sendEmail({ to, subject: emailSubject.trim(), body: emailBody.trim(), leadId: selectedLead?.id });
       toast.success('Email sent successfully');
       setEmailSubject('');
       setEmailBody('');
@@ -1079,6 +1083,39 @@ export default function AiCallerPage() {
           </Card>
         )}
       </Tabs>
+
+      {/* AI Caller Diagnostics — Call Flow Tree + Event Log */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Call Flow Pipeline
+            </CardTitle>
+            <CardDescription>
+              Real-time 10-stage pipeline — see exactly where calls succeed or fail
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CallFlowTree />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              Event Log
+            </CardTitle>
+            <CardDescription>
+              Real-time diagnostic events, transcripts, and tool execution logs
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CallEventLog />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

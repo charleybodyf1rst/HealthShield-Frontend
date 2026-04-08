@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   LogOut,
   Mail,
+  Megaphone,
   MessageSquare,
   Phone,
   Settings,
@@ -118,6 +119,11 @@ const baseCommunicationItems = [
     badgeKey: 'unread', // Special key for dynamic badge
   },
   {
+    title: 'Emails',
+    href: '/dashboard/emails',
+    icon: Mail,
+  },
+  {
     title: 'Messages',
     href: '/dashboard/messages',
     icon: MessageSquare,
@@ -125,7 +131,7 @@ const baseCommunicationItems = [
   {
     title: 'Campaigns',
     href: '/dashboard/campaigns',
-    icon: Mail,
+    icon: Megaphone,
   },
 ];
 
