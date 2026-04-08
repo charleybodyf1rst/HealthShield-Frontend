@@ -307,17 +307,20 @@ function mapCrmLeadToLead(raw: any): Lead {
 
 export const leadsApi = {
   getAll: async (params?: LeadFilters & { page?: number; limit?: number }) => {
-    const response = await api.get<{ success: boolean; data: { data: unknown[]; current_page: number; last_page: number; total: number; per_page: number } }>(
+    // API returns Laravel pagination directly: { current_page, data: [...leads], total, per_page }
+    const response = await api.get<{ current_page: number; data: unknown[]; total: number; per_page: number; last_page: number }>(
       '/api/v1/crm/leads',
       params as Record<string, string>
     );
-    const paginated = response.data || {} as { data?: unknown[]; current_page?: number; last_page?: number; total?: number; per_page?: number };
-    const rawLeads = (paginated.data || []) as unknown[];
+    const rawLeads = Array.isArray(response.data) ? response.data : [];
     return {
-      ...response,
       data: {
-        ...paginated,
         data: rawLeads.map(mapCrmLeadToLead),
+        leads: rawLeads.map(mapCrmLeadToLead),
+        current_page: response.current_page || 1,
+        total: response.total || rawLeads.length,
+        per_page: response.per_page || 20,
+        last_page: response.last_page || 1,
       },
     };
   },
