@@ -287,17 +287,17 @@ function mapLeadSource(source: string): string {
 function mapBoatLeadToLead(raw: any): Lead {
   return {
     id: String(raw.id),
-    firstName: raw.first_name || raw.firstName || '',
-    lastName: raw.last_name || raw.lastName || '',
-    email: raw.email || '',
-    phone: raw.phone,
-    status: raw.status || 'new',
+    firstName: raw.contact_first_name || raw.first_name || raw.firstName || '',
+    lastName: raw.contact_last_name || raw.last_name || raw.lastName || '',
+    email: raw.contact_email || raw.email || '',
+    phone: raw.contact_phone || raw.phone,
+    status: raw.status || raw.stage || 'new',
     source: raw.source || 'other',
-    classification: raw.specific_boat_name || raw.boat_type_interested || raw.classification,
-    value: raw.budget_min ? Number(raw.budget_min) : raw.value,
+    classification: raw.classification || raw.plan_type,
+    value: raw.value ? Number(raw.value) : undefined,
     notes: raw.notes,
-    assignedTo: raw.assigned_to != null ? String(raw.assigned_to) : raw.assignedTo,
-    lastContactedAt: raw.last_contact_at || raw.lastContactedAt,
+    assignedTo: raw.assigned_to_user_id != null ? String(raw.assigned_to_user_id) : raw.assignedTo,
+    lastContactedAt: raw.last_contacted_at || raw.lastContactedAt,
     nextFollowUpAt: raw.next_follow_up_at || raw.nextFollowUpAt,
     lostReason: raw.lost_reason || raw.lostReason,
     createdAt: raw.created_at || raw.createdAt || '',
@@ -308,7 +308,7 @@ function mapBoatLeadToLead(raw: any): Lead {
 export const leadsApi = {
   getAll: async (params?: LeadFilters & { page?: number; limit?: number }) => {
     const response = await api.get<{ success: boolean; data: { data: unknown[]; current_page: number; last_page: number; total: number; per_page: number } }>(
-      '/api/v1/boat-rentals/crm/leads',
+      '/api/v1/crm/leads',
       params as Record<string, string>
     );
     const paginated = response.data || {} as { data?: unknown[]; current_page?: number; last_page?: number; total?: number; per_page?: number };
@@ -323,7 +323,7 @@ export const leadsApi = {
   },
 
   getById: async (id: string) => {
-    const response = await api.get<{ success: boolean; data: unknown }>(`/api/v1/boat-rentals/crm/leads/${id}`);
+    const response = await api.get<{ success: boolean; data: unknown }>(`/api/v1/crm/leads/${id}`);
     return {
       ...response,
       data: mapBoatLeadToLead(response.data),
@@ -332,19 +332,17 @@ export const leadsApi = {
 
   create: async (data: CreateLeadData) => {
     const payload = {
-      first_name: data.firstName,
-      last_name: data.lastName,
-      email: data.email,
-      phone: data.phone,
+      contact_first_name: data.firstName,
+      contact_last_name: data.lastName,
+      contact_email: data.email,
+      contact_phone: data.phone,
       source: mapLeadSource(data.source),
-      specific_boat_name: data.boatName,
-      preferred_date: data.rental_date,
-      preferred_time: data.rental_time,
-      budget_min: data.value,
+      classification: data.boatName,
+      value: data.value,
       notes: data.notes,
     };
     const response = await api.post<{ success: boolean; message: string; data: unknown }>(
-      '/api/v1/boat-rentals/crm/leads',
+      '/api/v1/crm/leads',
       payload
     );
     return {
@@ -354,10 +352,10 @@ export const leadsApi = {
   },
 
   update: (id: string, data: UpdateLeadData) =>
-    api.put<{ success: boolean; data: Lead }>(`/api/v1/boat-rentals/crm/leads/${id}`, data),
+    api.put<{ success: boolean; data: Lead }>(`/api/v1/crm/leads/${id}`, data),
 
   delete: (id: string) =>
-    api.delete<{ success: boolean; message: string }>(`/api/v1/boat-rentals/crm/leads/${id}`),
+    api.delete<{ success: boolean; message: string }>(`/api/v1/crm/leads/${id}`),
 
   updateStatus: (id: string, status: string, reason?: string) =>
     api.patch<{ status: number; message: string; data: { lead: Lead } }>(`/api/v1/sales/leads/${id}/status`, { status, reason }),
