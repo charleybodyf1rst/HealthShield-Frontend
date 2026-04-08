@@ -171,7 +171,19 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getStats();
-      set({ stats: response.data || response, isLoading: false });
+      const raw = response.data || response;
+      // Map snake_case backend fields to camelCase frontend InsuranceStats
+      const stats: InsuranceStats = {
+        totalPrograms: raw.total_programs ?? raw.totalPrograms ?? 0,
+        activeEnrollments: raw.total_enrolled ?? raw.activeEnrollments ?? 0,
+        totalProposals: raw.pending_proposals ?? raw.totalProposals ?? 0,
+        conversionRate: raw.average_enrollment_rate ?? raw.conversionRate ?? 0,
+        averagePremium: raw.average_premium ?? raw.averagePremium ?? 0,
+        totalRevenue: raw.monthly_revenue ?? raw.totalRevenue ?? 0,
+        claimsProcessed: raw.claims_processed ?? raw.claimsProcessed ?? 0,
+        wellnessScore: raw.wellness_score ?? raw.wellnessScore ?? 0,
+      };
+      set({ stats, isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch stats', isLoading: false });
     }

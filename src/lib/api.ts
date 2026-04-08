@@ -2136,9 +2136,9 @@ export const financeApi = {
 // HealthShield Insurance API
 export const insuranceApi = {
   // Programs
-  getPrograms: () => api.get<any>('/api/insurance/healthshield/programs'),
+  getPrograms: () => api.get<any>('/api/v1/insurance/healthshield/programs'),
   getProgram: (id: string) => api.get<any>(`/api/insurance/healthshield/programs/${id}`),
-  createProgram: (data: Record<string, any>) => api.post<any>('/api/insurance/healthshield/programs', data),
+  createProgram: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/healthshield/programs', data),
   updateProgram: (id: string, data: Record<string, any>) => api.put<any>(`/api/insurance/healthshield/programs/${id}`, data),
   deleteProgram: (id: string) => api.delete<any>(`/api/insurance/healthshield/programs/${id}`),
 
@@ -2147,31 +2147,31 @@ export const insuranceApi = {
   enroll: (programId: string, data: Record<string, any>) => api.post<any>(`/api/insurance/healthshield/programs/${programId}/enroll`, data),
 
   // Savings & Wellness
-  getSavingsCalculator: (params?: Record<string, string>) => api.get<any>('/api/insurance/healthshield/savings-calculator', params),
-  getWellnessMetrics: () => api.get<any>('/api/insurance/healthshield/wellness-metrics'),
-  getStats: () => api.get<any>('/api/insurance/healthshield/stats'),
+  getSavingsCalculator: (params?: Record<string, string>) => api.get<any>('/api/v1/insurance/healthshield/savings-calculator', params),
+  getWellnessMetrics: () => api.get<any>('/api/v1/insurance/healthshield/wellness-metrics'),
+  getStats: () => api.get<any>('/api/v1/insurance/healthshield/stats'),
 
   // Proposals
-  getProposals: () => api.get<any>('/api/insurance/healthshield/proposals'),
-  createProposal: (data: Record<string, any>) => api.post<any>('/api/insurance/healthshield/proposals', data),
+  getProposals: () => api.get<any>('/api/v1/insurance/healthshield/proposals'),
+  createProposal: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/healthshield/proposals', data),
 
   // Policies
-  getPolicies: (params?: Record<string, string>) => api.get<any>('/api/insurance/policies', params),
+  getPolicies: (params?: Record<string, string>) => api.get<any>('/api/v1/insurance/policies', params),
   getPolicy: (id: string) => api.get<any>(`/api/insurance/policies/${id}`),
-  getPolicyStats: () => api.get<any>('/api/insurance/policies/stats'),
+  getPolicyStats: () => api.get<any>('/api/v1/insurance/policies/stats'),
 
   // Quotes
-  getQuotes: (params?: Record<string, string>) => api.get<any>('/api/insurance/quotes', params),
-  createQuote: (data: Record<string, any>) => api.post<any>('/api/insurance/quotes', data),
-  estimatePremium: (data: Record<string, any>) => api.post<any>('/api/insurance/quotes/estimate', data),
+  getQuotes: (params?: Record<string, string>) => api.get<any>('/api/v1/insurance/quotes', params),
+  createQuote: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/quotes', data),
+  estimatePremium: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/quotes/estimate', data),
 
   // Claims
-  getClaims: (params?: Record<string, string>) => api.get<any>('/api/insurance/claims', params),
-  fileClaim: (data: Record<string, any>) => api.post<any>('/api/insurance/claims', data),
-  getClaimStats: () => api.get<any>('/api/insurance/claims/stats'),
+  getClaims: (params?: Record<string, string>) => api.get<any>('/api/v1/insurance/claims', params),
+  fileClaim: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/claims', data),
+  getClaimStats: () => api.get<any>('/api/v1/insurance/claims/stats'),
 
   // Public (no auth required)
-  requestQuote: (data: Record<string, any>) => api.post<any>('/api/insurance/public/quote-request', data),
-  verifyPolicy: (data: Record<string, any>) => api.post<any>('/api/insurance/public/verify-policy', data),
-  checkClaimStatus: (data: Record<string, any>) => api.post<any>('/api/insurance/public/claim-status', data),
+  requestQuote: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/public/quote-request', data),
+  verifyPolicy: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/public/verify-policy', data),
+  checkClaimStatus: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/public/claim-status', data),
 };

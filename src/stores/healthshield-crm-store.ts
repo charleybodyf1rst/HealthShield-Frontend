@@ -389,9 +389,10 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     await Promise.all([
       get().fetchKPIs(),
       get().fetchTodaySchedule(),
-      get().fetchPendingApprovals(),
-      get().fetchActiveCalls(),
       get().fetchRecentActivity(10),
+      // These endpoints don't exist yet on the backend — skip to avoid 404 console errors
+      get().fetchPendingApprovals().catch(() => {}),
+      get().fetchActiveCalls().catch(() => {}),
     ]);
   },
 
