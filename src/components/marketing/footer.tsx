@@ -20,10 +20,10 @@ const footerLinks = {
     { name: 'Get a Quote', href: '/quote' },
   ],
   insurance: [
-    { name: 'Medicare Plans', href: '/services#medicare' },
-    { name: 'ACA Marketplace', href: '/services#aca' },
-    { name: 'Group Benefits', href: '/services#group' },
-    { name: 'Supplemental', href: '/services#supplemental' },
+    { name: 'Medicare Plans', href: '/plans' },
+    { name: 'ACA Marketplace', href: '/plans' },
+    { name: 'Group Benefits', href: '/plans' },
+    { name: 'Supplemental', href: '/plans' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },

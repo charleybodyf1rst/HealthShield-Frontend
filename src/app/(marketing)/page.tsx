@@ -63,7 +63,7 @@ export default function MarketingPage() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80')",
+              "url('https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=1920&q=80')",
           }}
         />
         {/* Navy overlay */}
@@ -71,7 +71,7 @@ export default function MarketingPage() {
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(135deg, rgba(10,22,40,0.97) 0%, rgba(10,22,40,0.88) 50%, rgba(10,22,40,0.95) 100%)',
+              'linear-gradient(135deg, rgba(10,22,40,0.82) 0%, rgba(10,22,40,0.65) 50%, rgba(10,22,40,0.82) 100%)',
           }}
         />
         {/* Grid texture */}
@@ -537,14 +537,14 @@ export default function MarketingPage() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&q=80')",
+              "url('https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=1920&q=80')",
           }}
         />
         <div
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(180deg, rgba(10,22,40,0.95) 0%, rgba(10,22,40,0.92) 100%)',
+              'linear-gradient(180deg, rgba(10,22,40,0.78) 0%, rgba(10,22,40,0.72) 100%)',
           }}
         />
         <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
@@ -850,7 +850,7 @@ export default function MarketingPage() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1920&q=80')",
+              "url('https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1920&q=80')",
           }}
         />
         {/* Warm navy + gold overlay */}
@@ -858,7 +858,7 @@ export default function MarketingPage() {
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(135deg, rgba(10,22,40,0.94) 0%, rgba(15,29,50,0.90) 50%, rgba(10,22,40,0.94) 100%)',
+              'linear-gradient(135deg, rgba(10,22,40,0.78) 0%, rgba(15,29,50,0.70) 50%, rgba(10,22,40,0.78) 100%)',
           }}
         />
 
