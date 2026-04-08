@@ -277,7 +277,7 @@ export const usePipelineStore = create<PipelineStore>((set) => ({
   fetchPipeline: async () => {
     set({ isLoading: true, error: null });
     try {
-      // Fetch all boat-rental leads and group by status into pipeline stages
+      // Fetch all leads for current org and group by status into pipeline stages
       const response = await leadsApi.getAll({ limit: 200 } as Parameters<typeof leadsApi.getAll>[0]);
       const allLeads: Lead[] = response.data?.data || [];
 

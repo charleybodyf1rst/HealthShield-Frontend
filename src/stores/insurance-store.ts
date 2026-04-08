@@ -53,7 +53,8 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getPrograms();
-      set({ programs: response.data || response, isLoading: false });
+      const data = response.data || response;
+      set({ programs: Array.isArray(data) ? data : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch programs', isLoading: false });
     }
@@ -116,7 +117,7 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getEnrollments(programId);
-      set({ enrollments: response.data || response, isLoading: false });
+      const eData = response.data || response; set({ enrollments: Array.isArray(eData) ? eData : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch enrollments', isLoading: false });
     }
@@ -137,7 +138,7 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getProposals();
-      set({ proposals: response.data || response, isLoading: false });
+      const pData = response.data || response; set({ proposals: Array.isArray(pData) ? pData : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch proposals', isLoading: false });
     }
@@ -160,7 +161,7 @@ export const useInsuranceStore = create<InsuranceState & InsuranceActions>((set)
     set({ isLoading: true, error: null });
     try {
       const response = await insuranceApi.getWellnessMetrics();
-      set({ wellnessMetrics: response.data || response, isLoading: false });
+      const wData = response.data || response; set({ wellnessMetrics: Array.isArray(wData) ? wData : [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message || 'Failed to fetch wellness metrics', isLoading: false });
     }
