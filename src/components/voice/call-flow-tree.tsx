@@ -193,10 +193,12 @@ export function CallFlowTree({
   const [elapsed, setElapsed] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  const activeNode = nodes.find((n) => n.status === 'active');
-  const completedCount = nodes.filter((n) => n.status === 'success').length;
-  const errorCount = nodes.filter((n) => n.status === 'error').length;
-  const totalToolCalls = nodes.reduce((sum, n) => sum + n.children.length, 0);
+  // Guard against undefined nodes
+  const safeNodes = nodes || [];
+  const activeNode = safeNodes.find((n) => n.status === 'active');
+  const completedCount = safeNodes.filter((n) => n.status === 'success').length;
+  const errorCount = safeNodes.filter((n) => n.status === 'error').length;
+  const totalToolCalls = safeNodes.reduce((sum, n) => sum + n.children.length, 0);
 
   // Live elapsed timer (Phase 5b)
   useEffect(() => {
@@ -218,7 +220,7 @@ export function CallFlowTree({
       isCallActive,
       elapsed,
       trackingStartedAt,
-      nodes: nodes.map((n) => ({
+      nodes: safeNodes.map((n) => ({
         id: n.id,
         label: n.label,
         status: n.status,
@@ -321,8 +323,8 @@ export function CallFlowTree({
       {/* Content area */}
       {viewMode === 'tree' ? (
         <div className="p-3 space-y-0.5 overflow-y-auto">
-          {nodes.map((node, idx) => (
-            <FlowNodeRow key={node.id} node={node} isLast={idx === nodes.length - 1} />
+          {safeNodes.map((node, idx) => (
+            <FlowNodeRow key={node.id} node={node} isLast={idx === safeNodes.length - 1} />
           ))}
         </div>
       ) : (
