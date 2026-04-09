@@ -184,7 +184,7 @@ export default function AiCallerPage() {
           elevenLabsApi.getVoices().catch(() => ({ data: { premium_voices: [] } })),
           aiCallerApi.getCallStats().catch(() => ({ data: null })),
           elevenLabsApi.getUsage().catch(() => ({ data: { subscription: null } })),
-          leadsApi.getAll({ limit: 50 }).catch(() => ({ data: { leads: [] } })),
+          leadsApi.getAll({ limit: 300 } as any).catch(() => ({ data: { data: [] } })),
         ]);
 
         setIsConfigured(statusRes.data.configured);
@@ -192,7 +192,8 @@ export default function AiCallerPage() {
         setVoices(voicesRes.data.premium_voices || []);
         setStats(statsRes.data);
         setUsageInfo(usageRes.data.subscription);
-        setLeads(leadsRes.data?.leads || []);
+        const leadsData = leadsRes.data?.data || leadsRes.data?.leads || leadsRes.data || [];
+        setLeads(Array.isArray(leadsData) ? leadsData : []);
 
         // If conversational is configured, fetch its stats
         if (convStatusRes.data.configured) {
