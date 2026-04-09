@@ -40,7 +40,7 @@ export function CampaignPreviewStep() {
           <div style="font-size: 12px; color: #6c757d;">From: HealthShield <noreply@healthshield.com></div>
           <div style="font-size: 12px; color: #6c757d;">Subject: <strong>${wizard.subject || '(No subject)'}</strong></div>
         </div>
-        <div style="background: white; padding: 24px; border: 1px solid #e9ecef; border-top: none; border-radius: 0 0 8px 8px;">
+        <div style="background: white; color: #333; padding: 24px; border: 1px solid #e9ecef; border-top: none; border-radius: 0 0 8px 8px; line-height: 1.6; font-size: 14px;">
           ${emailHtml.replace(/\n/g, '<br/>')}
         </div>
       </div>
@@ -66,6 +66,7 @@ export function CampaignPreviewStep() {
         </div>
         <div
           className="p-4 min-h-[300px] text-sm"
+          style={{ color: '#333' }}
           dangerouslySetInnerHTML={{ __html: wrappedHtml }}
         />
       </div>
