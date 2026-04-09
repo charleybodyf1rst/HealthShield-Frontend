@@ -429,8 +429,10 @@ export default function PoliciesPage() {
       if (searchQuery) params.search = searchQuery;
 
       const response = await insuranceApi.getPolicies(params);
-      const data = response?.data || response?.policies || response || [];
-      setPolicies(Array.isArray(data) ? data : []);
+      // Unwrap paginated response: {success, data: {current_page, data: [...]}}
+      const wrapper = response?.data || response;
+      const items = wrapper?.data || wrapper?.policies || wrapper || [];
+      setPolicies(Array.isArray(items) ? items : []);
     } catch (error) {
       console.error('Failed to fetch policies:', error);
       setPolicies([]);

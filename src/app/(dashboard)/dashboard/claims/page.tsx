@@ -318,8 +318,10 @@ export default function ClaimsPage() {
       if (searchQuery) params.search = searchQuery;
 
       const response = await insuranceApi.getClaims(params);
-      const data = response?.data || response?.claims || response || [];
-      setClaims(Array.isArray(data) ? data : []);
+      // Unwrap paginated response: {success, data: {current_page, data: [...]}}
+      const wrapper = response?.data || response;
+      const items = wrapper?.data || wrapper?.claims || wrapper || [];
+      setClaims(Array.isArray(items) ? items : []);
     } catch (error) {
       console.error('Failed to fetch claims:', error);
       setClaims([]);

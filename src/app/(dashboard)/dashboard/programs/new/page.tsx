@@ -152,9 +152,7 @@ export default function NewProgramPage() {
                   <SelectContent>
                     <SelectItem value="500">$500</SelectItem>
                     <SelectItem value="1000">$1,000</SelectItem>
-                    <SelectItem value="1500">$1,500</SelectItem>
                     <SelectItem value="2500">$2,500</SelectItem>
-                    <SelectItem value="5000">$5,000</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
