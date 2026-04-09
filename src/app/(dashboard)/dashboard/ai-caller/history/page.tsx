@@ -81,10 +81,10 @@ export default function CallHistoryPage() {
   async function loadConversations() {
     setIsLoadingList(true);
     try {
-      const res = await conversationalAiApi.getConversations();
-      const data = res.data || res.conversations || res || [];
-      setConversations(Array.isArray(data) ? data : []);
-    } catch (err: any) {
+      const res: any = await conversationalAiApi.getConversations();
+      const raw = res?.data?.conversations || res?.data?.data?.conversations || res?.conversations || res?.data || [];
+      setConversations(Array.isArray(raw) ? raw : []);
+    } catch {
       toast.error('Failed to load call history');
       setConversations([]);
     } finally {
@@ -106,21 +106,23 @@ export default function CallHistoryPage() {
       ]);
 
       if (transcriptRes.status === 'fulfilled') {
-        const t = transcriptRes.value?.data?.transcript || transcriptRes.value?.transcript || [];
+        const v: any = transcriptRes.value;
+        const t = v?.data?.transcript || v?.transcript || [];
         setTranscript(Array.isArray(t) ? t : []);
       }
 
       if (recordingRes.status === 'fulfilled') {
-        const url = recordingRes.value?.data?.audio_url || recordingRes.value?.audio_url || recordingRes.value?.data?.recording_url || null;
+        const v: any = recordingRes.value;
+        const url = v?.data?.audio_url || v?.audio_url || v?.data?.recording_url || null;
         setRecordingUrl(url);
       }
 
       // Load analytics in background
       try {
-        const analyticsRes = await conversationalAiApi.getCallAnalytics(id);
+        const analyticsRes: any = await conversationalAiApi.getCallAnalytics(id);
         setAnalytics(analyticsRes?.data || analyticsRes || null);
       } catch { /* analytics optional */ }
-    } catch (err: any) {
+    } catch {
       toast.error('Failed to load call details');
     } finally {
       setIsLoadingDetail(false);

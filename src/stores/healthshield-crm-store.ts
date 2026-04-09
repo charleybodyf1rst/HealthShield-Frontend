@@ -590,10 +590,11 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
   // ============================================================================
 
   fetchPendingApprovals: async () => {
+    // Endpoint /api/v1/sales/approvals does not exist yet — skip API call to avoid 404
     set({ approvalsLoading: true, error: null });
 
     try {
-      const response = await api.get(`${API_URL}/api/v1/sales/approvals`);
+      const response = await Promise.resolve({ data: { data: [] } } as any); // stub until backend endpoint is created
       set({
         pendingApprovals: toArray(response.data.data || response.data),
         approvalsLoading: false,
@@ -665,39 +666,20 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
   // ============================================================================
 
   fetchCalls: async () => {
-    set({ callsLoading: true, error: null });
-
-    try {
-      const [activeRes, recentRes, scheduledRes] = await Promise.all([
-        api.get(`${API_URL}/api/v1/sales/ai-caller/history`, { params: { status: 'in_progress,ringing,dialing' } }),
-        api.get(`${API_URL}/api/v1/sales/ai-caller/history`, { params: { limit: 20 } }),
-        api.get(`${API_URL}/api/v1/sales/ai-caller/history`, { params: { status: 'scheduled,queued' } }),
-      ]);
-
-      set({
-        activeCalls: toArray(activeRes.data.calls || activeRes.data),
-        recentCalls: toArray(recentRes.data.calls || recentRes.data),
-        scheduledCalls: toArray(scheduledRes.data.calls || scheduledRes.data),
-        callsLoading: false,
-      });
-    } catch (error) {
-      const message = axios.isAxiosError(error)
-        ? error.response?.data?.message || 'Failed to fetch calls'
-        : 'Failed to fetch calls';
-      set({ error: message, callsLoading: false });
-    }
+    // Endpoint /api/v1/sales/ai-caller/history does not exist yet — skip to avoid 404
+    set({ activeCalls: [], recentCalls: [], scheduledCalls: [], callsLoading: false });
   },
 
   fetchActiveCalls: async () => {
     try {
-      const response = await api.get(`${API_URL}/api/v1/sales/ai-caller/history`, {
-        params: { status: 'in_progress,ringing,dialing' },
+      const response = await api.get(`${API_URL}/api/v1/sales/conversational-ai/conversations`, {
+        params: { limit: 5 },
       });
-      set({
-        activeCalls: toArray(response.data.calls || response.data),
-      });
+      const raw: any = response;
+      const calls = raw?.data?.conversations || raw?.conversations || [];
+      set({ activeCalls: Array.isArray(calls) ? calls : [] });
     } catch {
-      // Silent fail for polling
+      set({ activeCalls: [] });
     }
   },
 

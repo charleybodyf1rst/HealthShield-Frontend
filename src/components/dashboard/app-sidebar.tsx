@@ -27,6 +27,7 @@ import {
   Shield,
   ShieldCheck,
   StickyNote,
+  Clock,
   User,
   UserPlus,
   Users,
@@ -168,6 +169,11 @@ const aiItems = [
     title: 'AI Caller',
     href: '/dashboard/ai-caller',
     icon: Phone,
+  },
+  {
+    title: 'Call History',
+    href: '/dashboard/ai-caller/history',
+    icon: Clock,
   },
   {
     title: 'AI Notes',

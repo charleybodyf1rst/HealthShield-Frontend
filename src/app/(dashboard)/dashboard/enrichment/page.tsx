@@ -147,14 +147,16 @@ export default function EnrichmentPage() {
 
       if (statsRes.ok) {
         const statsData = await statsRes.json();
-        setStats(statsData.data || statsData);
+        setStats(statsData?.data || statsData || SAMPLE_STATS);
       } else {
         setStats(SAMPLE_STATS);
       }
 
       if (leadsRes.ok) {
         const leadsData = await leadsRes.json();
-        setLeads(leadsData.data || leadsData.leads || SAMPLE_LEADS);
+        // Unwrap: may be paginated { data: { data: [...] } } or { data: [...] } or { leads: [...] }
+        const raw = leadsData?.data?.data || leadsData?.data || leadsData?.leads || leadsData;
+        setLeads(Array.isArray(raw) ? raw : SAMPLE_LEADS);
       } else {
         setLeads(SAMPLE_LEADS);
       }

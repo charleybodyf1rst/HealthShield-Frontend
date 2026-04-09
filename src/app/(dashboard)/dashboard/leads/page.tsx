@@ -175,7 +175,7 @@ export default function LeadsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{(leads ?? []).length}</div>
+            <div className="text-2xl font-bold">{pagination.total || (leads ?? []).length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -475,6 +475,57 @@ export default function LeadsPage() {
             </TableBody>
           </Table>
         </CardContent>
+
+        {/* Pagination */}
+        {pagination.total > pagination.limit && (
+          <div className="flex items-center justify-between px-6 py-4 border-t">
+            <p className="text-sm text-muted-foreground">
+              Showing {((pagination.page - 1) * pagination.limit) + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} leads
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pagination.page <= 1}
+                onClick={() => {
+                  const filters: LeadFilters = {};
+                  if (statusFilter !== 'all') filters.status = statusFilter as LeadFilters['status'];
+                  if (sourceFilter !== 'all') filters.source = sourceFilter as LeadFilters['source'];
+                  if (search) filters.search = search;
+                  fetchLeads(filters, pagination.page - 1);
+                }}
+              >
+                Previous
+              </Button>
+              <span className="text-sm font-medium">
+                Page {pagination.page} of {Math.ceil(pagination.total / pagination.limit)}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pagination.page >= Math.ceil(pagination.total / pagination.limit)}
+                onClick={() => {
+                  const filters: LeadFilters = {};
+                  if (statusFilter !== 'all') filters.status = statusFilter as LeadFilters['status'];
+                  if (sourceFilter !== 'all') filters.source = sourceFilter as LeadFilters['source'];
+                  if (search) filters.search = search;
+                  fetchLeads(filters, pagination.page + 1);
+                }}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Total count footer */}
+        {pagination.total > 0 && pagination.total <= pagination.limit && (
+          <div className="px-6 py-3 border-t">
+            <p className="text-sm text-muted-foreground">
+              Showing all {pagination.total} leads
+            </p>
+          </div>
+        )}
       </Card>
     </div>
   );
