@@ -259,9 +259,13 @@ export function ConversationalAiPanel({
       });
 
       if (response.data.success) {
-        setConversationId(response.data.conversation_id);
+        // ElevenLabs returns call_sid immediately; conversation_id arrives later via webhook
+        const trackingId = response.data.conversation_id || response.data.call_sid || null;
+        setConversationId(trackingId);
         setCallState('ringing');
-        startPolling(response.data.conversation_id);
+        if (trackingId) {
+          startPolling(trackingId);
+        }
         startDurationTimer();
         onCallStarted?.(response.data);
       } else {
