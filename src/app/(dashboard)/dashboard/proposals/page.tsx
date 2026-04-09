@@ -16,6 +16,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Eye, FileText, Loader2, Plus } from 'lucide-react';
 import { useInsuranceStore } from '@/stores/insurance-store';
+import { toast } from 'sonner';
 
 const statusColors: Record<string, string> = {
   draft: 'bg-gray-500/10 text-gray-500',
@@ -139,10 +140,8 @@ export default function ProposalsPage() {
                     </TableCell>
                     <TableCell>{formatDate(proposal.created_at || proposal.createdAt)}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link href={`/dashboard/proposals/${proposal.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
+                      <Button variant="ghost" size="icon" onClick={() => toast.info('Detail view coming soon')}>
+                        <Eye className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>

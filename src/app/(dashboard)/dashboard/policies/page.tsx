@@ -70,16 +70,17 @@ interface Policy {
 }
 
 interface PolicyFormData {
-  policyholder_name: string;
-  email: string;
-  phone: string;
-  carrier: string;
-  plan_type: string;
-  policy_number: string;
-  monthly_premium: string;
+  client_id: string;
+  policy_type: string;
+  carrier_name: string;
+  coverage_amount: string;
   deductible: string;
+  premium_amount: string;
+  premium_frequency: string;
   effective_date: string;
-  expiry_date: string;
+  expiration_date: string;
+  policy_number: string;
+  group_number: string;
 }
 
 interface PolicyStats {
@@ -89,8 +90,13 @@ interface PolicyStats {
   expired: number;
 }
 
-const CARRIERS = ['BlueCross', 'Aetna', 'Cigna', 'UnitedHealth', 'Humana', 'Kaiser'];
-const PLAN_TYPES = ['Individual', 'Family', 'Medicare Advantage', 'Medicare Supplement', 'Dental & Vision', 'Group'];
+const POLICY_TYPES = ['Individual', 'Family', 'Medicare Advantage', 'Medicare Supplement', 'Dental & Vision', 'Group'];
+const PREMIUM_FREQUENCIES = [
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'quarterly', label: 'Quarterly' },
+  { value: 'semi_annual', label: 'Semi-Annual' },
+  { value: 'annual', label: 'Annual' },
+];
 
 const STATUS_CONFIG: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className: string }> = {
   active: { label: 'Active', variant: 'default', className: 'bg-green-500/10 text-green-500 border-green-500/20' },
@@ -100,16 +106,17 @@ const STATUS_CONFIG: Record<string, { label: string; variant: 'default' | 'secon
 };
 
 const EMPTY_FORM: PolicyFormData = {
-  policyholder_name: '',
-  email: '',
-  phone: '',
-  carrier: '',
-  plan_type: '',
-  policy_number: '',
-  monthly_premium: '',
+  client_id: '',
+  policy_type: '',
+  carrier_name: '',
+  coverage_amount: '',
   deductible: '',
+  premium_amount: '',
+  premium_frequency: 'monthly',
   effective_date: '',
-  expiry_date: '',
+  expiration_date: '',
+  policy_number: '',
+  group_number: '',
 };
 
 // ---- Stats Cards ----
@@ -193,16 +200,17 @@ function PolicyDialog({
   useEffect(() => {
     if (policy) {
       setFormData({
-        policyholder_name: policy.policyholder_name || '',
-        email: policy.email || '',
-        phone: policy.phone || '',
-        carrier: policy.carrier || '',
-        plan_type: policy.plan_type || '',
-        policy_number: policy.policy_number || '',
-        monthly_premium: policy.monthly_premium?.toString() || '',
+        client_id: (policy as any).client_id?.toString() || '',
+        policy_type: (policy as any).policy_type || policy.plan_type || '',
+        carrier_name: (policy as any).carrier_name || policy.carrier || '',
+        coverage_amount: (policy as any).coverage_amount?.toString() || '',
         deductible: policy.deductible?.toString() || '',
+        premium_amount: (policy as any).premium_amount?.toString() || policy.monthly_premium?.toString() || '',
+        premium_frequency: (policy as any).premium_frequency || 'monthly',
         effective_date: policy.effective_date || '',
-        expiry_date: policy.expiry_date || '',
+        expiration_date: (policy as any).expiration_date || policy.expiry_date || '',
+        policy_number: policy.policy_number || '',
+        group_number: (policy as any).group_number || '',
       });
     } else {
       setFormData(EMPTY_FORM);
@@ -216,7 +224,7 @@ function PolicyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{policy ? 'Edit Policy' : 'New Policy'}</DialogTitle>
           <DialogDescription>
@@ -225,93 +233,62 @@ function PolicyDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            {/* Policyholder Info */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="policyholder_name">Policyholder Name *</Label>
-                <Input
-                  id="policyholder_name"
-                  value={formData.policyholder_name}
-                  onChange={(e) => setFormData({ ...formData, policyholder_name: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
+            {/* Client/Lead ID */}
+            <div className="space-y-2">
+              <Label htmlFor="client_id">Client / Lead ID *</Label>
+              <Input
+                id="client_id"
+                type="number"
+                value={formData.client_id}
+                onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                placeholder="Enter lead ID from the leads table"
+                required
+              />
             </div>
 
+            {/* Policy Type & Carrier */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="policy_number">Policy Number</Label>
-                <Input
-                  id="policy_number"
-                  value={formData.policy_number}
-                  onChange={(e) => setFormData({ ...formData, policy_number: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Carrier & Plan */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="carrier">Carrier *</Label>
+                <Label htmlFor="policy_type">Policy Type *</Label>
                 <Select
-                  value={formData.carrier}
-                  onValueChange={(value) => setFormData({ ...formData, carrier: value })}
+                  value={formData.policy_type}
+                  onValueChange={(value) => setFormData({ ...formData, policy_type: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select carrier" />
+                    <SelectValue placeholder="Select policy type" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CARRIERS.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="plan_type">Plan Type *</Label>
-                <Select
-                  value={formData.plan_type}
-                  onValueChange={(value) => setFormData({ ...formData, plan_type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select plan type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PLAN_TYPES.map((p) => (
+                    {POLICY_TYPES.map((p) => (
                       <SelectItem key={p} value={p}>{p}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="carrier_name">Carrier Name *</Label>
+                <Input
+                  id="carrier_name"
+                  value={formData.carrier_name}
+                  onChange={(e) => setFormData({ ...formData, carrier_name: e.target.value })}
+                  placeholder="e.g., BlueCross, Aetna"
+                  required
+                />
+              </div>
             </div>
 
-            {/* Financial */}
+            {/* Coverage & Deductible */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="monthly_premium">Monthly Premium ($)</Label>
+                <Label htmlFor="coverage_amount">Coverage Amount ($) *</Label>
                 <Input
-                  id="monthly_premium"
+                  id="coverage_amount"
                   type="number"
                   step="0.01"
-                  value={formData.monthly_premium}
-                  onChange={(e) => setFormData({ ...formData, monthly_premium: e.target.value })}
+                  min="0"
+                  value={formData.coverage_amount}
+                  onChange={(e) => setFormData({ ...formData, coverage_amount: e.target.value })}
+                  placeholder="e.g., 100000"
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -320,30 +297,88 @@ function PolicyDialog({
                   id="deductible"
                   type="number"
                   step="0.01"
+                  min="0"
                   value={formData.deductible}
                   onChange={(e) => setFormData({ ...formData, deductible: e.target.value })}
+                  placeholder="e.g., 1000"
                 />
+              </div>
+            </div>
+
+            {/* Premium Amount & Frequency */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="premium_amount">Premium Amount ($) *</Label>
+                <Input
+                  id="premium_amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.premium_amount}
+                  onChange={(e) => setFormData({ ...formData, premium_amount: e.target.value })}
+                  placeholder="e.g., 450"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="premium_frequency">Premium Frequency *</Label>
+                <Select
+                  value={formData.premium_frequency}
+                  onValueChange={(value) => setFormData({ ...formData, premium_frequency: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PREMIUM_FREQUENCIES.map((f) => (
+                      <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             {/* Dates */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="effective_date">Effective Date</Label>
+                <Label htmlFor="effective_date">Effective Date *</Label>
                 <Input
                   id="effective_date"
                   type="date"
                   value={formData.effective_date}
                   onChange={(e) => setFormData({ ...formData, effective_date: e.target.value })}
+                  required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="expiry_date">Expiry Date</Label>
+                <Label htmlFor="expiration_date">Expiration Date</Label>
                 <Input
-                  id="expiry_date"
+                  id="expiration_date"
                   type="date"
-                  value={formData.expiry_date}
-                  onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
+                  value={formData.expiration_date}
+                  onChange={(e) => setFormData({ ...formData, expiration_date: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Policy & Group Number */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="policy_number">Policy Number</Label>
+                <Input
+                  id="policy_number"
+                  value={formData.policy_number}
+                  onChange={(e) => setFormData({ ...formData, policy_number: e.target.value })}
+                  placeholder="Optional"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="group_number">Group Number</Label>
+                <Input
+                  id="group_number"
+                  value={formData.group_number}
+                  onChange={(e) => setFormData({ ...formData, group_number: e.target.value })}
+                  placeholder="Optional"
                 />
               </div>
             </div>
@@ -372,7 +407,7 @@ export default function PoliciesPage() {
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [carrierFilter, setCarrierFilter] = useState('all');
+  const [carrierFilter, setCarrierFilter] = useState('all'); // kept for filter UI compatibility
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
 
@@ -434,10 +469,18 @@ export default function PoliciesPage() {
   const handleSave = async (formData: PolicyFormData) => {
     try {
       setSaving(true);
-      const payload = {
-        ...formData,
-        monthly_premium: formData.monthly_premium ? parseFloat(formData.monthly_premium) : 0,
-        deductible: formData.deductible ? parseFloat(formData.deductible) : 0,
+      const payload: Record<string, any> = {
+        client_id: parseInt(formData.client_id),
+        policy_type: formData.policy_type,
+        carrier_name: formData.carrier_name,
+        coverage_amount: parseFloat(formData.coverage_amount) || 0,
+        deductible: formData.deductible ? parseFloat(formData.deductible) : null,
+        premium_amount: parseFloat(formData.premium_amount) || 0,
+        premium_frequency: formData.premium_frequency,
+        effective_date: formData.effective_date,
+        expiration_date: formData.expiration_date || null,
+        policy_number: formData.policy_number || null,
+        group_number: formData.group_number || null,
       };
 
       if (editingPolicy) {
@@ -483,10 +526,11 @@ export default function PoliciesPage() {
   const filteredPolicies = policies.filter((policy) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
+      const p = policy as any;
       return (
-        policy.policyholder_name?.toLowerCase().includes(query) ||
+        p.policyholder_name?.toLowerCase().includes(query) ||
         policy.policy_number?.toLowerCase().includes(query) ||
-        policy.carrier?.toLowerCase().includes(query)
+        (p.carrier_name || policy.carrier || '').toLowerCase().includes(query)
       );
     }
     return true;
@@ -557,9 +601,12 @@ export default function PoliciesPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Carriers</SelectItem>
-                {CARRIERS.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
+                <SelectItem value="BlueCross">BlueCross</SelectItem>
+                <SelectItem value="Aetna">Aetna</SelectItem>
+                <SelectItem value="Cigna">Cigna</SelectItem>
+                <SelectItem value="UnitedHealth">UnitedHealth</SelectItem>
+                <SelectItem value="Humana">Humana</SelectItem>
+                <SelectItem value="Kaiser">Kaiser</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={handleSearch}>

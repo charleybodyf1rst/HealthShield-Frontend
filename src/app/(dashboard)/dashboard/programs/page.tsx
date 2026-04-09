@@ -16,6 +16,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, Plus, Eye, Pencil, Trash2, ShieldCheck } from 'lucide-react';
 import { useInsuranceStore } from '@/stores/insurance-store';
+import { toast } from 'sonner';
 
 const typeLabels: Record<string, string> = {
   individual: 'Individual',
@@ -130,15 +131,11 @@ export default function ProgramsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" asChild>
-                          <Link href={`/dashboard/programs/${program.id}`}>
-                            <Eye className="h-4 w-4" />
-                          </Link>
+                        <Button variant="ghost" size="icon" onClick={() => toast.info('Detail view coming soon')}>
+                          <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" asChild>
-                          <Link href={`/dashboard/programs/${program.id}/edit`}>
-                            <Pencil className="h-4 w-4" />
-                          </Link>
+                        <Button variant="ghost" size="icon" onClick={() => toast.info('Detail view coming soon')}>
+                          <Pencil className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon">
                           <Trash2 className="h-4 w-4 text-red-500" />

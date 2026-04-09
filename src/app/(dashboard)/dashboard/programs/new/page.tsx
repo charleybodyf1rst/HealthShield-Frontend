@@ -46,11 +46,11 @@ export default function NewProgramPage() {
         program_tier: formData.program_tier,
         monthly_pepm: parseFloat(formData.monthly_pepm) || 0,
         total_employees: parseInt(formData.total_employees) || 0,
-        deductible_option: formData.deductible_option,
+        deductible_option: formData.deductible_option || null,
         first_dollar_coverage: formData.first_dollar_coverage,
         wellness_activities: formData.wellness_activities
           ? formData.wellness_activities.split(',').map((s) => s.trim())
-          : [],
+          : null,
         notes: formData.notes,
         status: 'active',
       });

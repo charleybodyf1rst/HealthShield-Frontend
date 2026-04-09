@@ -71,12 +71,12 @@ interface Claim {
 }
 
 interface ClaimFormData {
-  policyholder_name: string;
-  policy_number: string;
+  policy_id: string;
   claim_type: string;
-  amount: string;
+  incident_date: string;
   description: string;
-  supporting_documents_url: string;
+  estimated_amount: string;
+  notes: string;
 }
 
 interface ClaimStats {
@@ -97,12 +97,12 @@ const STATUS_CONFIG: Record<string, { label: string; variant: 'default' | 'secon
 };
 
 const EMPTY_FORM: ClaimFormData = {
-  policyholder_name: '',
-  policy_number: '',
+  policy_id: '',
   claim_type: '',
-  amount: '',
+  incident_date: '',
   description: '',
-  supporting_documents_url: '',
+  estimated_amount: '',
+  notes: '',
 };
 
 // ---- Stats Cards ----
@@ -194,7 +194,7 @@ function FileClaimDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>File a Claim</DialogTitle>
           <DialogDescription>
@@ -205,26 +205,16 @@ function FileClaimDialog({
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="policyholder_name">Policyholder Name *</Label>
+                <Label htmlFor="policy_id">Policy ID *</Label>
                 <Input
-                  id="policyholder_name"
-                  value={formData.policyholder_name}
-                  onChange={(e) => setFormData({ ...formData, policyholder_name: e.target.value })}
+                  id="policy_id"
+                  type="number"
+                  value={formData.policy_id}
+                  onChange={(e) => setFormData({ ...formData, policy_id: e.target.value })}
+                  placeholder="Enter policy ID"
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="policy_number">Policy Number *</Label>
-                <Input
-                  id="policy_number"
-                  value={formData.policy_number}
-                  onChange={(e) => setFormData({ ...formData, policy_number: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="claim_type">Claim Type *</Label>
                 <Select
@@ -241,38 +231,54 @@ function FileClaimDialog({
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="amount">Amount ($) *</Label>
+                <Label htmlFor="incident_date">Incident Date *</Label>
                 <Input
-                  id="amount"
+                  id="incident_date"
+                  type="date"
+                  value={formData.incident_date}
+                  onChange={(e) => setFormData({ ...formData, incident_date: e.target.value })}
+                  max={new Date().toISOString().split('T')[0]}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="estimated_amount">Estimated Amount ($)</Label>
+                <Input
+                  id="estimated_amount"
                   type="number"
                   step="0.01"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  required
+                  min="0"
+                  value={formData.estimated_amount}
+                  onChange={(e) => setFormData({ ...formData, estimated_amount: e.target.value })}
+                  placeholder="Optional"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">Description *</Label>
               <Textarea
                 id="description"
                 rows={3}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Describe the claim details..."
+                required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="supporting_documents_url">Supporting Documents URL</Label>
-              <Input
-                id="supporting_documents_url"
-                type="url"
-                value={formData.supporting_documents_url}
-                onChange={(e) => setFormData({ ...formData, supporting_documents_url: e.target.value })}
-                placeholder="https://..."
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                rows={2}
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                placeholder="Additional notes (optional)"
               />
             </div>
           </div>
@@ -361,9 +367,13 @@ export default function ClaimsPage() {
   const handleFileClaim = async (formData: ClaimFormData) => {
     try {
       setSaving(true);
-      const payload = {
-        ...formData,
-        amount: formData.amount ? parseFloat(formData.amount) : 0,
+      const payload: Record<string, any> = {
+        policy_id: parseInt(formData.policy_id),
+        claim_type: formData.claim_type,
+        incident_date: formData.incident_date,
+        description: formData.description,
+        estimated_amount: formData.estimated_amount ? parseFloat(formData.estimated_amount) : null,
+        notes: formData.notes || null,
       };
 
       await insuranceApi.fileClaim(payload);
