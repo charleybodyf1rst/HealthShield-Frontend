@@ -77,7 +77,7 @@ const INSURANCE_PERSONAS = [
   {
     id: 'insurance_sales',
     name: 'Sales Agent',
-    description: 'New quotes, plan comparisons, enrollment assistance',
+    description: 'Health, auto, home, life insurance quotes and enrollment',
     icon: '💼',
     voice: 'Sarah',
     color: 'from-blue-500 to-blue-600',
@@ -85,16 +85,31 @@ const INSURANCE_PERSONAS = [
     bgColor: 'bg-blue-500/10',
     textColor: 'text-blue-600',
     questions: [
-      'What health plans do you offer?',
-      'Can you compare Bronze vs Gold coverage?',
-      'How much would a family plan cost?',
-      'What wellness benefits are included?',
+      // Health Insurance
+      'What health insurance plans do you offer?',
+      'Can you compare Bronze vs Gold health coverage?',
+      'How much would a family health plan cost?',
+      'What wellness and preventive care benefits are included?',
+      'Do you cover pre-existing conditions?',
+      // Auto Insurance
+      'I need a quote for auto insurance',
+      'What does full coverage auto insurance include?',
+      'Can you bundle my car and home insurance?',
+      // Home Insurance
+      'How much is homeowners insurance?',
+      'Does your home policy cover flood damage?',
+      // Life Insurance
+      'What term life insurance options do you have?',
+      'Whats the difference between term and whole life?',
+      // General
+      'I want to enroll in a HealthShield plan today',
+      'What discounts are available for families?',
     ],
   },
   {
     id: 'insurance_claims',
     name: 'Claims Agent',
-    description: 'File claims, check status, documentation help',
+    description: 'File claims, check status, get documentation help for all policy types',
     icon: '📋',
     voice: 'Drew',
     color: 'from-amber-500 to-amber-600',
@@ -102,16 +117,28 @@ const INSURANCE_PERSONAS = [
     bgColor: 'bg-amber-500/10',
     textColor: 'text-amber-600',
     questions: [
-      'I need to file a new claim',
-      "What's the status of my claim?",
+      // Health Claims
+      'I need to file a health insurance claim',
+      'My doctor visit wasnt covered — can you help?',
+      'How do I submit a prescription reimbursement?',
+      // Auto Claims
+      'I was in a car accident and need to file a claim',
+      'My car was damaged in a storm — whats covered?',
+      'How long does an auto claim take to process?',
+      // Home Claims
+      'I need to file a homeowners claim for water damage',
+      'A tree fell on my roof — is this covered?',
+      // General
+      "Whats the status of my claim?",
       'What documents do I need for my claim?',
-      'How long does claims processing take?',
+      'Can I appeal a denied claim?',
+      'How do I get my claim payment faster?',
     ],
   },
   {
     id: 'insurance_service',
     name: 'Service Agent',
-    description: 'Policy changes, renewals, billing questions',
+    description: 'Policy changes, renewals, billing, and coverage questions for all types',
     icon: '🛡️',
     voice: 'Adam',
     color: 'from-emerald-500 to-emerald-600',
@@ -119,10 +146,24 @@ const INSURANCE_PERSONAS = [
     bgColor: 'bg-emerald-500/10',
     textColor: 'text-emerald-600',
     questions: [
-      'I need to update my coverage',
+      // Policy Management
+      'I need to update my coverage limits',
       'When is my policy renewal date?',
-      'Can you explain my deductible?',
-      'I have a billing question',
+      'Can you explain my deductible and copay?',
+      'I want to add a driver to my auto policy',
+      'How do I remove someone from my plan?',
+      // Billing
+      'I have a billing question about my premium',
+      'Can I change my payment schedule to monthly?',
+      'Why did my premium go up this year?',
+      // Coverage Questions
+      'Am I covered if I travel out of state?',
+      'Does my health plan include dental and vision?',
+      'What is my out-of-pocket maximum?',
+      'Can I add roadside assistance to my auto policy?',
+      // Account
+      'I need a copy of my insurance ID card',
+      'How do I find an in-network provider?',
     ],
   },
 ];
