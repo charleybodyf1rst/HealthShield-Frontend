@@ -306,11 +306,17 @@ function mapCrmLeadToLead(raw: any): Lead {
 }
 
 export const leadsApi = {
-  getAll: async (params?: LeadFilters & { page?: number; limit?: number }) => {
+  getAll: async (params?: LeadFilters & { page?: number; limit?: number; per_page?: number }) => {
     // API returns Laravel pagination directly: { current_page, data: [...leads], total, per_page }
+    // Backend uses 'per_page' not 'limit' — map it
+    const queryParams: Record<string, string> = { ...(params as Record<string, string>) };
+    if (queryParams.limit && !queryParams.per_page) {
+      queryParams.per_page = queryParams.limit;
+      delete queryParams.limit;
+    }
     const response = await api.get<{ current_page: number; data: unknown[]; total: number; per_page: number; last_page: number }>(
       '/api/v1/crm/leads',
-      params as Record<string, string>
+      queryParams
     );
     const rawLeads = Array.isArray(response.data) ? response.data : [];
     return {

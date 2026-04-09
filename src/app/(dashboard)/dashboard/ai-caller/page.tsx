@@ -80,6 +80,7 @@ const INSURANCE_PERSONAS = [
     description: 'Sarah helps callers find the right health plan — asks about current coverage, family size, budget',
     icon: '🏥',
     voice: 'Sarah',
+    voiceId: 'EXAVITQu4vr4xnSDxMaL',
     color: 'from-blue-500 to-blue-600',
     borderColor: 'border-blue-500/30',
     bgColor: 'bg-blue-500/10',
@@ -97,14 +98,15 @@ const INSURANCE_PERSONAS = [
   {
     id: 'insurance_sales',
     name: 'Auto Insurance',
-    description: 'Sarah helps callers get auto coverage — asks about vehicles, driving history, bundling',
+    description: 'Rachel helps callers get auto coverage — asks about vehicles, driving history, bundling',
     icon: '🚗',
-    voice: 'Sarah',
+    voice: 'Rachel',
+    voiceId: '21m00Tcm4TlvDq8ikWAM',
     color: 'from-violet-500 to-violet-600',
     borderColor: 'border-violet-500/30',
     bgColor: 'bg-violet-500/10',
     textColor: 'text-violet-600',
-    firstMessage: "Hey there! This is Sarah from HealthShield Insurance. I'm reaching out about auto insurance today. What kind of vehicle are you looking to insure, and do you currently have coverage?",
+    firstMessage: "Hey there! This is Rachel from HealthShield Insurance. I'm reaching out about auto insurance today. What kind of vehicle are you looking to insure, and do you currently have coverage?",
     questions: [
       'Get them a quote for full coverage auto',
       'Help them bundle auto + home for savings',
@@ -117,14 +119,15 @@ const INSURANCE_PERSONAS = [
   {
     id: 'insurance_sales',
     name: 'Dental Insurance',
-    description: 'Sarah helps callers with dental plans — asks about dental needs, family, preventive care',
+    description: 'Emily helps callers with dental plans — asks about dental needs, family, preventive care',
     icon: '🦷',
-    voice: 'Sarah',
+    voice: 'Emily',
+    voiceId: 'MF3mGyEYCl7XYWbV9V6O',
     color: 'from-cyan-500 to-cyan-600',
     borderColor: 'border-cyan-500/30',
     bgColor: 'bg-cyan-500/10',
     textColor: 'text-cyan-600',
-    firstMessage: "Hi! This is Sarah from HealthShield. I'm calling about dental insurance options for you. When was your last dental checkup, and are you looking for coverage for just yourself or your whole family?",
+    firstMessage: "Hi! This is Emily from HealthShield. I'm calling about dental insurance options for you. When was your last dental checkup, and are you looking for coverage for just yourself or your whole family?",
     questions: [
       'Find them a dental plan with cleanings included',
       'Explain what preventive vs major dental covers',
@@ -137,14 +140,15 @@ const INSURANCE_PERSONAS = [
   {
     id: 'insurance_sales',
     name: 'Life Insurance',
-    description: 'Sarah helps callers protect their family — asks about dependents, coverage amount, term length',
+    description: 'Josh helps callers protect their family — asks about dependents, coverage amount, term length',
     icon: '💚',
-    voice: 'Sarah',
+    voice: 'Josh',
+    voiceId: 'TxGEqnHWrfWFTfGW9XjX',
     color: 'from-rose-500 to-rose-600',
     borderColor: 'border-rose-500/30',
     bgColor: 'bg-rose-500/10',
     textColor: 'text-rose-600',
-    firstMessage: "Hi, this is Sarah from HealthShield. I'm reaching out about life insurance. Do you currently have any life insurance coverage, and do you have any dependents you'd like to protect?",
+    firstMessage: "Hi, this is Josh from HealthShield. I'm reaching out about life insurance. Do you currently have any life insurance coverage, and do you have any dependents you'd like to protect?",
     questions: [
       'Help them choose between term and whole life',
       'Calculate how much coverage they need',
@@ -1024,7 +1028,8 @@ export default function AiCallerPage() {
                   leadSource={selectedLead?.source}
                   leadNotes={selectedLead?.notes}
                   persona={selectedPersona}
-                  customFirstMessage={INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.firstMessage}
+                  customFirstMessage={INSURANCE_PERSONAS.find((p) => p.name === selectedPersona || p.id === selectedPersona)?.firstMessage}
+                  defaultVoiceId={INSURANCE_PERSONAS.find((p) => p.name === selectedPersona || p.id === selectedPersona)?.voiceId}
                   onCallStarted={handleConvCallStarted}
                   onCallEnded={handleConvCallEnded}
                 />

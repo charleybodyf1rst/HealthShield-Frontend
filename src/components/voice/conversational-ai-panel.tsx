@@ -66,6 +66,7 @@ interface ConversationalAiPanelProps {
   leadNotes?: string;
   persona?: string;
   customFirstMessage?: string;
+  defaultVoiceId?: string;
   onCallStarted?: (result: ConversationalCallResult) => void;
   onCallEnded?: (conversationId: string) => void;
   className?: string;
@@ -82,6 +83,7 @@ export function ConversationalAiPanel({
   leadNotes,
   persona: parentPersona,
   customFirstMessage: parentFirstMessage,
+  defaultVoiceId: parentVoiceId,
   onCallStarted,
   onCallEnded,
   className,
@@ -94,13 +96,16 @@ export function ConversationalAiPanel({
 
   // Call configuration
   const [selectedPersona, setSelectedPersona] = useState<ConversationalPersona>((parentPersona as ConversationalPersona) || 'insurance_sales');
-  // Sync persona from parent when it changes
+  // Sync persona and voice from parent when they change
   useEffect(() => {
     if (parentPersona) setSelectedPersona(parentPersona as ConversationalPersona);
   }, [parentPersona]);
+  useEffect(() => {
+    if (parentVoiceId) setSelectedVoiceId(parentVoiceId);
+  }, [parentVoiceId]);
 
   const [selectedLlm, setSelectedLlm] = useState<ConversationalLlm>('gpt-4o');
-  const [selectedVoiceId, setSelectedVoiceId] = useState<string>('');
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string>(parentVoiceId || '');
   const [customPrompt, setCustomPrompt] = useState('');
   const [firstMessage, setFirstMessage] = useState('');
   const [manualPhone, setManualPhone] = useState('');
