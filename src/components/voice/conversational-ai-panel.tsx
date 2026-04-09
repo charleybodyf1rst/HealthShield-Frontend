@@ -317,9 +317,14 @@ export function ConversationalAiPanel({
     }
   };
 
-  // Auto-start call when autoStart prop is true (triggered by quick question buttons)
+  // Auto-start call when autoStart prop is true (triggered by quick question buttons or Call Me Assistant)
   const autoStartedRef = useRef(false);
   useEffect(() => {
+    // Reset the guard when autoStart is turned off so it can fire again
+    if (!autoStart) {
+      autoStartedRef.current = false;
+      return;
+    }
     if (autoStart && !autoStartedRef.current && !isLoading && isConfigured && callState === 'idle' && (leadPhone || manualPhone)) {
       autoStartedRef.current = true;
       handleInitiateCall();

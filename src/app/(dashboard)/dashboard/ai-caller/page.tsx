@@ -1070,6 +1070,7 @@ export default function AiCallerPage() {
                 </Card>
               ) : (selectedLead || manualCallMode) ? (
                 <ConversationalAiPanel
+                  key={`panel-${selectedPersona}`}
                   leadId={selectedLead?.id}
                   leadName={manualCallMode ? (manualName || 'Manual Call') : `${selectedLead?.firstName} ${selectedLead?.lastName}`}
                   leadPhone={manualCallMode ? manualPhone : selectedLead?.phone}
