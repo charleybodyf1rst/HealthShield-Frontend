@@ -19,6 +19,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -105,8 +106,15 @@ export function ConversationalAiPanel({
   // Call state
   const [callState, setCallState] = useState<CallState>('idle');
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [callSid, setCallSid] = useState<string | null>(null);
   const [callStatus, setCallStatus] = useState<ConversationalCallStatus | null>(null);
   const [transcript, setTranscript] = useState<ConversationalTranscript | null>(null);
+
+  // Diagnostic log — shows call pipeline stages
+  const [diagLog, setDiagLog] = useState<Array<{ time: string; stage: string; status: 'ok' | 'error' | 'pending'; detail: string }>>([]);
+  const addDiag = (stage: string, status: 'ok' | 'error' | 'pending', detail: string) => {
+    setDiagLog((prev) => [...prev, { time: new Date().toLocaleTimeString(), stage, status, detail }]);
+  };
   const [analytics, setAnalytics] = useState<ConversationalAnalytics | null>(null);
   const [callDuration, setCallDuration] = useState(0);
 
@@ -239,6 +247,8 @@ export function ConversationalAiPanel({
       setTranscript(null);
       setAnalytics(null);
       setCallStatus(null);
+      setDiagLog([]);
+      addDiag('Initiation', 'pending', `Calling ${phone} with persona ${selectedPersona}`);
 
       const context: Record<string, string> = {};
       if (leadName) context.lead_name = leadName;
@@ -246,6 +256,7 @@ export function ConversationalAiPanel({
       if (leadSource) context.lead_source = leadSource;
       if (leadNotes) context.lead_notes = leadNotes.substring(0, 500);
 
+      addDiag('API Request', 'pending', `POST /conversational-ai/call → persona=${selectedPersona}, voice=${selectedVoiceId || 'default'}, llm=${selectedLlm}`);
       const response = await conversationalAiApi.initiateCall({
         lead_id: leadId,
         phone,
@@ -258,20 +269,37 @@ export function ConversationalAiPanel({
         context: Object.keys(context).length > 0 ? context : undefined,
       });
 
+      addDiag('API Response', response.data.success ? 'ok' : 'error', JSON.stringify({
+        success: response.data.success,
+        conversation_id: response.data.conversation_id,
+        call_sid: response.data.call_sid,
+        status: response.data.status,
+        provider: response.data.provider,
+      }));
+
       if (response.data.success) {
-        // ElevenLabs returns call_sid immediately; conversation_id arrives later via webhook
         const trackingId = response.data.conversation_id || response.data.call_sid || null;
         setConversationId(trackingId);
+        setCallSid(response.data.call_sid || null);
         setCallState('ringing');
+
+        addDiag('Call Placed', 'ok', `Tracking: ${trackingId} | Twilio SID: ${response.data.call_sid}`);
+
         if (trackingId) {
+          addDiag('Polling', 'pending', `Starting poll for ${trackingId}`);
           startPolling(trackingId);
+        } else {
+          addDiag('Polling', 'error', 'No tracking ID — cannot poll status');
         }
         startDurationTimer();
         onCallStarted?.(response.data);
       } else {
+        addDiag('Call Failed', 'error', response.data.message || 'Unknown error');
         throw new Error('Failed to initiate call');
       }
-    } catch (err) {
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      addDiag('Exception', 'error', errMsg);
       console.error('Failed to initiate conversational AI call:', err);
       setError('Failed to initiate call. Please check the configuration and try again.');
       setCallState('failed');
@@ -694,6 +722,44 @@ export function ConversationalAiPanel({
           </Button>
         )}
       </CardFooter>
+
+      {/* Call Diagnostic Tree — shows pipeline stages */}
+      {diagLog.length > 0 && (
+        <div className="border-t px-6 py-4">
+          <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Call Pipeline Diagnostics
+          </h4>
+          <div className="space-y-1 font-mono text-xs">
+            {diagLog.map((entry, i) => (
+              <div key={i} className={`flex items-start gap-2 p-1.5 rounded ${
+                entry.status === 'ok' ? 'bg-emerald-500/10 text-emerald-400' :
+                entry.status === 'error' ? 'bg-red-500/10 text-red-400' :
+                'bg-amber-500/10 text-amber-400'
+              }`}>
+                <span className="opacity-50 shrink-0">{entry.time}</span>
+                <span className={`shrink-0 ${
+                  entry.status === 'ok' ? 'text-emerald-500' :
+                  entry.status === 'error' ? 'text-red-500' :
+                  'text-amber-500'
+                }`}>
+                  {entry.status === 'ok' ? '✓' : entry.status === 'error' ? '✗' : '⏳'}
+                </span>
+                <span className="font-semibold shrink-0">{entry.stage}</span>
+                <span className="opacity-70 break-all">{entry.detail}</span>
+              </div>
+            ))}
+          </div>
+          {conversationId && (
+            <div className="mt-2 text-xs text-muted-foreground">
+              Conversation: <code className="bg-muted px-1 py-0.5 rounded">{conversationId}</code>
+              {callSid && callSid !== conversationId && (
+                <> | Twilio SID: <code className="bg-muted px-1 py-0.5 rounded">{callSid}</code></>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </Card>
   );
 }
