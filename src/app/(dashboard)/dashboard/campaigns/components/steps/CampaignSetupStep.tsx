@@ -1,12 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, MessageSquare, Bell, Layers } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Mail, MessageSquare, Bell, Layers, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCampaignStore } from '@/stores/campaign-store';
+import { communicationApi } from '@/lib/api';
+import { toast } from 'sonner';
 import type { CampaignType } from '@/types/campaign';
 
 const TYPE_CARDS: Array<{
@@ -22,7 +26,7 @@ const TYPE_CARDS: Array<{
     label: 'Email',
     description: 'Send emails via SendGrid',
     icon: Mail,
-    color: 'text-blue-500 bg-blue-50',
+    color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/50',
     ring: 'ring-blue-500',
   },
   {
@@ -30,7 +34,7 @@ const TYPE_CARDS: Array<{
     label: 'SMS',
     description: 'Text messages via Twilio',
     icon: MessageSquare,
-    color: 'text-green-500 bg-green-50',
+    color: 'text-green-500 bg-green-50 dark:bg-green-950/50',
     ring: 'ring-green-500',
   },
   {
@@ -38,7 +42,7 @@ const TYPE_CARDS: Array<{
     label: 'Push Notification',
     description: 'Push notifications via OneSignal',
     icon: Bell,
-    color: 'text-purple-500 bg-purple-50',
+    color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/50',
     ring: 'ring-purple-500',
   },
   {
@@ -46,21 +50,74 @@ const TYPE_CARDS: Array<{
     label: 'Multi-Channel',
     description: 'Email + SMS + Push combined',
     icon: Layers,
-    color: 'text-indigo-500 bg-indigo-50',
+    color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/50',
     ring: 'ring-indigo-500',
   },
 ];
 
 export function CampaignSetupStep() {
   const { wizard, updateWizard } = useCampaignStore();
+  const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
+  const [isGeneratingName, setIsGeneratingName] = useState(false);
+
+  const handleAiDescription = async () => {
+    if (!wizard.name.trim()) {
+      toast.error('Enter a campaign name first');
+      return;
+    }
+    setIsGeneratingDesc(true);
+    try {
+      const result = await communicationApi.aiGenerateDraft({
+        purpose: `Write a brief 1-2 sentence campaign description for a ${wizard.type} campaign called "${wizard.name}". This is for a health insurance call center called HealthShield. Return ONLY the description, nothing else.`,
+        tone: 'friendly',
+      });
+      updateWizard({ description: result.body.replace(/^["']|["']$/g, '').trim() });
+    } catch {
+      toast.error('Failed to generate description');
+    } finally {
+      setIsGeneratingDesc(false);
+    }
+  };
+
+  const handleAiName = async () => {
+    setIsGeneratingName(true);
+    try {
+      const result = await communicationApi.aiSuggestSubject({
+        body: `Generate a catchy ${wizard.type} campaign name for a health insurance company called HealthShield. The campaign is about reaching potential customers about health insurance plans. Return just the name, max 60 characters.`,
+      });
+      if (result.subjects?.[0]) {
+        updateWizard({ name: result.subjects[0] });
+      }
+    } catch {
+      toast.error('Failed to generate name');
+    } finally {
+      setIsGeneratingName(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Campaign Name */}
       <div className="space-y-2">
-        <Label htmlFor="campaign-name">
-          Campaign Name <span className="text-red-500">*</span>
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="campaign-name">
+            Campaign Name <span className="text-red-500">*</span>
+          </Label>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-xs h-7"
+            onClick={handleAiName}
+            disabled={isGeneratingName}
+          >
+            {isGeneratingName ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Sparkles className="h-3 w-3" />
+            )}
+            Suggest Name
+          </Button>
+        </div>
         <Input
           id="campaign-name"
           placeholder="e.g., Spring Open Enrollment Outreach"
@@ -72,7 +129,23 @@ export function CampaignSetupStep() {
 
       {/* Description */}
       <div className="space-y-2">
-        <Label htmlFor="campaign-description">Description (optional)</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="campaign-description">Description (optional)</Label>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-xs h-7"
+            onClick={handleAiDescription}
+            disabled={isGeneratingDesc || !wizard.name.trim()}
+          >
+            {isGeneratingDesc ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Sparkles className="h-3 w-3" />
+            )}
+            AI Description
+          </Button>
+        </div>
         <Textarea
           id="campaign-description"
           placeholder="Brief description of this campaign's purpose..."

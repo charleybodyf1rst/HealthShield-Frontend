@@ -9,7 +9,9 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Upload, Users, FileSpreadsheet } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Upload, Users, FileSpreadsheet, Sparkles, Loader2 } from 'lucide-react';
+import { communicationApi } from '@/lib/api';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useCampaignStore } from '@/stores/campaign-store';
@@ -140,11 +142,50 @@ export function CampaignAudienceStep() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const [isSuggesting, setIsSuggesting] = useState(false);
+
+  const handleAiSuggestAudience = async () => {
+    setIsSuggesting(true);
+    try {
+      const result = await communicationApi.aiGenerateDraft({
+        purpose: `For a ${wizard.type} campaign called "${wizard.name}" (${wizard.description || 'health insurance outreach'}), suggest the best audience segment. Return ONLY a JSON object like: {"status":["new","contacted_1"],"source":["website","referral"]}. No explanation, just the JSON.`,
+        tone: 'formal',
+      });
+      const body = result.body.trim();
+      const jsonMatch = body.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const suggestion = JSON.parse(jsonMatch[0]);
+        const newFilters: AudienceFilters = {};
+        if (suggestion.status) newFilters.status = suggestion.status;
+        if (suggestion.source) newFilters.source = suggestion.source;
+        updateWizard({ audience: { ...wizard.audience, ...newFilters } });
+        setAllContacts(false);
+        toast.success('AI suggested audience filters applied');
+      }
+    } catch {
+      toast.error('Failed to suggest audience');
+    } finally {
+      setIsSuggesting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Audience Count Badge */}
+      {/* Audience Count Badge + AI Suggest */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Target Audience</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold">Target Audience</h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-xs h-7"
+            onClick={handleAiSuggestAudience}
+            disabled={isSuggesting || !wizard.name}
+          >
+            {isSuggesting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            AI Suggest
+          </Button>
+        </div>
         <Badge variant="secondary" className="gap-1.5 text-sm px-3 py-1">
           <Users className="h-3.5 w-3.5" />
           {isEstimating ? (
