@@ -1443,7 +1443,7 @@ export const aiCallerApi = {
 // CONVERSATIONAL AI API (Real-Time Voice Calling)
 // ============================================================================
 
-export type ConversationalPersona = 'sales' | 'follow_up' | 'appointment' | 'coach' | 'win_back' | 'support';
+export type ConversationalPersona = 'sales' | 'follow_up' | 'appointment' | 'coach' | 'win_back' | 'support' | 'insurance_sales' | 'insurance_claims' | 'insurance_service' | 'health_insurance' | 'auto_insurance' | 'dental_insurance' | 'life_insurance';
 export type ConversationalLlm = 'gpt-4o' | 'gpt-4o-mini' | 'gpt-4-turbo' | 'claude-3-5-sonnet' | 'gemini-1.5-pro';
 
 export interface ConversationalPersonaInfo {

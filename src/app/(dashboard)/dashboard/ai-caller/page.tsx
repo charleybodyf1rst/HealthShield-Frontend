@@ -75,7 +75,7 @@ type CallerMode = 'scripted' | 'conversational';
 // Insurance AI Agent Personas — each agent is direct and asks the caller questions
 const INSURANCE_PERSONAS = [
   {
-    id: 'insurance_sales',
+    id: 'health_insurance',
     name: 'Health Insurance',
     description: 'Sarah helps callers find the right health plan — asks about current coverage, family size, budget',
     icon: '🏥',
@@ -96,7 +96,7 @@ const INSURANCE_PERSONAS = [
     ],
   },
   {
-    id: 'insurance_sales',
+    id: 'auto_insurance',
     name: 'Auto Insurance',
     description: 'Rachel helps callers get auto coverage — asks about vehicles, driving history, bundling',
     icon: '🚗',
@@ -117,7 +117,7 @@ const INSURANCE_PERSONAS = [
     ],
   },
   {
-    id: 'insurance_sales',
+    id: 'dental_insurance',
     name: 'Dental Insurance',
     description: 'Emily helps callers with dental plans — asks about dental needs, family, preventive care',
     icon: '🦷',
@@ -138,7 +138,7 @@ const INSURANCE_PERSONAS = [
     ],
   },
   {
-    id: 'insurance_sales',
+    id: 'life_insurance',
     name: 'Life Insurance',
     description: 'Josh helps callers protect their family — asks about dependents, coverage amount, term length',
     icon: '💚',

@@ -10,9 +10,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { Monitor, Smartphone, Mail, MessageSquare, Bell } from 'lucide-react';
+import { Monitor, Smartphone, Bell, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCampaignStore } from '@/stores/campaign-store';
+import { communicationApi } from '@/lib/api';
 import { CAMPAIGN_TYPE_CONFIG } from '@/types/campaign';
 
 type DeviceMode = 'desktop' | 'mobile';
@@ -20,6 +21,7 @@ type DeviceMode = 'desktop' | 'mobile';
 export function CampaignPreviewStep() {
   const { wizard, updateWizard } = useCampaignStore();
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('desktop');
+  const [isGeneratingVariant, setIsGeneratingVariant] = useState(false);
 
   const typeConfig = CAMPAIGN_TYPE_CONFIG[wizard.type];
 
@@ -264,7 +266,34 @@ export function CampaignPreviewStep() {
                   </div>
                   {/* Variant B */}
                   <div className="space-y-2 p-3 rounded-lg border">
-                    <Label className="text-xs font-medium">Variant B</Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-medium">Variant B</Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="gap-1 text-xs h-6 px-2"
+                        disabled={isGeneratingVariant}
+                        onClick={async () => {
+                          setIsGeneratingVariant(true);
+                          try {
+                            const result = await communicationApi.aiImproveTone({
+                              body: wizard.content,
+                              targetTone: 'friendly',
+                            });
+                            const subjects = await communicationApi.aiSuggestSubject({ body: result.body });
+                            updateWizard({
+                              variantBContent: result.body,
+                              variantBSubject: subjects.subjects?.[0] || wizard.subject + ' (v2)',
+                            });
+                          } catch { /* ignore */ } finally {
+                            setIsGeneratingVariant(false);
+                          }
+                        }}
+                      >
+                        {isGeneratingVariant ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                        AI Generate
+                      </Button>
+                    </div>
                     <Input
                       placeholder="Alt subject..."
                       value={wizard.variantBSubject}
