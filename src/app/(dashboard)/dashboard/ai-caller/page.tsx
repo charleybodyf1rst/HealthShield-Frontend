@@ -218,6 +218,9 @@ export default function AiCallerPage() {
   const [manualName, setManualName] = useState('');
   const [manualCallMode, setManualCallMode] = useState(false);
 
+  // Auto-start call trigger (set by quick question buttons)
+  const [autoStartCall, setAutoStartCall] = useState(false);
+
   // SMS & Email state
   const [smsMessage, setSmsMessage] = useState('');
   const [sendingSms, setSendingSms] = useState(false);
@@ -619,15 +622,17 @@ export default function AiCallerPage() {
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedPersona(persona.id);
-                            // Auto-setup Call Me mode with the question as context
                             if (authUser?.phone) {
                               setManualPhone(authUser.phone);
                               setManualName(`${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || 'Me');
                               setSelectedLead(null);
                               setManualCallMode(true);
-                              toast.success(`Ready to call about: "${q}" — Click "Start AI Call" above`);
+                              // Reset then trigger auto-start so the panel initiates the call immediately
+                              setAutoStartCall(false);
+                              setTimeout(() => setAutoStartCall(true), 100);
+                              toast.success(`Starting ${persona.voice} call about: "${q}"`);
                             } else {
-                              toast.info(`Topic: "${q}" — Select a lead or enter a phone number`);
+                              toast.info(`Topic: "${q}" — Enter a phone number to start the call`);
                             }
                           }}
                           className={cn(
@@ -1028,9 +1033,13 @@ export default function AiCallerPage() {
                   leadSource={selectedLead?.source}
                   leadNotes={selectedLead?.notes}
                   persona={selectedPersona}
-                  customFirstMessage={INSURANCE_PERSONAS.find((p) => p.name === selectedPersona || p.id === selectedPersona)?.firstMessage}
-                  defaultVoiceId={INSURANCE_PERSONAS.find((p) => p.name === selectedPersona || p.id === selectedPersona)?.voiceId}
-                  onCallStarted={handleConvCallStarted}
+                  customFirstMessage={INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.firstMessage}
+                  defaultVoiceId={INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.voiceId}
+                  autoStart={autoStartCall}
+                  onCallStarted={(result) => {
+                    setAutoStartCall(false);
+                    handleConvCallStarted(result);
+                  }}
                   onCallEnded={handleConvCallEnded}
                 />
               ) : (

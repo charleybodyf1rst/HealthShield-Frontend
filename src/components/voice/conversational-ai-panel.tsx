@@ -67,6 +67,7 @@ interface ConversationalAiPanelProps {
   persona?: string;
   customFirstMessage?: string;
   defaultVoiceId?: string;
+  autoStart?: boolean;
   onCallStarted?: (result: ConversationalCallResult) => void;
   onCallEnded?: (conversationId: string) => void;
   className?: string;
@@ -84,6 +85,7 @@ export function ConversationalAiPanel({
   persona: parentPersona,
   customFirstMessage: parentFirstMessage,
   defaultVoiceId: parentVoiceId,
+  autoStart,
   onCallStarted,
   onCallEnded,
   className,
@@ -315,6 +317,15 @@ export function ConversationalAiPanel({
     }
   };
 
+  // Auto-start call when autoStart prop is true (triggered by quick question buttons)
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStart && !autoStartedRef.current && !isLoading && isConfigured && callState === 'idle' && (leadPhone || manualPhone)) {
+      autoStartedRef.current = true;
+      handleInitiateCall();
+    }
+  }, [autoStart, isLoading, isConfigured, callState, leadPhone, manualPhone]);
+
   const handleEndCall = () => {
     // In a real implementation, you'd call an API to end the call
     // For now, we just stop polling and update state
@@ -490,7 +501,7 @@ export function ConversationalAiPanel({
                           <p className="font-medium text-xs mb-1">
                             {msg.role === 'agent' ? 'AI Agent' : 'Lead'}
                           </p>
-                          <p>{msg.original_message || msg.message || msg.text || ''}</p>
+                          <p>{(msg as Record<string, unknown>).original_message as string || (msg as Record<string, unknown>).message as string || msg.text || ''}</p>
                         </div>
                       </div>
                     ))}
