@@ -1739,6 +1739,13 @@ export const campaignsApi = {
       filters
     ),
 
+  // List recipients for audience picker
+  listRecipients: (params?: { search?: string; status?: string; source?: string; per_page?: number; page?: number }) =>
+    api.get<{ data: Array<{ id: number; contact_first_name: string; contact_last_name: string; contact_email: string; contact_phone: string; status: string; source: string; company_name: string }>; total: number; current_page: number; last_page: number }>(
+      '/api/v1/crm/campaigns/recipients',
+      params as Record<string, string>
+    ),
+
   // Import audience from CSV
   importAudienceCsv: (file: File) => {
     const formData = new FormData();

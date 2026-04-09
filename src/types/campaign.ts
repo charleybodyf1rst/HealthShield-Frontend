@@ -49,6 +49,7 @@ export interface AudienceFilters {
   tags?: string[];
   date_from?: string;
   date_to?: string;
+  selected_ids?: number[];
   imported_emails?: Array<{ email: string; name?: string }>;
 }
 
