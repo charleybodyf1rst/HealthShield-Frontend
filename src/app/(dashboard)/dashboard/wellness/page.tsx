@@ -76,30 +76,31 @@ export default function WellnessPage() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                 <XAxis
                   dataKey="month"
-                  className="text-xs"
-                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                 />
                 <YAxis
                   domain={[60, 100]}
-                  className="text-xs"
-                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
+                    backgroundColor: '#1a1a1a',
+                    border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: '8px',
+                    color: '#fff',
                   }}
                 />
                 <Line
                   type="monotone"
                   dataKey="score"
-                  stroke="hsl(var(--primary))"
+                  stroke="#f97316"
                   strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                  dot={{ fill: '#f97316', r: 4 }}
                   activeDot={{ r: 6 }}
                 />
               </LineChart>
