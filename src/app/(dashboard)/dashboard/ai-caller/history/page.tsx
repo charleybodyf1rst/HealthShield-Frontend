@@ -16,10 +16,13 @@ import Link from 'next/link';
 
 interface Conversation {
   conversation_id: string;
+  agent_id?: string;
   phone_number?: string;
   status: string;
-  created_at: string;
-  duration?: number;
+  created_at?: string;
+  started_at?: number | string | null;
+  ended_at?: number | string | null;
+  duration?: number | null;
   direction?: string;
   lead_name?: string;
 }
@@ -35,21 +38,49 @@ interface TranscriptTurn {
   sentiment?: string;
 }
 
-function formatDuration(seconds?: number): string {
-  if (!seconds) return '--';
+function formatDuration(seconds?: number | null): string {
+  if (!seconds || seconds <= 0) return '--';
   const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const s = Math.floor(seconds % 60);
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
+function parseTimestamp(val?: number | string | null): Date | null {
+  if (!val) return null;
+  // Unix seconds (number > 1e9 and < 1e11)
+  if (typeof val === 'number' && val > 1e9 && val < 1e12) return new Date(val * 1000);
+  // Unix milliseconds
+  if (typeof val === 'number' && val > 1e12) return new Date(val);
+  // ISO string
+  if (typeof val === 'string') {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
+function formatDate(val?: number | string | null): string {
+  const d = parseTimestamp(val);
+  if (!d) return '--';
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function formatTime(dateStr: string): string {
-  const d = new Date(dateStr);
+function formatTime(val?: number | string | null): string {
+  const d = parseTimestamp(val);
+  if (!d) return '';
   return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+
+function getConversationTimestamp(conv: Conversation): number | string | null {
+  return conv.started_at || conv.created_at || conv.ended_at || null;
+}
+
+function getConversationLabel(conv: Conversation): string {
+  if (conv.lead_name) return conv.lead_name;
+  if (conv.phone_number) return conv.phone_number;
+  // Shorten conversation_id for display
+  const id = conv.conversation_id || '';
+  return id.length > 16 ? `Call ${id.slice(-8)}` : id || 'Unknown';
 }
 
 const statusColors: Record<string, string> = {
@@ -216,7 +247,7 @@ export default function CallHistoryPage() {
                         <PhoneOutgoing className="h-4 w-4 text-green-500" />
                       )}
                       <span className="font-medium text-sm">
-                        {conv.lead_name || conv.phone_number || 'Unknown'}
+                        {getConversationLabel(conv)}
                       </span>
                     </div>
                     <Badge className={`text-xs ${statusColors[conv.status] || 'bg-gray-100 text-gray-700'}`}>
@@ -224,8 +255,8 @@ export default function CallHistoryPage() {
                     </Badge>
                   </div>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span>{formatDate(conv.created_at)}</span>
-                    <span>{formatTime(conv.created_at)}</span>
+                    <span>{formatDate(getConversationTimestamp(conv))}</span>
+                    <span>{formatTime(getConversationTimestamp(conv))}</span>
                     {conv.duration && (
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -259,10 +290,10 @@ export default function CallHistoryPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-lg font-semibold">
-                        {selectedConv?.lead_name || selectedConv?.phone_number || 'Call Details'}
+                        {selectedConv ? getConversationLabel(selectedConv) : 'Call Details'}
                       </h2>
                       <p className="text-sm text-muted-foreground">
-                        {selectedConv ? `${formatDate(selectedConv.created_at)} at ${formatTime(selectedConv.created_at)}` : ''}
+                        {selectedConv ? `${formatDate(getConversationTimestamp(selectedConv))} at ${formatTime(getConversationTimestamp(selectedConv))}` : ''}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
