@@ -577,7 +577,7 @@ export default function AiCallerPage() {
         {callerMode === 'conversational' && (
           <div className="mt-6 space-y-4">
             <h2 className="text-lg font-semibold">Choose Your AI Agent</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {INSURANCE_PERSONAS.map((persona) => (
                 <Card
                   key={persona.id}
@@ -1024,6 +1024,7 @@ export default function AiCallerPage() {
                   leadSource={selectedLead?.source}
                   leadNotes={selectedLead?.notes}
                   persona={selectedPersona}
+                  customFirstMessage={INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.firstMessage}
                   onCallStarted={handleConvCallStarted}
                   onCallEnded={handleConvCallEnded}
                 />

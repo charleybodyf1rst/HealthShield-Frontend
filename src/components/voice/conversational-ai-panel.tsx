@@ -65,6 +65,7 @@ interface ConversationalAiPanelProps {
   leadSource?: string;
   leadNotes?: string;
   persona?: string;
+  customFirstMessage?: string;
   onCallStarted?: (result: ConversationalCallResult) => void;
   onCallEnded?: (conversationId: string) => void;
   className?: string;
@@ -80,6 +81,7 @@ export function ConversationalAiPanel({
   leadSource,
   leadNotes,
   persona: parentPersona,
+  customFirstMessage: parentFirstMessage,
   onCallStarted,
   onCallEnded,
   className,
@@ -265,7 +267,7 @@ export function ConversationalAiPanel({
         persona: selectedPersona,
         llm: selectedLlm,
         custom_prompt: customPrompt || undefined,
-        first_message: firstMessage || undefined,
+        first_message: firstMessage || parentFirstMessage || undefined,
         context: Object.keys(context).length > 0 ? context : undefined,
       });
 

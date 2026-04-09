@@ -10,6 +10,7 @@ import {
   CheckSquare,
   ChevronDown,
   ClipboardList,
+  Database,
   DollarSign,
   FileText,
   GitBranch,
@@ -172,6 +173,11 @@ const aiItems = [
     title: 'AI Notes',
     href: '/dashboard/ai-notes',
     icon: StickyNote,
+  },
+  {
+    title: 'Data Enrichment',
+    href: '/dashboard/enrichment',
+    icon: Database,
   },
 ];
 
