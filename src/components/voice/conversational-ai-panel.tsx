@@ -182,9 +182,9 @@ export function ConversationalAiPanel({
           setCallStatus(statusRes.data);
 
           // Update call state based on status
-          const status = statusRes.data.status;
-          if (status === 'completed' || status === 'failed') {
-            setCallState(status);
+          const status = statusRes.data.status as string;
+          if (status === 'completed' || status === 'done' || status === 'failed') {
+            setCallState(status === 'done' ? 'completed' : (status as CallState));
             if (pollingRef.current) clearInterval(pollingRef.current);
             if (durationRef.current) clearInterval(durationRef.current);
 
@@ -483,7 +483,7 @@ export function ConversationalAiPanel({
                           <p className="font-medium text-xs mb-1">
                             {msg.role === 'agent' ? 'AI Agent' : 'Lead'}
                           </p>
-                          <p>{msg.text || msg.message}</p>
+                          <p>{msg.original_message || msg.message || msg.text || ''}</p>
                         </div>
                       </div>
                     ))}
