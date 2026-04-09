@@ -1574,21 +1574,21 @@ export const conversationalAiApi = {
     api.get<{
       status: number;
       data: ConversationalCallStatus;
-    }>(`/api/sales/conversational-ai/call/${conversationId}`),
+    }>(`/api/v1/sales/conversational-ai/call/${conversationId}`),
 
   // Get call transcript
   getTranscript: (conversationId: string) =>
     api.get<{
       status: number;
       data: ConversationalTranscript;
-    }>(`/api/sales/conversational-ai/call/${conversationId}/transcript`),
+    }>(`/api/v1/sales/conversational-ai/call/${conversationId}/transcript`),
 
   // Get call analytics
   getAnalytics: (conversationId: string) =>
     api.get<{
       status: number;
       data: ConversationalAnalytics;
-    }>(`/api/sales/conversational-ai/call/${conversationId}/analytics`),
+    }>(`/api/v1/sales/conversational-ai/call/${conversationId}/analytics`),
 
   // Get call recording URL
   getRecording: (conversationId: string) =>
