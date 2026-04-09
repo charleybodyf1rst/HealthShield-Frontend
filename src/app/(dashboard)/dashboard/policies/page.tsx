@@ -90,7 +90,16 @@ interface PolicyStats {
   expired: number;
 }
 
-const POLICY_TYPES = ['Individual', 'Family', 'Medicare Advantage', 'Medicare Supplement', 'Dental & Vision', 'Group'];
+const POLICY_TYPES = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'home', label: 'Home' },
+  { value: 'health', label: 'Health' },
+  { value: 'life', label: 'Life' },
+  { value: 'commercial', label: 'Commercial' },
+  { value: 'liability', label: 'Liability' },
+  { value: 'workers_comp', label: 'Workers Comp' },
+  { value: 'umbrella', label: 'Umbrella' },
+];
 const PREMIUM_FREQUENCIES = [
   { value: 'monthly', label: 'Monthly' },
   { value: 'quarterly', label: 'Quarterly' },
@@ -259,7 +268,7 @@ function PolicyDialog({
                   </SelectTrigger>
                   <SelectContent>
                     {POLICY_TYPES.map((p) => (
-                      <SelectItem key={p} value={p}>{p}</SelectItem>
+                      <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
