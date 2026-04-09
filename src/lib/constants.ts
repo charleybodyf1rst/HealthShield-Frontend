@@ -45,6 +45,10 @@ export const ROUTES = {
   PROGRAMS: '/programs',
   ENROLLMENTS: '/enrollments',
   PROPOSALS: '/proposals',
+  POLICIES: '/policies',
+  CLAIMS: '/claims',
+  RENEWALS: '/renewals',
+  COMMISSIONS: '/commissions',
   WELLNESS: '/wellness',
 
   // Communication
@@ -147,6 +151,10 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   { title: 'Programs', href: ROUTES.PROGRAMS, icon: 'ShieldCheck', roles: ['sales_admin', 'sales_manager'] },
   { title: 'Enrollments', href: ROUTES.ENROLLMENTS, icon: 'ClipboardList', roles: ['sales_admin', 'sales_rep', 'sales_manager'] },
   { title: 'Proposals', href: ROUTES.PROPOSALS, icon: 'FileText', roles: ['sales_admin', 'sales_rep', 'sales_manager'] },
+  { title: 'Policies', href: ROUTES.POLICIES, icon: 'Shield', roles: ['sales_admin', 'sales_rep', 'sales_manager'] },
+  { title: 'Claims', href: ROUTES.CLAIMS, icon: 'FileText', roles: ['sales_admin', 'sales_rep', 'sales_manager'] },
+  { title: 'Renewals', href: ROUTES.RENEWALS, icon: 'RefreshCw', roles: ['sales_admin', 'sales_manager'] },
+  { title: 'Commissions', href: ROUTES.COMMISSIONS, icon: 'DollarSign', roles: ['sales_admin', 'sales_manager'] },
   { title: 'Wellness', href: ROUTES.WELLNESS, icon: 'Heart', roles: ['sales_admin', 'sales_manager'] },
   // Communication
   { title: 'Inbox', href: ROUTES.INBOX, icon: 'Inbox', roles: ['sales_admin', 'sales_rep', 'sales_manager'] },
@@ -163,6 +171,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
 export const ADMIN_ITEMS: SidebarItem[] = [
   { title: 'Team Management', href: ROUTES.TEAM, icon: 'UserCog', roles: ['sales_admin'] },
   { title: 'Settings', href: ROUTES.SETTINGS, icon: 'Settings', roles: ['sales_admin', 'sales_rep', 'sales_manager'] },
+  { title: 'Compliance', href: ROUTES.COMPLIANCE, icon: 'ShieldCheck', roles: ['sales_admin', 'sales_manager'] },
   { title: 'Integrations', href: ROUTES.INTEGRATIONS, icon: 'Plug', roles: ['sales_admin'] },
   { title: 'Billing', href: ROUTES.BILLING, icon: 'CreditCard', roles: ['sales_admin'] },
 ];

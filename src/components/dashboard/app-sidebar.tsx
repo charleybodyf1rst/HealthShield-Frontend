@@ -10,6 +10,7 @@ import {
   CheckSquare,
   ChevronDown,
   ClipboardList,
+  DollarSign,
   FileText,
   GitBranch,
   Heart,
@@ -20,6 +21,7 @@ import {
   Megaphone,
   MessageSquare,
   Phone,
+  RefreshCw,
   Settings,
   Shield,
   ShieldCheck,
@@ -104,6 +106,26 @@ const insuranceItems = [
     icon: FileText,
   },
   {
+    title: 'Policies',
+    href: '/dashboard/policies',
+    icon: Shield,
+  },
+  {
+    title: 'Claims',
+    href: '/dashboard/claims',
+    icon: FileText,
+  },
+  {
+    title: 'Renewals',
+    href: '/dashboard/renewals',
+    icon: RefreshCw,
+  },
+  {
+    title: 'Commissions',
+    href: '/dashboard/commissions',
+    icon: DollarSign,
+  },
+  {
     title: 'Wellness',
     href: '/dashboard/wellness',
     icon: Heart,
@@ -166,6 +188,11 @@ const adminItems = [
     title: 'Settings',
     href: '/dashboard/settings',
     icon: Settings,
+  },
+  {
+    title: 'Compliance',
+    href: '/dashboard/compliance',
+    icon: ShieldCheck,
   },
 ];
 
