@@ -53,16 +53,16 @@ export const useLeadsStore = create<LeadsStore>((set, get) => ({
   pagination: {
     total: 0,
     page: 1,
-    limit: 100,
+    limit: 300,
   },
   isLoading: false,
   error: null,
 
-  // Fetch leads with filters — default 100 per page to show all leads
-  fetchLeads: async (filters?: LeadFilters, page = 1, limit = 100) => {
+  // Fetch leads with filters — default 300 per page to load all leads at once
+  fetchLeads: async (filters?: LeadFilters, page = 1, limit = 300) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await leadsApi.getAll({ ...filters, page, limit } as LeadFilters & { page?: number; limit?: number });
+      const response = await leadsApi.getAll({ ...filters, page, per_page: limit } as LeadFilters & { page?: number; per_page?: number });
       // Backend returns { success, data: { data: [...], current_page, total, per_page } } (Laravel pagination)
       const paginated = response.data || {};
       const leads = paginated.data || paginated.leads || [];
