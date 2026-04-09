@@ -107,12 +107,12 @@ export default function CampaignsPage() {
     }
   };
 
-  // Stats
+  // Stats — guard against null/undefined metric fields
   const totalCampaigns = campaigns.length;
   const activeCampaigns = campaigns.filter((c) => c.status === 'active').length;
-  const totalSent = campaigns.reduce((sum, c) => sum + c.sent_count, 0);
-  const totalOpened = campaigns.reduce((sum, c) => sum + c.opened_count, 0);
-  const totalClicked = campaigns.reduce((sum, c) => sum + c.clicked_count, 0);
+  const totalSent = campaigns.reduce((sum, c) => sum + (c.sent_count || 0), 0);
+  const totalOpened = campaigns.reduce((sum, c) => sum + (c.opened_count || 0), 0);
+  const totalClicked = campaigns.reduce((sum, c) => sum + (c.clicked_count || 0), 0);
   const avgOpenRate = totalSent > 0 ? (totalOpened / totalSent) * 100 : 0;
   const avgClickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0;
 
@@ -267,8 +267,11 @@ export default function CampaignsPage() {
               {campaigns.map((campaign) => {
                 const status = CAMPAIGN_STATUS_CONFIG[campaign.status as CampaignStatus] || CAMPAIGN_STATUS_CONFIG.draft;
                 const TypeIcon = typeIcons[campaign.type] || Mail;
-                const openRate = campaign.sent_count > 0 ? (campaign.opened_count / campaign.sent_count) * 100 : 0;
-                const clickRate = campaign.opened_count > 0 ? (campaign.clicked_count / campaign.opened_count) * 100 : 0;
+                const sentCount = campaign.sent_count || 0;
+                const openedCount = campaign.opened_count || 0;
+                const clickedCount = campaign.clicked_count || 0;
+                const openRate = sentCount > 0 ? (openedCount / sentCount) * 100 : 0;
+                const clickRate = openedCount > 0 ? (clickedCount / openedCount) * 100 : 0;
 
                 return (
                   <div
@@ -293,7 +296,7 @@ export default function CampaignsPage() {
                       <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Users className="h-3 w-3" />
-                          {campaign.sent_count.toLocaleString()} sent
+                          {sentCount.toLocaleString()} sent
                         </span>
                         {campaign.sent_at && (
                           <span>{new Date(campaign.sent_at).toLocaleDateString()}</span>
