@@ -121,23 +121,23 @@ export default function ProposalsPage() {
                 {proposals.map((proposal) => (
                   <TableRow key={proposal.id}>
                     <TableCell className="font-medium">
-                      {proposal.leadName || `Lead #${proposal.leadId}`}
+                      {proposal.employer_name || proposal.leadName || proposal.contact_name || `Proposal #${proposal.id}`}
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">
-                        {proposal.programs.length} program{proposal.programs.length !== 1 ? 's' : ''}
+                        {proposal.proposed_tier || proposal.program_tier || '—'}
                       </Badge>
                     </TableCell>
-                    <TableCell>${proposal.totalPremium.toLocaleString()}/mo</TableCell>
+                    <TableCell>${Number(proposal.proposed_pepm || proposal.totalPremium || 0).toLocaleString()}/mo</TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className={statusColors[proposal.status] || ''}
+                        className={statusColors[proposal.proposal_status || proposal.status] || ''}
                       >
-                        {statusLabels[proposal.status] || proposal.status}
+                        {statusLabels[proposal.proposal_status || proposal.status] || proposal.proposal_status || proposal.status || '—'}
                       </Badge>
                     </TableCell>
-                    <TableCell>{formatDate(proposal.createdAt)}</TableCell>
+                    <TableCell>{formatDate(proposal.created_at || proposal.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="icon" asChild>
                         <Link href={`/dashboard/proposals/${proposal.id}`}>

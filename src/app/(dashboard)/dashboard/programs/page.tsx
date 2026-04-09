@@ -107,25 +107,25 @@ export default function ProgramsPage() {
               <TableBody>
                 {programs.map((program) => (
                   <TableRow key={program.id}>
-                    <TableCell className="font-medium">{program.name}</TableCell>
+                    <TableCell className="font-medium">{program.employer_name || program.name || '—'}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">
-                        {typeLabels[program.type] || program.type}
+                        {typeLabels[program.program_tier || program.type] || program.program_tier || program.type || '—'}
                       </Badge>
                     </TableCell>
-                    <TableCell>${program.premium.toLocaleString()}/mo</TableCell>
-                    <TableCell>${program.deductible.toLocaleString()}</TableCell>
-                    <TableCell>{program.enrollmentCount ?? 0}</TableCell>
+                    <TableCell>${Number(program.monthly_pepm || program.premium || 0).toLocaleString()}/mo</TableCell>
+                    <TableCell>${Number(program.deductible_option || program.deductible || 0).toLocaleString()}</TableCell>
+                    <TableCell>{program.enrolled_employees ?? program.enrollmentCount ?? 0} / {program.total_employees ?? '—'}</TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
                         className={
-                          program.isActive
+                          (program.status === 'active' || program.isActive)
                             ? 'bg-green-500/10 text-green-600'
                             : 'bg-gray-500/10 text-gray-500'
                         }
                       >
-                        {program.isActive ? 'Active' : 'Inactive'}
+                        {(program.status === 'active' || program.isActive) ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
