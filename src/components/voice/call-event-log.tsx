@@ -126,6 +126,8 @@ export function CallEventLog({
   onClear,
   className = '',
 }: CallEventLogProps) {
+  // Guard against undefined props
+  const safeEntries = entries || [];
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -136,7 +138,7 @@ export function CallEventLog({
     if (autoScroll && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [entries.length, autoScroll]);
+  }, [safeEntries.length, autoScroll]);
 
   // Detect manual scroll to disable auto-scroll
   const handleScroll = () => {
@@ -161,8 +163,8 @@ export function CallEventLog({
     }
   };
 
-  const errorCount = entries.filter((e) => e.level === 'error').length;
-  const warnCount = entries.filter((e) => e.level === 'warn').length;
+  const errorCount = safeEntries.filter((e) => e.level === 'error').length;
+  const warnCount = safeEntries.filter((e) => e.level === 'warn').length;
 
   return (
     <div className={`flex flex-col h-full ${className}`}>
@@ -170,7 +172,7 @@ export function CallEventLog({
       <div className="flex items-center justify-between px-3 py-2 border-b border-dark-border">
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-400">
-            {entries.length} event{entries.length !== 1 ? 's' : ''}
+            {safeEntries.length} event{safeEntries.length !== 1 ? 's' : ''}
           </span>
           {errorCount > 0 && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300">
@@ -244,19 +246,19 @@ export function CallEventLog({
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-0.5 font-mono"
       >
-        {entries.length === 0 ? (
+        {safeEntries.length === 0 ? (
           <p className="text-xs text-slate-600 text-center py-4">
             No events yet. Start a call to see diagnostic logs.
           </p>
         ) : (
-          entries.map((entry) => (
+          safeEntries.map((entry) => (
             <LogEntryRow key={entry.id} entry={entry} />
           ))
         )}
       </div>
 
       {/* Auto-scroll indicator */}
-      {!autoScroll && entries.length > 0 && (
+      {!autoScroll && safeEntries.length > 0 && (
         <button
           type="button"
           onClick={() => {

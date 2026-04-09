@@ -236,7 +236,7 @@ export function CallFlowTree({
     } catch { /* clipboard not available */ }
   };
 
-  const logErrorCount = logEntries.filter((e) => e.level === 'error').length;
+  const logErrorCount = (logEntries || []).filter((e) => e.level === 'error').length;
 
   return (
     <div className={`bg-dark-card border border-dark-border rounded-xl overflow-hidden flex flex-col ${className}`}>
@@ -314,8 +314,8 @@ export function CallFlowTree({
           {logErrorCount > 0 && (
             <span className="px-1 py-0.5 text-[9px] rounded bg-red-500/20 text-red-300">{logErrorCount}</span>
           )}
-          {logEntries.length > 0 && logErrorCount === 0 && (
-            <span className="px-1 py-0.5 text-[9px] rounded bg-slate-600/40 text-slate-400">{logEntries.length}</span>
+          {(logEntries || []).length > 0 && logErrorCount === 0 && (
+            <span className="px-1 py-0.5 text-[9px] rounded bg-slate-600/40 text-slate-400">{(logEntries || []).length}</span>
           )}
         </button>
       </div>

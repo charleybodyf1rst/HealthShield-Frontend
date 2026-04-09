@@ -74,16 +74,32 @@ export const useEmailStore = create<EmailStore>((set, get) => ({
       }
 
       const response = await inboxApi.getInbox(params as Parameters<typeof inboxApi.getInbox>[0]);
-      const comms = response?.data?.communications || [];
+      // Backend returns Laravel paginated: { data: [...], current_page, total, per_page }
+      // OR wrapped format: { data: { communications: [...] } }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const raw = response as any;
+      let comms: CommunicationLog[] = [];
+      let total = 0;
+
+      if (Array.isArray(raw?.data)) {
+        // Laravel paginated format: response.data is the array
+        comms = raw.data as CommunicationLog[];
+        total = (raw.total as number) || comms.length;
+      } else if (raw?.data && typeof raw.data === 'object') {
+        const inner = raw.data as Record<string, unknown>;
+        if (Array.isArray(inner.communications)) {
+          comms = inner.communications as CommunicationLog[];
+          total = (inner.pagination as Record<string, number>)?.total || comms.length;
+        } else if (Array.isArray(inner.data)) {
+          comms = inner.data as CommunicationLog[];
+          total = (inner.total as number) || comms.length;
+        }
+      }
 
       set({
-        emails: Array.isArray(comms) ? comms : [],
+        emails: comms,
         isLoading: false,
-        pagination: {
-          total: response?.data?.pagination?.total || 0,
-          page: 1,
-          perPage: 50,
-        },
+        pagination: { total, page: 1, perPage: 50 },
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to fetch emails';

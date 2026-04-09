@@ -1010,15 +1010,27 @@ export const smsApi = {
 
 export interface CommunicationLog {
   id: string;
-  type: 'email' | 'sms' | 'call';
+  type: 'email' | 'sms' | 'call' | 'voice_call' | 'meeting' | 'note';
   direction: 'inbound' | 'outbound';
   from: string;
   to: string;
   subject: string | null;
   content: string;
+  content_html?: string;
   status: string;
   is_read: boolean;
   created_at: string;
+  // Email-specific fields
+  email_from?: string;
+  email_to?: string;
+  email_cc?: string;
+  email_bcc?: string;
+  email_thread_id?: string;
+  email_message_id?: string;
+  opened_at?: string;
+  clicked_at?: string;
+  open_count?: number;
+  click_count?: number;
   lead: {
     id: string;
     name: string;
