@@ -580,6 +580,50 @@ export default function AiCallerPage() {
           )}
         </div>
 
+        {/* HealthShield Dashboard Assistant — Call Me Button */}
+        {callerMode === 'conversational' && (
+          <Card className="mt-6 border-2 border-emerald-500/30 bg-gradient-to-r from-emerald-500/5 to-teal-500/5">
+            <CardContent className="flex items-center justify-between py-5 px-6">
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-600/25">
+                  <Sparkles className="h-7 w-7" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold flex items-center gap-2">
+                    HealthShield AI Assistant
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30">Full Access</Badge>
+                  </h2>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    Your voice-powered dashboard assistant — create leads, policyholders, proposals, schedule appointments, file claims, send emails, and manage your entire platform by voice.
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-600/25 gap-2 px-6"
+                onClick={() => {
+                  setSelectedPersona('healthshield_assistant');
+                  if (authUser?.phone) {
+                    setManualPhone(authUser.phone);
+                    setManualName(`${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || 'Me');
+                    setSelectedLead(null);
+                    setManualCallMode(true);
+                    setAutoStartCall(false);
+                    setTimeout(() => setAutoStartCall(true), 100);
+                    toast.success('Starting HealthShield AI Assistant call...');
+                  } else {
+                    setManualCallMode(true);
+                    toast.info('Enter a phone number to start the AI Assistant call');
+                  }
+                }}
+              >
+                <PhoneCall className="h-5 w-5" />
+                Call Me
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Insurance AI Agent Personas */}
         {callerMode === 'conversational' && (
           <div className="mt-6 space-y-4">
@@ -1033,8 +1077,16 @@ export default function AiCallerPage() {
                   leadSource={selectedLead?.source}
                   leadNotes={selectedLead?.notes}
                   persona={selectedPersona}
-                  customFirstMessage={INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.firstMessage}
-                  defaultVoiceId={INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.voiceId}
+                  customFirstMessage={
+                    selectedPersona === 'healthshield_assistant'
+                      ? "Hey! I'm your HealthShield Dashboard Assistant and I'm ready to help you manage everything by voice. I can create leads, schedule appointments, file claims, create proposals, send emails — you name it! What would you like me to do?"
+                      : INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.firstMessage
+                  }
+                  defaultVoiceId={
+                    selectedPersona === 'healthshield_assistant'
+                      ? 'EXAVITQu4vr4xnSDxMaL'
+                      : INSURANCE_PERSONAS.find((p) => p.id === selectedPersona)?.voiceId
+                  }
                   autoStart={autoStartCall}
                   onCallStarted={(result) => {
                     setAutoStartCall(false);

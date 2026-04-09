@@ -1443,7 +1443,7 @@ export const aiCallerApi = {
 // CONVERSATIONAL AI API (Real-Time Voice Calling)
 // ============================================================================
 
-export type ConversationalPersona = 'sales' | 'follow_up' | 'appointment' | 'coach' | 'win_back' | 'support' | 'insurance_sales' | 'insurance_claims' | 'insurance_service' | 'health_insurance' | 'auto_insurance' | 'dental_insurance' | 'life_insurance';
+export type ConversationalPersona = 'sales' | 'follow_up' | 'appointment' | 'coach' | 'win_back' | 'support' | 'insurance_sales' | 'insurance_claims' | 'insurance_service' | 'health_insurance' | 'auto_insurance' | 'dental_insurance' | 'life_insurance' | 'healthshield_assistant';
 export type ConversationalLlm = 'gpt-4o' | 'gpt-4o-mini' | 'gpt-4-turbo' | 'claude-3-5-sonnet' | 'gemini-1.5-pro';
 
 export interface ConversationalPersonaInfo {
@@ -1643,6 +1643,50 @@ export const conversationalAiApi = {
       status: number;
       data: ConversationalStats;
     }>('/api/v1/sales/conversational-ai/stats', params as Record<string, string>),
+
+  // Aliases used by the history page
+  getConversations: (params?: { limit?: number; offset?: number; search?: string }) =>
+    api.get<{
+      status: number;
+      data: {
+        success: boolean;
+        conversations: ConversationSummary[];
+        total: number;
+      };
+    }>('/api/v1/sales/conversational-ai/conversations', params as Record<string, string>),
+
+  getCallTranscript: (conversationId: string) =>
+    api.get<{
+      status: number;
+      data: {
+        success: boolean;
+        transcript: Array<{ role: string; message: string; text?: string; timestamp?: number }>;
+      };
+    }>(`/api/v1/sales/conversational-ai/call/${conversationId}/transcript`),
+
+  getCallRecording: (conversationId: string) =>
+    api.get<{
+      status: number;
+      data: {
+        success: boolean;
+        recording_url: string;
+        audio_url?: string;
+        duration_seconds: number;
+      };
+    }>(`/api/sales/conversational-ai/call/${conversationId}/recording`),
+
+  getCallAnalytics: (conversationId: string) =>
+    api.get<{
+      status: number;
+      data: {
+        success: boolean;
+        duration_seconds?: number;
+        turns?: number;
+        sentiment?: string;
+        outcome?: string;
+        summary?: string;
+      };
+    }>(`/api/v1/sales/conversational-ai/call/${conversationId}/analytics`),
 };
 
 // ============================================================================
