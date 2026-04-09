@@ -1673,10 +1673,13 @@ export interface Campaign {
 export interface CampaignCreateData {
   name: string;
   type: 'email' | 'push' | 'sms' | 'in_app' | 'social' | 'multi_channel';
+  description?: string;
   subject?: string;
   content: string;
-  target_audience?: string;
+  target_audience?: Record<string, unknown> | string;
   scheduled_at?: string;
+  metadata?: Record<string, unknown>;
+  template_id?: string;
 }
 
 export interface CampaignsResponse {
@@ -1727,6 +1730,29 @@ export const campaignsApi = {
     api.post<{ status: number; message: string; data: { recipients_count: number } }>(
       `/api/v1/crm/campaigns/${id}/send`,
       {}
+    ),
+
+  // Estimate audience size based on filters
+  estimateAudience: (filters: { status?: string[]; source?: string[]; tags?: string[]; date_from?: string; date_to?: string }) =>
+    api.post<{ count: number; sample: Array<{ id: number; contact_first_name: string; contact_last_name: string; contact_email: string; status: string; source: string }> }>(
+      '/api/v1/crm/campaigns/estimate-audience',
+      filters
+    ),
+
+  // Import audience from CSV
+  importAudienceCsv: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.upload<{ recipients: Array<{ email: string; name: string }>; count: number; invalid_count: number; invalid: string[] }>(
+      '/api/v1/crm/campaigns/import-audience',
+      formData
+    );
+  },
+
+  // Get email templates
+  getTemplates: () =>
+    api.get<{ data: Array<{ id: string; name: string; subject: string; body: string; type: string; category: string; variables: string[] }> }>(
+      '/api/v1/crm/communications/templates'
     ),
 };
 

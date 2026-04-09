@@ -483,7 +483,7 @@ export function ConversationalAiPanel({
                           <p className="font-medium text-xs mb-1">
                             {msg.role === 'agent' ? 'AI Agent' : 'Lead'}
                           </p>
-                          <p>{msg.text}</p>
+                          <p>{msg.text || msg.message}</p>
                         </div>
                       </div>
                     ))}

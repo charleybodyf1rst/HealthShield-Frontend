@@ -563,8 +563,16 @@ export default function AiCallerPage() {
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedPersona(persona.id);
-                            // Set the question as custom prompt context
-                            toast.info(`Topic: "${q}" — Select a lead or click Call Me to start`);
+                            // Auto-setup Call Me mode with the question as context
+                            if (authUser?.phone) {
+                              setManualPhone(authUser.phone);
+                              setManualName(`${authUser.firstName || ''} ${authUser.lastName || ''}`.trim() || 'Me');
+                              setSelectedLead(null);
+                              setManualCallMode(true);
+                              toast.success(`Ready to call about: "${q}" — Click "Start AI Call" above`);
+                            } else {
+                              toast.info(`Topic: "${q}" — Select a lead or enter a phone number`);
+                            }
                           }}
                           className={cn(
                             'w-full text-left text-xs px-3 py-1.5 rounded-md transition-colors',
