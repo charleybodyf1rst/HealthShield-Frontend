@@ -49,7 +49,7 @@ import {
   XCircle,
   AlertTriangle,
 } from 'lucide-react';
-import { insuranceApi, api } from '@/lib/api';
+import { insuranceApi, api, leadsApi } from '@/lib/api';
 
 // ---- Types ----
 interface Policy {
@@ -205,6 +205,19 @@ function PolicyDialog({
   loading: boolean;
 }) {
   const [formData, setFormData] = useState<PolicyFormData>(EMPTY_FORM);
+  const [leads, setLeads] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Fetch leads for dropdown
+    const fetchLeads = async () => {
+      try {
+        const leadsRes = await leadsApi.getAll({ limit: 100 } as any);
+        const leadsData = leadsRes?.data?.data || leadsRes?.data || [];
+        setLeads(Array.isArray(leadsData) ? leadsData : []);
+      } catch { setLeads([]); }
+    };
+    fetchLeads();
+  }, []);
 
   useEffect(() => {
     if (policy) {
@@ -242,17 +255,20 @@ function PolicyDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            {/* Client/Lead ID */}
+            {/* Client/Lead */}
             <div className="space-y-2">
-              <Label htmlFor="client_id">Client / Lead ID *</Label>
-              <Input
-                id="client_id"
-                type="number"
-                value={formData.client_id}
-                onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                placeholder="Enter lead ID from the leads table"
-                required
-              />
+              <Label htmlFor="client_id">Client / Lead *</Label>
+              <Select value={formData.client_id} onValueChange={(value: string) => setFormData({ ...formData, client_id: value })}>
+                <SelectTrigger><SelectValue placeholder="Select a lead..." /></SelectTrigger>
+                <SelectContent>
+                  {leads.map((lead: any) => (
+                    <SelectItem key={lead.id} value={String(lead.id)}>
+                      {lead.contact_first_name || lead.firstName} {lead.contact_last_name || lead.lastName} ({lead.contact_email || lead.email})
+                    </SelectItem>
+                  ))}
+                  {leads.length === 0 && <SelectItem value="" disabled>No leads found</SelectItem>}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Policy Type & Carrier */}

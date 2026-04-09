@@ -28,7 +28,7 @@ export default function NewProgramPage() {
     monthly_pepm: '',
     total_employees: '',
     deductible_option: '',
-    first_dollar_coverage: false,
+    first_dollar_coverage: '',
     wellness_activities: '',
     notes: '',
   });
@@ -45,9 +45,9 @@ export default function NewProgramPage() {
         employer_name: formData.employer_name,
         program_tier: formData.program_tier,
         monthly_pepm: parseFloat(formData.monthly_pepm) || 0,
-        total_employees: parseInt(formData.total_employees) || 0,
+        total_employees: parseInt(formData.total_employees) || 1,
         deductible_option: formData.deductible_option || null,
-        first_dollar_coverage: formData.first_dollar_coverage,
+        first_dollar_coverage: formData.first_dollar_coverage && formData.first_dollar_coverage !== 'none' ? formData.first_dollar_coverage : null,
         wellness_activities: formData.wellness_activities
           ? formData.wellness_activities.split(',').map((s) => s.trim())
           : null,
@@ -156,6 +156,19 @@ export default function NewProgramPage() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>First Dollar Coverage</Label>
+              <Select value={formData.first_dollar_coverage} onValueChange={(v: string) => updateField('first_dollar_coverage', v)}>
+                <SelectTrigger><SelectValue placeholder="Optional" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="6000">$6,000</SelectItem>
+                  <SelectItem value="8000">$8,000</SelectItem>
+                  <SelectItem value="10000">$10,000</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
