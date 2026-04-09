@@ -51,6 +51,7 @@ export interface AudienceFilters {
   date_to?: string;
   selected_ids?: number[];
   imported_emails?: Array<{ email: string; name?: string }>;
+  manual_emails?: string;
 }
 
 export interface AudienceEstimate {

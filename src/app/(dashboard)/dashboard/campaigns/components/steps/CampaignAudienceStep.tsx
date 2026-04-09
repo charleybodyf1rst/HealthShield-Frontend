@@ -90,7 +90,7 @@ export function CampaignAudienceStep() {
       const params: Record<string, string> = { per_page: '50' };
       if (search) params.search = search;
       if (statusFilter) params.status = statusFilter;
-      if (sourceFilter) params.source = sourceFilter;
+      if (sourceFilter) params.lead_source = sourceFilter;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = await campaignsApi.listRecipients(params as any);
@@ -193,6 +193,10 @@ export function CampaignAudienceStep() {
           <TabsTrigger value="leads" className="flex-1 gap-1.5">
             <UserPlus className="h-3.5 w-3.5" />
             CRM Leads
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="flex-1 gap-1.5">
+            <Mail className="h-3.5 w-3.5" />
+            Manual Entry
           </TabsTrigger>
           <TabsTrigger value="csv" className="flex-1 gap-1.5">
             <FileSpreadsheet className="h-3.5 w-3.5" />
@@ -316,6 +320,45 @@ export function CampaignAudienceStep() {
                   })}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Manual Entry Tab */}
+        <TabsContent value="manual" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Add Email Addresses
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Enter email addresses, one per line or comma-separated.
+              </p>
+              <textarea
+                className="w-full min-h-[150px] rounded-md border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring font-mono"
+                placeholder={"john@example.com\njane@example.com\nmark@company.com"}
+                value={(wizard.audience?.manual_emails as string) || ''}
+                onChange={(e) => {
+                  const text = e.target.value;
+                  updateWizard({ audience: { ...wizard.audience, manual_emails: text } });
+                  // Parse and count valid emails
+                  const emails = text.split(/[,\n\r]+/).map((s: string) => s.trim()).filter((s: string) => s && s.includes('@'));
+                  updateWizard({ audienceCount: selectedIds.size + csvRecipients.length + emails.length });
+                }}
+              />
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>
+                  {(() => {
+                    const text = (wizard.audience?.manual_emails as string) || '';
+                    const emails = text.split(/[,\n\r]+/).map((s: string) => s.trim()).filter((s: string) => s && s.includes('@'));
+                    return `${emails.length} valid email${emails.length !== 1 ? 's' : ''} entered`;
+                  })()}
+                </span>
+                <span>Separate with commas or new lines</span>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
