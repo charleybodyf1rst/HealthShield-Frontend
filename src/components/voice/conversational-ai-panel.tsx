@@ -276,6 +276,7 @@ export function ConversationalAiPanel({
         custom_prompt: customPrompt || undefined,
         first_message: firstMessage || parentFirstMessage || undefined,
         context: Object.keys(context).length > 0 ? context : undefined,
+        organization_id: process.env.NEXT_PUBLIC_HEALTHSHIELD_ORG_ID || '12',
       });
 
       addDiag('API Response', response.data.success ? 'ok' : 'error', JSON.stringify({

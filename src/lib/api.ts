@@ -1568,6 +1568,7 @@ export const conversationalAiApi = {
     custom_prompt?: string;
     first_message?: string;
     context?: Record<string, unknown>;
+    organization_id?: string;
   }) =>
     api.post<{
       status: number;

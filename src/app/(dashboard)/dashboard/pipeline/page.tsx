@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   DropdownMenu,
@@ -648,25 +647,24 @@ export default function PipelinePage() {
       )}
 
       {/* Pipeline Board */}
-      <ScrollArea className="w-full">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="flex gap-4 pb-4 min-w-max">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="overflow-x-auto w-full pb-4">
+          <div className="flex gap-4 min-w-max">
             {(stages ?? []).map((stage) => (
               <StageColumn key={stage.id} stage={stage} />
             ))}
           </div>
+        </div>
 
-          <DragOverlay>
-            {activeLead && <LeadCard lead={activeLead} isDragging />}
-          </DragOverlay>
-        </DndContext>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+        <DragOverlay>
+          {activeLead && <LeadCard lead={activeLead} isDragging />}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }

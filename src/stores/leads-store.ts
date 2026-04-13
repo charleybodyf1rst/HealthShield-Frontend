@@ -278,7 +278,7 @@ export const usePipelineStore = create<PipelineStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       // Fetch all leads for current org and group by status into pipeline stages
-      const response = await leadsApi.getAll({ limit: 200 } as Parameters<typeof leadsApi.getAll>[0]);
+      const response = await leadsApi.getAll({ per_page: 300 } as Parameters<typeof leadsApi.getAll>[0]);
       const allLeads: Lead[] = response.data?.data || [];
 
       const stageDefs = [
