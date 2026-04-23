@@ -20,10 +20,12 @@ import {
 } from '@/components/ui/select';
 import {
   ArrowLeft,
+  Briefcase,
   Building2,
   Calendar,
   Edit,
   Mail,
+  MapPin,
   MessageSquare,
   Phone,
   Plus,
@@ -107,7 +109,7 @@ export default function LeadDetailClient() {
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [taskForm, setTaskForm] = useState({ title: '', description: '', type: 'follow_up', priority: 'medium' as 'low' | 'medium' | 'high', dueAt: '' });
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', email: '', phone: '', notes: '', value: 0 });
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', email: '', phone: '', company: '', jobTitle: '', companyAddress: '', companyCity: '', companyState: '', companyZip: '', notes: '', value: 0 });
   const [isSaving, setIsSaving] = useState(false);
 
   const loadLead = useCallback(async () => {
@@ -117,12 +119,21 @@ export default function LeadDetailClient() {
     try {
       const data = await fetchLead(Number(id));
       if (data) {
+        const raw = data as any;
         setLead({
           id: String(data.id),
           firstName: data.firstName || '',
           lastName: data.lastName || '',
           email: data.email || '',
           phone: data.phone || '',
+          company: raw.companyName || undefined,
+          jobTitle: raw.contactTitle || undefined,
+          companyAddress: raw.companyAddress || undefined,
+          companyCity: raw.companyCity || undefined,
+          companyState: raw.companyState || undefined,
+          companyZip: raw.companyZip || undefined,
+          companyCountry: raw.companyCountry || undefined,
+          industry: raw.industry || undefined,
           status: data.status as Lead['status'],
           source: data.source as Lead['source'],
           value: data.budgetMax || data.budgetMin || undefined,
@@ -305,6 +316,12 @@ export default function LeadDetailClient() {
                   lastName: editForm.lastName,
                   email: editForm.email,
                   phone: editForm.phone,
+                  companyName: editForm.company || undefined,
+                  contactTitle: editForm.jobTitle || undefined,
+                  companyAddress: editForm.companyAddress || undefined,
+                  companyCity: editForm.companyCity || undefined,
+                  companyState: editForm.companyState || undefined,
+                  companyZip: editForm.companyZip || undefined,
                   notes: editForm.notes,
                 } as Record<string, unknown>).then(() => {
                   setLead((prev) => ({ ...prev, ...editForm }));
@@ -318,6 +335,12 @@ export default function LeadDetailClient() {
                   lastName: lead.lastName,
                   email: lead.email,
                   phone: lead.phone || '',
+                  company: lead.company || '',
+                  jobTitle: lead.jobTitle || '',
+                  companyAddress: lead.companyAddress || '',
+                  companyCity: lead.companyCity || '',
+                  companyState: lead.companyState || '',
+                  companyZip: lead.companyZip || '',
                   notes: lead.notes || '',
                   value: lead.value || 0,
                 });
@@ -707,6 +730,55 @@ export default function LeadDetailClient() {
                       onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                     />
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <input
+                      className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                      placeholder="Company name"
+                      value={editForm.company}
+                      onChange={(e) => setEditForm({ ...editForm, company: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <input
+                      className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                      placeholder="Title / Department"
+                      value={editForm.jobTitle}
+                      onChange={(e) => setEditForm({ ...editForm, jobTitle: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0 mt-2" />
+                    <div className="w-full space-y-2">
+                      <input
+                        className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                        placeholder="Street address"
+                        value={editForm.companyAddress}
+                        onChange={(e) => setEditForm({ ...editForm, companyAddress: e.target.value })}
+                      />
+                      <div className="grid grid-cols-3 gap-2">
+                        <input
+                          className="rounded-md border px-3 py-2 text-sm bg-background"
+                          placeholder="City"
+                          value={editForm.companyCity}
+                          onChange={(e) => setEditForm({ ...editForm, companyCity: e.target.value })}
+                        />
+                        <input
+                          className="rounded-md border px-3 py-2 text-sm bg-background"
+                          placeholder="State"
+                          value={editForm.companyState}
+                          onChange={(e) => setEditForm({ ...editForm, companyState: e.target.value })}
+                        />
+                        <input
+                          className="rounded-md border px-3 py-2 text-sm bg-background"
+                          placeholder="ZIP"
+                          value={editForm.companyZip}
+                          onChange={(e) => setEditForm({ ...editForm, companyZip: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
                   <Textarea
                     placeholder="Notes"
                     value={editForm.notes}
@@ -734,6 +806,33 @@ export default function LeadDetailClient() {
                       >
                         {lead.phone}
                       </a>
+                    </div>
+                  )}
+                  {lead.company && (
+                    <div className="flex items-center gap-3">
+                      <Building2 className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">{lead.company}</span>
+                    </div>
+                  )}
+                  {lead.jobTitle && (
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{lead.jobTitle}</span>
+                    </div>
+                  )}
+                  {(lead.companyAddress || lead.companyCity) && (
+                    <div className="flex items-start gap-3">
+                      <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div className="text-sm">
+                        {lead.companyAddress && <p>{lead.companyAddress}</p>}
+                        <p>
+                          {[lead.companyCity, lead.companyState].filter(Boolean).join(', ')}
+                          {lead.companyZip ? ` ${lead.companyZip}` : ''}
+                        </p>
+                        {lead.companyCountry && lead.companyCountry !== 'US' && (
+                          <p>{lead.companyCountry}</p>
+                        )}
+                      </div>
                     </div>
                   )}
                 </>

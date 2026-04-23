@@ -8,6 +8,12 @@ export interface Lead {
   phone?: string;
   company?: string;
   jobTitle?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companyState?: string;
+  companyZip?: string;
+  companyCountry?: string;
+  industry?: string;
   status: LeadStatus;
   source: LeadSource;
   classification?: LeadClassification;
