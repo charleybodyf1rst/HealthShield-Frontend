@@ -575,6 +575,8 @@ export interface CrmLead {
   companyZip?: string;
   companyCountry?: string;
   industry?: string;
+  estimatedEmployees?: number;
+  website?: string;
   categoryInterested?: LeadCategory;
   hoursRequested?: number;
   partySize?: number;

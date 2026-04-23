@@ -366,6 +366,12 @@ function LeadRow({
                 {lead.companyName}
               </span>
             )}
+            {lead.estimatedEmployees && (
+              <span className="flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                {lead.estimatedEmployees.toLocaleString()} employees
+              </span>
+            )}
           </div>
 
           {lead.categoryInterested && (
@@ -472,6 +478,19 @@ function LeadDetailPanel({
             )}
             {lead.industry && (
               <div className="text-slate-500 ml-6">{lead.industry}</div>
+            )}
+            {lead.estimatedEmployees && (
+              <div className="flex items-center gap-2 ml-6">
+                <Users className="w-3 h-3 text-slate-400" />
+                <span className="text-slate-600">{lead.estimatedEmployees.toLocaleString()} employees</span>
+              </div>
+            )}
+            {lead.website && (
+              <div className="ml-6">
+                <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                  {lead.website}
+                </a>
+              </div>
             )}
           </div>
         )}

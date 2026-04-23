@@ -14,6 +14,8 @@ export interface Lead {
   companyZip?: string;
   companyCountry?: string;
   industry?: string;
+  estimatedEmployees?: number;
+  website?: string;
   status: LeadStatus;
   source: LeadSource;
   classification?: LeadClassification;

@@ -109,7 +109,7 @@ export default function LeadDetailClient() {
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [taskForm, setTaskForm] = useState({ title: '', description: '', type: 'follow_up', priority: 'medium' as 'low' | 'medium' | 'high', dueAt: '' });
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', email: '', phone: '', company: '', jobTitle: '', companyAddress: '', companyCity: '', companyState: '', companyZip: '', notes: '', value: 0 });
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', email: '', phone: '', company: '', jobTitle: '', companyAddress: '', companyCity: '', companyState: '', companyZip: '', estimatedEmployees: '', website: '', notes: '', value: 0 });
   const [isSaving, setIsSaving] = useState(false);
 
   const loadLead = useCallback(async () => {
@@ -134,6 +134,8 @@ export default function LeadDetailClient() {
           companyZip: raw.companyZip || undefined,
           companyCountry: raw.companyCountry || undefined,
           industry: raw.industry || undefined,
+          estimatedEmployees: raw.estimatedEmployees || undefined,
+          website: raw.website || undefined,
           status: data.status as Lead['status'],
           source: data.source as Lead['source'],
           value: data.budgetMax || data.budgetMin || undefined,
@@ -322,9 +324,15 @@ export default function LeadDetailClient() {
                   companyCity: editForm.companyCity || undefined,
                   companyState: editForm.companyState || undefined,
                   companyZip: editForm.companyZip || undefined,
+                  estimatedEmployees: editForm.estimatedEmployees ? Number(editForm.estimatedEmployees) : undefined,
+                  website: editForm.website || undefined,
                   notes: editForm.notes,
                 } as Record<string, unknown>).then(() => {
-                  setLead((prev) => ({ ...prev, ...editForm }));
+                  setLead((prev) => ({
+                    ...prev,
+                    ...editForm,
+                    estimatedEmployees: editForm.estimatedEmployees ? Number(editForm.estimatedEmployees) : undefined,
+                  }));
                   setIsEditing(false);
                 }).catch(() => {
                   // stay in edit mode on error
@@ -341,6 +349,8 @@ export default function LeadDetailClient() {
                   companyCity: lead.companyCity || '',
                   companyState: lead.companyState || '',
                   companyZip: lead.companyZip || '',
+                  estimatedEmployees: lead.estimatedEmployees ? String(lead.estimatedEmployees) : '',
+                  website: lead.website || '',
                   notes: lead.notes || '',
                   value: lead.value || 0,
                 });
@@ -779,6 +789,24 @@ export default function LeadDetailClient() {
                       </div>
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <input
+                        className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                        placeholder="Employee count"
+                        type="number"
+                        value={editForm.estimatedEmployees}
+                        onChange={(e) => setEditForm({ ...editForm, estimatedEmployees: e.target.value })}
+                      />
+                    </div>
+                    <input
+                      className="w-full rounded-md border px-3 py-2 text-sm bg-background"
+                      placeholder="Website URL"
+                      value={editForm.website}
+                      onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
+                    />
+                  </div>
                   <Textarea
                     placeholder="Notes"
                     value={editForm.notes}
@@ -833,6 +861,20 @@ export default function LeadDetailClient() {
                           <p>{lead.companyCountry}</p>
                         )}
                       </div>
+                    </div>
+                  )}
+                  {lead.estimatedEmployees && (
+                    <div className="flex items-center gap-3">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm">{lead.estimatedEmployees.toLocaleString()} employees</span>
+                    </div>
+                  )}
+                  {lead.website && (
+                    <div className="flex items-center gap-3">
+                      <Building2 className="h-4 w-4 text-muted-foreground" />
+                      <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                        {lead.website}
+                      </a>
                     </div>
                   )}
                 </>
