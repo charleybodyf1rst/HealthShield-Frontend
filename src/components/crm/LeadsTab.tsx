@@ -38,6 +38,8 @@ import {
   RefreshCw,
   TrendingUp,
   AlertCircle,
+  Building2,
+  Briefcase,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
@@ -358,6 +360,12 @@ function LeadRow({
                 {lead.email}
               </span>
             )}
+            {lead.companyName && (
+              <span className="flex items-center gap-1">
+                <Building2 className="w-3 h-3" />
+                {lead.companyName}
+              </span>
+            )}
           </div>
 
           {lead.categoryInterested && (
@@ -435,8 +443,57 @@ function LeadDetailPanel({
                 </a>
               </div>
             )}
+            {lead.contactPhoneAlt && (
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-slate-400" />
+                <a href={`tel:${lead.contactPhoneAlt}`} className="text-blue-600 hover:underline">
+                  {lead.contactPhoneAlt}
+                </a>
+                <span className="text-xs text-slate-400">(alt)</span>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Company & Department */}
+        {(lead.companyName || lead.contactTitle || lead.industry) && (
+          <div className="space-y-2 text-sm">
+            {lead.companyName && (
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-slate-400" />
+                <span className="font-medium">{lead.companyName}</span>
+              </div>
+            )}
+            {lead.contactTitle && (
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-slate-400" />
+                <span>{lead.contactTitle}</span>
+              </div>
+            )}
+            {lead.industry && (
+              <div className="text-slate-500 ml-6">{lead.industry}</div>
+            )}
+          </div>
+        )}
+
+        {/* Business Address */}
+        {(lead.companyAddress || lead.companyCity) && (
+          <div className="text-sm">
+            <div className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
+              <div>
+                {lead.companyAddress && <p>{lead.companyAddress}</p>}
+                <p>
+                  {[lead.companyCity, lead.companyState].filter(Boolean).join(', ')}
+                  {lead.companyZip ? ` ${lead.companyZip}` : ''}
+                </p>
+                {lead.companyCountry && lead.companyCountry !== 'US' && (
+                  <p>{lead.companyCountry}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Insurance Interest */}
         <div className="space-y-3 p-3 bg-slate-50 rounded-lg">
@@ -593,6 +650,12 @@ function NewLeadForm({
     lastName: '',
     email: '',
     phone: '',
+    companyName: '',
+    contactTitle: '',
+    companyAddress: '',
+    companyCity: '',
+    companyState: '',
+    companyZip: '',
     categoryInterested: '',
     partySize: '',
     occasion: '',
@@ -614,6 +677,12 @@ function NewLeadForm({
         lastName: formData.lastName || undefined,
         email: formData.email || undefined,
         phone: formData.phone,
+        companyName: formData.companyName || undefined,
+        contactTitle: formData.contactTitle || undefined,
+        companyAddress: formData.companyAddress || undefined,
+        companyCity: formData.companyCity || undefined,
+        companyState: formData.companyState || undefined,
+        companyZip: formData.companyZip || undefined,
         categoryInterested: formData.categoryInterested || undefined,
         partySize: formData.partySize ? parseInt(formData.partySize) : undefined,
         occasion: formData.occasion || undefined,
@@ -664,6 +733,56 @@ function NewLeadForm({
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium">Company Name</label>
+          <Input
+            value={formData.companyName}
+            onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium">Title / Department</label>
+          <Input
+            value={formData.contactTitle}
+            onChange={(e) => setFormData({ ...formData, contactTitle: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Business Address</label>
+        <Input
+          value={formData.companyAddress}
+          onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })}
+          placeholder="Street address"
+        />
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label className="text-sm font-medium">City</label>
+          <Input
+            value={formData.companyCity}
+            onChange={(e) => setFormData({ ...formData, companyCity: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium">State</label>
+          <Input
+            value={formData.companyState}
+            onChange={(e) => setFormData({ ...formData, companyState: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium">ZIP</label>
+          <Input
+            value={formData.companyZip}
+            onChange={(e) => setFormData({ ...formData, companyZip: e.target.value })}
           />
         </div>
       </div>

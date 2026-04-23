@@ -291,6 +291,8 @@ function mapCrmLeadToLead(raw: any): Lead {
     lastName: raw.contact_last_name || raw.last_name || raw.lastName || '',
     email: raw.contact_email || raw.email || '',
     phone: raw.contact_phone || raw.phone,
+    company: raw.company_name || raw.companyName,
+    jobTitle: raw.contact_title || raw.contactTitle,
     status: raw.status || raw.stage || 'new',
     source: raw.lead_source || raw.source || 'other',
     classification: raw.classification || raw.company_type || raw.plan_type,

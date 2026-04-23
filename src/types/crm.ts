@@ -566,6 +566,15 @@ export interface CrmLead {
   lastName?: string;
   email?: string;
   phone: string;
+  contactPhoneAlt?: string;
+  companyName?: string;
+  contactTitle?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companyState?: string;
+  companyZip?: string;
+  companyCountry?: string;
+  industry?: string;
   categoryInterested?: LeadCategory;
   hoursRequested?: number;
   partySize?: number;
