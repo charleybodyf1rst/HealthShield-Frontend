@@ -429,7 +429,15 @@ export default function LeadDetailClient() {
                 <CardTitle className="text-sm font-medium">About This Company</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{lead.notes}</p>
+                <div className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {lead.notes.split(/(https?:\/\/[^\s]+|linkedin\.com\/[^\s]+|www\.[^\s]+)/g).map((part, i) =>
+                    /https?:\/\/|linkedin\.com|www\./.test(part) ? (
+                      <a key={i} href={part.startsWith('http') ? part : `https://${part}`}
+                         target="_blank" rel="noopener noreferrer"
+                         className="text-blue-500 hover:underline">{part}</a>
+                    ) : part
+                  )}
+                </div>
               </CardContent>
             </Card>
           )}
