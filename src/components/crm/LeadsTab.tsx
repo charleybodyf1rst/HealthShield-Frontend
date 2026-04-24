@@ -116,13 +116,27 @@ export function LeadsTab() {
     } as any);
   };
 
-  const filteredLeads = leads.filter((lead) => {
+  // Backend sends contact_first_name → contactFirstName via snakeToCamel
+  // Normalize leads to use the short field names for display
+  const normalizedLeads = leads.map((lead) => {
+    const raw = lead as any;
+    return {
+      ...lead,
+      firstName: raw.contactFirstName || lead.firstName || '',
+      lastName: raw.contactLastName || lead.lastName || '',
+      email: raw.contactEmail || lead.email || '',
+      phone: raw.contactPhone || lead.phone || '',
+    };
+  });
+
+  const filteredLeads = normalizedLeads.filter((lead) => {
     const matchesSearch =
       !searchTerm ||
-      lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.phone.includes(searchTerm) ||
-      lead.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      lead.phone?.includes(searchTerm) ||
+      lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (lead.companyName || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
 

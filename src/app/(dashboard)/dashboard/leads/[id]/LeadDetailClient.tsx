@@ -122,10 +122,10 @@ export default function LeadDetailClient() {
         const raw = data as any;
         setLead({
           id: String(data.id),
-          firstName: data.firstName || '',
-          lastName: data.lastName || '',
-          email: data.email || '',
-          phone: data.phone || '',
+          firstName: raw.contactFirstName || data.firstName || '',
+          lastName: raw.contactLastName || data.lastName || '',
+          email: raw.contactEmail || data.email || '',
+          phone: raw.contactPhone || data.phone || '',
           company: raw.companyName || undefined,
           jobTitle: raw.contactTitle || undefined,
           companyAddress: raw.companyAddress || undefined,
@@ -137,13 +137,13 @@ export default function LeadDetailClient() {
           estimatedEmployees: raw.estimatedEmployees || undefined,
           website: raw.website || undefined,
           status: data.status as Lead['status'],
-          source: data.source as Lead['source'],
-          value: data.budgetMax || data.budgetMin || undefined,
+          source: raw.leadSource || data.source as Lead['source'],
+          value: raw.dealValue || data.budgetMax || data.budgetMin || undefined,
           notes: data.notes || undefined,
-          lastContactedAt: data.lastContactAt || undefined,
-          nextFollowUpAt: data.nextFollowUpAt || undefined,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
+          lastContactedAt: raw.lastContactedAt || data.lastContactAt || undefined,
+          nextFollowUpAt: raw.nextFollowUpAt || data.nextFollowUpAt || undefined,
+          createdAt: raw.createdAt || data.createdAt,
+          updatedAt: raw.updatedAt || data.updatedAt,
         });
         // Map interactions to activities
         if (data.interactions?.length) {
@@ -314,10 +314,10 @@ export default function LeadDetailClient() {
                 // Save changes
                 setIsSaving(true);
                 updateLead(lead.id, {
-                  firstName: editForm.firstName,
-                  lastName: editForm.lastName,
-                  email: editForm.email,
-                  phone: editForm.phone,
+                  contactFirstName: editForm.firstName,
+                  contactLastName: editForm.lastName,
+                  contactEmail: editForm.email,
+                  contactPhone: editForm.phone,
                   companyName: editForm.company || undefined,
                   contactTitle: editForm.jobTitle || undefined,
                   companyAddress: editForm.companyAddress || undefined,
@@ -421,6 +421,18 @@ export default function LeadDetailClient() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Company Description / Notes */}
+          {lead.notes && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">About This Company</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{lead.notes}</p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Tabs */}
           <Tabs defaultValue="communications">
