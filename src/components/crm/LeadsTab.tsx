@@ -68,6 +68,7 @@ const planTypeIcons: Record<string, string> = {
 export function LeadsTab() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sizeFilter, setSizeFilter] = useState<string>('all');
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
   const [showNewLeadDialog, setShowNewLeadDialog] = useState(false);
   const [showConvertDialog, setShowConvertDialog] = useState(false);
@@ -93,11 +94,26 @@ export function LeadsTab() {
     fetchLeadOptions();
   }, [fetchLeads, fetchLeadPipeline, fetchLeadOptions]);
 
+  const sizeRanges: Record<string, { min?: number; max?: number }> = {
+    all: {},
+    '20-50': { min: 20, max: 50 },
+    '50-100': { min: 50, max: 100 },
+    '100-200': { min: 100, max: 200 },
+    '200-400': { min: 200, max: 400 },
+    '400-1000': { min: 400, max: 1000 },
+    '1000-2000': { min: 1000, max: 2000 },
+    '2000-5000': { min: 2000, max: 5000 },
+    '5000+': { min: 5000 },
+  };
+
   const handleSearch = () => {
+    const range = sizeRanges[sizeFilter] || {};
     fetchLeads({
       search: searchTerm,
       status: statusFilter !== 'all' ? (statusFilter as LeadStatus) : undefined,
-    });
+      employees_min: range.min,
+      employees_max: range.max,
+    } as any);
   };
 
   const filteredLeads = leads.filter((lead) => {
@@ -196,7 +212,7 @@ export function LeadsTab() {
           />
         </div>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); }}>
           <SelectTrigger className="w-40">
             <Filter className="w-4 h-4 mr-2" />
             <SelectValue placeholder="Status" />
@@ -213,7 +229,25 @@ export function LeadsTab() {
           </SelectContent>
         </Select>
 
-        <Button variant="outline" onClick={() => fetchLeads()}>
+        <Select value={sizeFilter} onValueChange={(v) => { setSizeFilter(v); }}>
+          <SelectTrigger className="w-40">
+            <Users className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Company Size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Sizes</SelectItem>
+            <SelectItem value="20-50">20-50</SelectItem>
+            <SelectItem value="50-100">50-100</SelectItem>
+            <SelectItem value="100-200">100-200</SelectItem>
+            <SelectItem value="200-400">200-400</SelectItem>
+            <SelectItem value="400-1000">400-1,000</SelectItem>
+            <SelectItem value="1000-2000">1,000-2,000</SelectItem>
+            <SelectItem value="2000-5000">2,000-5,000</SelectItem>
+            <SelectItem value="5000+">5,000+</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Button variant="outline" onClick={handleSearch}>
           <RefreshCw className="w-4 h-4 mr-2" />
           Refresh
         </Button>
