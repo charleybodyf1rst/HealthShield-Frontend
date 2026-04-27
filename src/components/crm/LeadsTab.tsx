@@ -69,6 +69,7 @@ export function LeadsTab() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sizeFilter, setSizeFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('lead_score');
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
   const [showNewLeadDialog, setShowNewLeadDialog] = useState(false);
   const [showConvertDialog, setShowConvertDialog] = useState(false);
@@ -89,7 +90,7 @@ export function LeadsTab() {
   } = useHealthShieldCrmStore();
 
   useEffect(() => {
-    fetchLeads();
+    fetchLeads({ sort_by: 'lead_score', sort_dir: 'desc' } as any);
     fetchLeadPipeline();
     fetchLeadOptions();
   }, [fetchLeads, fetchLeadPipeline, fetchLeadOptions]);
@@ -113,6 +114,8 @@ export function LeadsTab() {
       status: statusFilter !== 'all' ? (statusFilter as LeadStatus) : undefined,
       employees_min: range.min,
       employees_max: range.max,
+      sort_by: sortBy,
+      sort_dir: sortBy === 'company_name' ? 'asc' : 'desc',
     } as any);
   };
 
@@ -258,6 +261,19 @@ export function LeadsTab() {
             <SelectItem value="1000-2000">1,000-2,000</SelectItem>
             <SelectItem value="2000-5000">2,000-5,000</SelectItem>
             <SelectItem value="5000+">5,000+</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={sortBy} onValueChange={(v) => { setSortBy(v); }}>
+          <SelectTrigger className="w-44">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="lead_score">Most Complete</SelectItem>
+            <SelectItem value="estimated_employees">Most Employees</SelectItem>
+            <SelectItem value="company_name">Company Name</SelectItem>
+            <SelectItem value="created_at">Newest First</SelectItem>
           </SelectContent>
         </Select>
 
