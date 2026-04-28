@@ -427,6 +427,22 @@ export const leadsApi = {
 
   addComment: (leadId: string, content: string) =>
     api.post<{ status: number; message: string; comment: LeadComment }>(`/api/v1/sales/leads/${leadId}/comments`, { content }),
+
+  // Documents
+  getDocuments: (leadId: string) =>
+    api.get<{ success: boolean; data: Array<{ id: number; lead_id: number; name: string; original_filename: string; file_path: string; file_type: string; file_size: number; category: string; description: string | null; uploaded_by_name: string | null; created_at: string; }> }>(`/api/v1/crm/leads/${leadId}/documents`),
+
+  uploadDocument: (leadId: string, file: File, name?: string, category?: string, description?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (name) formData.append('name', name);
+    if (category) formData.append('category', category);
+    if (description) formData.append('description', description);
+    return api.upload<{ success: boolean; message: string; data: { id: number; name: string; file_type: string; file_size: number; category: string; created_at: string; } }>(`/api/v1/crm/leads/${leadId}/documents`, formData);
+  },
+
+  deleteDocument: (documentId: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/v1/crm/leads/documents/${documentId}`),
 };
 
 // ==================== PIPELINE API ====================

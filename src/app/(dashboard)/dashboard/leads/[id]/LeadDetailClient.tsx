@@ -26,13 +26,17 @@ import {
   Edit,
   Mail,
   MapPin,
+  FileText,
   MessageSquare,
   Phone,
   Plus,
   Send,
+  Trash2,
+  Upload,
   User,
 } from 'lucide-react';
 import { LEAD_STATUSES, LEAD_SOURCES } from '@/lib/constants';
+import { leadsApi } from '@/lib/api';
 import { format as fnsFormat, formatDistanceToNow as fnsDistanceToNow } from 'date-fns';
 import type { Lead, LeadActivity } from '@/types/lead';
 
@@ -447,6 +451,10 @@ export default function LeadDetailClient() {
             <TabsList>
               <TabsTrigger value="communications">Communications</TabsTrigger>
               <TabsTrigger value="activity">Activity</TabsTrigger>
+              <TabsTrigger value="documents" className="flex items-center gap-1.5">
+                <FileText className="h-3.5 w-3.5" />
+                Documents
+              </TabsTrigger>
               <TabsTrigger value="notes">Notes</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
             </TabsList>
@@ -711,6 +719,10 @@ export default function LeadDetailClient() {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            <TabsContent value="documents" className="mt-4">
+              <LeadDocumentsPanel leadId={lead.id} />
+            </TabsContent>
           </Tabs>
         </div>
 
@@ -962,5 +974,194 @@ export default function LeadDetailClient() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Documents Panel ──────────────────────────────────
+
+interface LeadDocument {
+  id: number;
+  name: string;
+  original_filename: string;
+  file_type: string;
+  file_size: number;
+  category: string;
+  description: string | null;
+  uploaded_by_name: string | null;
+  created_at: string;
+}
+
+const DOC_CATEGORIES = [
+  { id: 'census', label: 'Census' },
+  { id: 'group_info', label: 'Group Info' },
+  { id: 'agreement', label: 'Agreement' },
+  { id: 'proposal', label: 'Proposal' },
+  { id: 'communication', label: 'Communication' },
+  { id: 'other', label: 'Other' },
+];
+
+const categoryColors: Record<string, string> = {
+  census: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+  group_info: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  agreement: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  proposal: 'bg-green-500/10 text-green-600 border-green-500/20',
+  communication: 'bg-pink-500/10 text-pink-600 border-pink-500/20',
+  other: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
+};
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function LeadDocumentsPanel({ leadId }: { leadId: string }) {
+  const [documents, setDocuments] = useState<LeadDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [uploadCategory, setUploadCategory] = useState('other');
+
+  const fetchDocuments = useCallback(async () => {
+    try {
+      const res = await leadsApi.getDocuments(leadId);
+      setDocuments(res.data || []);
+    } catch {
+      // Silently handle — tab may not have documents yet
+      setDocuments([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [leadId]);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      await leadsApi.uploadDocument(leadId, file, file.name, uploadCategory);
+      toast.success('Document uploaded');
+      fetchDocuments();
+    } catch {
+      toast.error('Failed to upload document');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleDelete = async (docId: number, name: string) => {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    try {
+      await leadsApi.deleteDocument(String(docId));
+      toast.success('Document deleted');
+      setDocuments((prev) => prev.filter((d) => d.id !== docId));
+    } catch {
+      toast.error('Failed to delete document');
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm font-medium flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Documents ({documents.length})
+          </span>
+          <div className="flex items-center gap-2">
+            <Select value={uploadCategory} onValueChange={setUploadCategory}>
+              <SelectTrigger className="w-[130px] h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {DOC_CATEGORIES.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <label className="cursor-pointer">
+              <input
+                type="file"
+                className="hidden"
+                onChange={handleUpload}
+                accept=".pdf,.doc,.docx,.xlsx,.xls,.csv,.png,.jpg,.jpeg,.txt"
+                disabled={uploading}
+              />
+              <Button size="sm" variant="outline" asChild disabled={uploading}>
+                <span>
+                  <Upload className="mr-1.5 h-3.5 w-3.5" />
+                  {uploading ? 'Uploading...' : 'Upload'}
+                </span>
+              </Button>
+            </label>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="text-sm text-muted-foreground text-center py-8">Loading documents...</div>
+        ) : documents.length === 0 ? (
+          <div className="text-center py-8">
+            <FileText className="h-10 w-10 mx-auto mb-3 text-muted-foreground/30" />
+            <p className="text-sm text-muted-foreground mb-1">No documents yet</p>
+            <p className="text-xs text-muted-foreground/60">
+              Upload census files, group info forms, agreements, and proposals
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {documents.map((doc) => (
+              <div
+                key={doc.id}
+                className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{doc.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] px-1.5 py-0 ${categoryColors[doc.category] || categoryColors.other}`}
+                      >
+                        {DOC_CATEGORIES.find((c) => c.id === doc.category)?.label || doc.category}
+                      </Badge>
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatFileSize(doc.file_size)}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {safeFormat(doc.created_at, 'MMM d, yyyy')}
+                      </span>
+                      {doc.uploaded_by_name && (
+                        <span className="text-[10px] text-muted-foreground">
+                          by {doc.uploaded_by_name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-muted-foreground hover:text-red-500 shrink-0"
+                  onClick={() => handleDelete(doc.id, doc.name)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
