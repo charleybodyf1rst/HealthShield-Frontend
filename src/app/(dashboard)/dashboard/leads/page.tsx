@@ -32,8 +32,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ArrowUpDown,
+  ClipboardCheck,
   Download,
   Filter,
   MoreHorizontal,
@@ -42,7 +44,9 @@ import {
   Plus,
   Search,
   Trash2,
+  TrendingUp,
   UserPlus,
+  Users,
 } from 'lucide-react';
 import { useLeadsStore, useLeadStats, useLeadsLoading } from '@/stores/leads-store';
 import { LEAD_STATUSES, LEAD_SOURCES, LEAD_CLASSIFICATIONS } from '@/lib/constants';
@@ -75,6 +79,7 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'pipeline'>('all');
 
   // Fetch leads on mount and when filters change
   useEffect(() => {
@@ -91,8 +96,22 @@ export default function LeadsPage() {
     fetchLeads(filters);
   }, [fetchLeads, statusFilter, sourceFilter, search]);
 
+  // Pending approval sources (from corporate wellness site)
+  const PENDING_SOURCES = ['tablet-presentation', 'demo_request'];
+  const isPendingLead = (lead: Lead) =>
+    (PENDING_SOURCES.includes(lead.source) || lead.classification === 'corporate_wellness') &&
+    lead.status === 'new';
+  const PIPELINE_STATUSES = ['contacted', 'contacted_1', 'contacted_2', 'contacted_3', 'qualified', 'quoted', 'negotiating'];
+
+  const pendingCount = (leads ?? []).filter(isPendingLead).length;
+  const pipelineCount = (leads ?? []).filter((l) => PIPELINE_STATUSES.includes(l.status)).length;
+
   // Client-side filtering for immediate feedback
   const filteredLeads = (leads ?? []).filter((lead) => {
+    // Tab filter
+    if (activeTab === 'pending' && !isPendingLead(lead)) return false;
+    if (activeTab === 'pipeline' && !PIPELINE_STATUSES.includes(lead.status)) return false;
+
     const matchesSearch =
       !search ||
       `${lead.firstName} ${lead.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
@@ -190,19 +209,15 @@ export default function LeadsPage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={pendingCount > 0 ? 'border-amber-500/30 bg-amber-500/5' : ''}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              In Pipeline
+              Pending Approval
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {
-                (leads ?? []).filter((l) =>
-                  ['contacted', 'qualified', 'proposal', 'negotiation'].includes(l.status)
-                ).length
-              }
+            <div className={`text-2xl font-bold ${pendingCount > 0 ? 'text-amber-600' : ''}`}>
+              {pendingCount}
             </div>
           </CardContent>
         </Card>
@@ -219,6 +234,34 @@ export default function LeadsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'all' | 'pending' | 'pipeline')} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 max-w-lg">
+          <TabsTrigger value="all" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            All Leads
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="flex items-center gap-2">
+            <ClipboardCheck className="h-4 w-4" />
+            Pending Approval
+            {pendingCount > 0 && (
+              <Badge variant="secondary" className="ml-1 bg-amber-500/15 text-amber-600 border-amber-500/30 text-xs px-1.5 py-0">
+                {pendingCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="pipeline" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Active Pipeline
+            {pipelineCount > 0 && (
+              <Badge variant="secondary" className="ml-1 bg-blue-500/15 text-blue-600 border-blue-500/30 text-xs px-1.5 py-0">
+                {pipelineCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Filters */}
       <Card>

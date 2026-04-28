@@ -111,6 +111,9 @@ export const LEAD_SOURCES = [
   { id: 'direct_mail', name: 'Direct Mail' },
   { id: 'partner', name: 'Partner' },
   { id: 'advertisement', name: 'Advertisement' },
+  { id: 'tablet-presentation', name: 'Corporate Wellness' },
+  { id: 'demo_request', name: 'Demo Request' },
+  { id: 'phone_call', name: 'AI Caller' },
   { id: 'other', name: 'Other' },
 ] as const;
 
