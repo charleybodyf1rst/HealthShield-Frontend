@@ -59,12 +59,14 @@ const statusColors: Record<string, string> = {
   new: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
   contacted_1: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
   contacted_2: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-  contacted_3: 'bg-orange-400/10 text-orange-400 border-orange-400/20',
-  contacted: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-  qualified: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
-  quoted: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  negotiating: 'bg-pink-500/10 text-pink-500 border-pink-500/20',
-  converted: 'bg-green-500/10 text-green-500 border-green-500/20',
+  census_requested: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+  proposal_sent: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+  group_info: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
+  agreement_signed: 'bg-pink-500/10 text-pink-500 border-pink-500/20',
+  implementation: 'bg-teal-500/10 text-teal-500 border-teal-500/20',
+  census_final: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20',
+  go_live: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+  active: 'bg-green-500/10 text-green-500 border-green-500/20',
   lost: 'bg-red-500/10 text-red-500 border-red-500/20',
   unresponsive: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
 };
@@ -101,7 +103,7 @@ export default function LeadsPage() {
   const isPendingLead = (lead: Lead) =>
     (PENDING_SOURCES.includes(lead.source) || lead.classification === 'corporate_wellness') &&
     lead.status === 'new';
-  const PIPELINE_STATUSES = ['contacted', 'contacted_1', 'contacted_2', 'contacted_3', 'qualified', 'quoted', 'negotiating'];
+  const PIPELINE_STATUSES = ['contacted_1', 'contacted_2', 'census_requested', 'proposal_sent', 'group_info', 'agreement_signed', 'implementation', 'census_final', 'go_live'];
 
   const pendingCount = (leads ?? []).filter(isPendingLead).length;
   const pipelineCount = (leads ?? []).filter((l) => PIPELINE_STATUSES.includes(l.status)).length;

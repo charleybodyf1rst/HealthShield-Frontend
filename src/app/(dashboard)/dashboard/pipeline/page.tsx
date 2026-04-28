@@ -65,16 +65,17 @@ import type { Lead, PipelineStage } from '@/types/lead';
 // Stage color configurations with gradients and background colors
 const stageConfig: Record<string, { bg: string; gradient: string; text: string; light: string }> = {
   new: { bg: 'bg-blue-500', gradient: 'from-blue-500 to-blue-600', text: 'text-blue-600', light: 'bg-blue-50 dark:bg-blue-950/30' },
-  contacted: { bg: 'bg-amber-500', gradient: 'from-amber-500 to-amber-600', text: 'text-amber-600', light: 'bg-amber-50 dark:bg-amber-950/30' },
-  qualified: { bg: 'bg-orange-500', gradient: 'from-orange-500 to-orange-600', text: 'text-orange-600', light: 'bg-orange-50 dark:bg-orange-950/30' },
   contacted_1: { bg: 'bg-yellow-500', gradient: 'from-yellow-500 to-yellow-600', text: 'text-yellow-600', light: 'bg-yellow-50 dark:bg-yellow-950/30' },
   contacted_2: { bg: 'bg-amber-500', gradient: 'from-amber-500 to-amber-600', text: 'text-amber-600', light: 'bg-amber-50 dark:bg-amber-950/30' },
-  contacted_3: { bg: 'bg-orange-400', gradient: 'from-orange-400 to-orange-500', text: 'text-orange-500', light: 'bg-orange-50 dark:bg-orange-950/30' },
-  quoted: { bg: 'bg-purple-500', gradient: 'from-purple-500 to-purple-600', text: 'text-purple-600', light: 'bg-purple-50 dark:bg-purple-950/30' },
-  negotiating: { bg: 'bg-pink-500', gradient: 'from-pink-500 to-pink-600', text: 'text-pink-600', light: 'bg-pink-50 dark:bg-pink-950/30' },
-  converted: { bg: 'bg-emerald-500', gradient: 'from-emerald-500 to-emerald-600', text: 'text-emerald-600', light: 'bg-emerald-50 dark:bg-emerald-950/30' },
+  census_requested: { bg: 'bg-orange-500', gradient: 'from-orange-500 to-orange-600', text: 'text-orange-600', light: 'bg-orange-50 dark:bg-orange-950/30' },
+  proposal_sent: { bg: 'bg-purple-500', gradient: 'from-purple-500 to-purple-600', text: 'text-purple-600', light: 'bg-purple-50 dark:bg-purple-950/30' },
+  group_info: { bg: 'bg-indigo-500', gradient: 'from-indigo-500 to-indigo-600', text: 'text-indigo-600', light: 'bg-indigo-50 dark:bg-indigo-950/30' },
+  agreement_signed: { bg: 'bg-pink-500', gradient: 'from-pink-500 to-pink-600', text: 'text-pink-600', light: 'bg-pink-50 dark:bg-pink-950/30' },
+  implementation: { bg: 'bg-teal-500', gradient: 'from-teal-500 to-teal-600', text: 'text-teal-600', light: 'bg-teal-50 dark:bg-teal-950/30' },
+  census_final: { bg: 'bg-cyan-500', gradient: 'from-cyan-500 to-cyan-600', text: 'text-cyan-600', light: 'bg-cyan-50 dark:bg-cyan-950/30' },
+  go_live: { bg: 'bg-emerald-500', gradient: 'from-emerald-500 to-emerald-600', text: 'text-emerald-600', light: 'bg-emerald-50 dark:bg-emerald-950/30' },
+  active: { bg: 'bg-green-500', gradient: 'from-green-500 to-green-600', text: 'text-green-600', light: 'bg-green-50 dark:bg-green-950/30' },
   lost: { bg: 'bg-red-500', gradient: 'from-red-500 to-red-600', text: 'text-red-600', light: 'bg-red-50 dark:bg-red-950/30' },
-  unresponsive: { bg: 'bg-gray-500', gradient: 'from-gray-500 to-gray-600', text: 'text-gray-600', light: 'bg-gray-50 dark:bg-gray-950/30' },
 };
 
 // Classification badge colors

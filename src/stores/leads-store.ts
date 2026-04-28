@@ -283,15 +283,17 @@ export const usePipelineStore = create<PipelineStore>((set) => ({
 
       const stageDefs = [
         { id: 'new', name: 'New Inquiry', color: '#3B82F6', order: 0, probability: 5 },
-        { id: 'contacted_1', name: 'Contacted (1st)', color: '#F59E0B', order: 1, probability: 15 },
-        { id: 'contacted_2', name: 'Contacted (2nd)', color: '#D97706', order: 2, probability: 25 },
-        { id: 'contacted_3', name: 'Contacted (3rd)', color: '#EA580C', order: 3, probability: 35 },
-        { id: 'qualified', name: 'Qualified', color: '#F97316', order: 4, probability: 50 },
-        { id: 'quoted', name: 'Quote Sent', color: '#8B5CF6', order: 5, probability: 65 },
-        { id: 'negotiating', name: 'Negotiating', color: '#EC4899', order: 6, probability: 80 },
-        { id: 'converted', name: 'Booked', color: '#10B981', order: 7, probability: 100 },
-        { id: 'lost', name: 'Lost', color: '#EF4444', order: 8, probability: 0 },
-        { id: 'unresponsive', name: 'Unresponsive', color: '#6B7280', order: 9, probability: 0 },
+        { id: 'contacted_1', name: 'Contacted (1st)', color: '#F59E0B', order: 1, probability: 10 },
+        { id: 'contacted_2', name: 'Contacted (2nd)', color: '#D97706', order: 2, probability: 15 },
+        { id: 'census_requested', name: 'Census Requested', color: '#F97316', order: 3, probability: 25 },
+        { id: 'proposal_sent', name: 'Proposal Sent', color: '#8B5CF6', order: 4, probability: 40 },
+        { id: 'group_info', name: 'Group Info Submitted', color: '#6366F1', order: 5, probability: 55 },
+        { id: 'agreement_signed', name: 'Agreement Signed', color: '#EC4899', order: 6, probability: 70 },
+        { id: 'implementation', name: 'Implementation Call', color: '#14B8A6', order: 7, probability: 80 },
+        { id: 'census_final', name: 'Census Finalized', color: '#06B6D4', order: 8, probability: 90 },
+        { id: 'go_live', name: 'Go-Live', color: '#10B981', order: 9, probability: 95 },
+        { id: 'active', name: 'Active Client', color: '#22C55E', order: 10, probability: 100 },
+        { id: 'lost', name: 'Lost', color: '#EF4444', order: 11, probability: 0 },
       ];
 
       set({

@@ -85,13 +85,15 @@ export const LEAD_STATUSES = [
   { id: 'new', name: 'New Inquiry', color: 'bg-blue-500' },
   { id: 'contacted_1', name: 'Contacted (1st)', color: 'bg-yellow-500' },
   { id: 'contacted_2', name: 'Contacted (2nd)', color: 'bg-amber-500' },
-  { id: 'contacted_3', name: 'Contacted (3rd)', color: 'bg-orange-400' },
-  { id: 'qualified', name: 'Qualified', color: 'bg-orange-500' },
-  { id: 'quoted', name: 'Quote Sent', color: 'bg-purple-500' },
-  { id: 'negotiating', name: 'Negotiating', color: 'bg-pink-500' },
-  { id: 'converted', name: 'Enrolled', color: 'bg-green-500' },
+  { id: 'census_requested', name: 'Census Requested', color: 'bg-orange-500' },
+  { id: 'proposal_sent', name: 'Proposal Sent', color: 'bg-purple-500' },
+  { id: 'group_info', name: 'Group Info Submitted', color: 'bg-indigo-500' },
+  { id: 'agreement_signed', name: 'Agreement Signed', color: 'bg-pink-500' },
+  { id: 'implementation', name: 'Implementation Call', color: 'bg-teal-500' },
+  { id: 'census_final', name: 'Census Finalized', color: 'bg-cyan-500' },
+  { id: 'go_live', name: 'Go-Live', color: 'bg-emerald-500' },
+  { id: 'active', name: 'Active Client', color: 'bg-green-500' },
   { id: 'lost', name: 'Lost', color: 'bg-red-500' },
-  { id: 'unresponsive', name: 'Unresponsive', color: 'bg-gray-500' },
 ] as const;
 
 export type LeadStatus = typeof LEAD_STATUSES[number]['id'];
