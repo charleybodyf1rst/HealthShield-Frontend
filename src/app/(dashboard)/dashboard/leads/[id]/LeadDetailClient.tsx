@@ -37,7 +37,7 @@ import {
   User,
 } from 'lucide-react';
 import { LEAD_STATUSES, LEAD_SOURCES } from '@/lib/constants';
-import { leadsApi } from '@/lib/api';
+import { api, leadsApi } from '@/lib/api';
 import { format as fnsFormat, formatDistanceToNow as fnsDistanceToNow } from 'date-fns';
 import type { Lead, LeadActivity } from '@/types/lead';
 
@@ -177,9 +177,68 @@ export default function LeadDetailClient() {
     }
   }, [params?.id, fetchLead]);
 
+  // Fetch tasks and activities from backend when lead loads
+  const loadTasksAndActivities = useCallback(async () => {
+    const id = params?.id;
+    if (!id) return;
+
+    // Fetch tasks
+    try {
+      const result = await leadsApi.getTasks(String(id));
+      const rawTasks = result?.tasks || (result as any)?.data?.tasks || [];
+      const backendTasks = rawTasks.map((t: any) => ({
+        id: String(t.id),
+        title: t.title || '',
+        description: t.description || undefined,
+        type: t.type || t.task_type || 'follow_up',
+        priority: t.priority || 'medium',
+        dueAt: t.due_date || t.dueAt || undefined,
+        completed: t.status === 'completed' || t.completed || false,
+        completedAt: t.completed_at || t.completedAt || undefined,
+      }));
+      if (backendTasks.length > 0) {
+        setTasks(backendTasks);
+      }
+    } catch {
+      // Tasks endpoint may not exist — ignore
+    }
+
+    // Fetch activities (notes saved via addActivity go to sales endpoint, not CRM interactions)
+    try {
+      const result = await leadsApi.getActivities(String(id));
+      const rawActivities = result?.activities || (result as any)?.data?.activities || [];
+      if (rawActivities.length > 0) {
+        const mapped = rawActivities.map((a: any) => ({
+          id: String(a.id),
+          leadId: String(id),
+          type: (a.type || 'note') as LeadActivity['type'],
+          title: a.title || 'Note',
+          description: a.description || a.content || undefined,
+          outcome: a.outcome || undefined,
+          duration: a.duration || undefined,
+          createdBy: String(a.created_by || a.createdBy || ''),
+          createdByUser: a.created_by_user || a.createdByUser
+            ? { id: String((a.created_by_user || a.createdByUser)?.id || ''), firstName: (a.created_by_user || a.createdByUser)?.name || (a.created_by_user || a.createdByUser)?.first_name || '', lastName: '' }
+            : undefined,
+          createdAt: a.created_at || a.createdAt || a.activity_at || new Date().toISOString(),
+          updatedAt: a.updated_at || a.updatedAt || a.created_at || new Date().toISOString(),
+        }));
+        setActivities((prev) => {
+          // Merge: keep existing from CRM interactions, add from sales activities (dedupe by id)
+          const existingIds = new Set(prev.map((p) => p.id));
+          const newOnes = mapped.filter((m: LeadActivity) => !existingIds.has(m.id));
+          return [...prev, ...newOnes];
+        });
+      }
+    } catch {
+      // Activities endpoint may not exist — ignore
+    }
+  }, [params?.id]);
+
   useEffect(() => {
     loadLead();
-  }, [loadLead]);
+    loadTasksAndActivities();
+  }, [loadLead, loadTasksAndActivities]);
 
   const handleStatusChange = async (newStatus: string) => {
     setLead((prev) => ({ ...prev, status: newStatus as Lead['status'] }));
@@ -700,15 +759,24 @@ export default function LeadDetailClient() {
                             checked={task.completed}
                             title={`Mark "${task.title}" as ${task.completed ? 'incomplete' : 'complete'}`}
                             className="mt-1 h-4 w-4 rounded"
-                            onChange={() =>
+                            onChange={async () => {
+                              const newCompleted = !task.completed;
                               setTasks((prev) =>
                                 prev.map((t) =>
                                   t.id === task.id
-                                    ? { ...t, completed: !t.completed, completedAt: !t.completed ? new Date().toISOString() : undefined }
+                                    ? { ...t, completed: newCompleted, completedAt: newCompleted ? new Date().toISOString() : undefined }
                                     : t
                                 )
-                              )
-                            }
+                              );
+                              // Persist to backend
+                              try {
+                                await api.put(`/api/v1/crm/tasks/${task.id}`, {
+                                  status: newCompleted ? 'completed' : 'pending',
+                                });
+                              } catch {
+                                // Silently fail — local state already updated
+                              }
+                            }}
                           />
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm font-medium ${task.completed ? 'line-through' : ''}`}>
@@ -742,7 +810,14 @@ export default function LeadDetailClient() {
                             variant="ghost"
                             size="sm"
                             className="h-6 w-6 p-0 text-muted-foreground hover:text-red-500"
-                            onClick={() => setTasks((prev) => prev.filter((t) => t.id !== task.id))}
+                            onClick={async () => {
+                              setTasks((prev) => prev.filter((t) => t.id !== task.id));
+                              try {
+                                await api.delete(`/api/v1/crm/tasks/${task.id}`);
+                              } catch {
+                                // Silently fail
+                              }
+                            }}
                           >
                             &times;
                           </Button>
