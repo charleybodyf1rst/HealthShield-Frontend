@@ -15,36 +15,52 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { leadsApi } from '@/lib/api';
+import { leadsApi, notificationsApi } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { formatDistanceToNow } from 'date-fns';
 
-const notifications = [
-  {
-    id: 1,
-    title: 'New lead assigned',
-    description: 'John Smith has been assigned to you',
-    time: '5 min ago',
-    unread: true,
-  },
-  {
-    id: 2,
-    title: 'Deal closed',
-    description: 'FitLife Studios signed the contract',
-    time: '1 hour ago',
-    unread: true,
-  },
-  {
-    id: 3,
-    title: 'Meeting reminder',
-    description: 'Demo call with Wellness Corp in 30 min',
-    time: '2 hours ago',
-    unread: false,
-  },
-];
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  cta_link?: string;
+  redirect_url?: string;
+  created_at: string;
+  read_at?: string | null;
+}
 
 export function DashboardHeader() {
   const router = useRouter();
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch notifications on mount and every 30 seconds
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const res = await notificationsApi.getAll({ per_page: 10 });
+      const items = Array.isArray(res.data) ? res.data : [];
+      setNotifications(items);
+      setUnreadCount(items.filter((n) => !n.read_at).length);
+    } catch {
+      // API may not exist yet — keep empty
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationsApi.markAllRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read_at: new Date().toISOString() })));
+      setUnreadCount(0);
+    } catch {
+      // Silent fail
+    }
+  };
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -244,31 +260,45 @@ export function DashboardHeader() {
             <DropdownMenuLabel className="flex items-center justify-between">
               Notifications
               {unreadCount > 0 && (
-                <Button variant="ghost" size="sm" className="h-auto px-2 py-1 text-xs">
+                <Button variant="ghost" size="sm" className="h-auto px-2 py-1 text-xs" onClick={handleMarkAllRead}>
                   Mark all read
                 </Button>
               )}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {notifications.map((notification) => (
-              <DropdownMenuItem
-                key={notification.id}
-                className="flex flex-col items-start gap-1 p-3"
-              >
-                <div className="flex w-full items-start justify-between">
-                  <span className="font-medium">{notification.title}</span>
-                  {notification.unread && (
-                    <span className="h-2 w-2 rounded-full bg-primary" />
-                  )}
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {notification.description}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {notification.time}
-                </span>
-              </DropdownMenuItem>
-            ))}
+            {notifications.length === 0 ? (
+              <div className="p-4 text-center text-sm text-muted-foreground">
+                No notifications yet
+              </div>
+            ) : (
+              notifications.slice(0, 8).map((notification) => (
+                <DropdownMenuItem
+                  key={notification.id}
+                  className="flex flex-col items-start gap-1 p-3 cursor-pointer"
+                  onClick={() => {
+                    if (notification.redirect_url) router.push(notification.redirect_url);
+                    if (!notification.read_at) {
+                      notificationsApi.markRead(notification.id).catch(() => {});
+                      setNotifications((prev) => prev.map((n) => n.id === notification.id ? { ...n, read_at: new Date().toISOString() } : n));
+                      setUnreadCount((c) => Math.max(0, c - 1));
+                    }
+                  }}
+                >
+                  <div className="flex w-full items-start justify-between">
+                    <span className="font-medium">{notification.title}</span>
+                    {!notification.read_at && (
+                      <span className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1.5" />
+                    )}
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {notification.message}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {(() => { try { return formatDistanceToNow(new Date(notification.created_at), { addSuffix: true }); } catch { return ''; } })()}
+                  </span>
+                </DropdownMenuItem>
+              ))
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="justify-center text-primary">
               View all notifications

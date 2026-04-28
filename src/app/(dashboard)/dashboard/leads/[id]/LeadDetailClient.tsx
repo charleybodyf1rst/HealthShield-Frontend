@@ -649,7 +649,7 @@ export default function LeadDetailClient() {
                       <Button
                         size="sm"
                         disabled={!taskForm.title.trim()}
-                        onClick={() => {
+                        onClick={async () => {
                           const newTask: LeadTask = {
                             id: String(Date.now()),
                             title: taskForm.title,
@@ -662,6 +662,22 @@ export default function LeadDetailClient() {
                           setTasks((prev) => [newTask, ...prev]);
                           setTaskForm({ title: '', description: '', type: 'follow_up', priority: 'medium', dueAt: '' });
                           setShowTaskForm(false);
+
+                          // Persist to backend + trigger notifications
+                          try {
+                            await leadsApi.createCrmTask({
+                              title: newTask.title,
+                              description: newTask.description,
+                              priority: newTask.priority,
+                              due_date: newTask.dueAt,
+                              linked_lead_id: lead.id,
+                              assigned_to: authUser?.id,
+                              notify_via: ['app', 'email', 'sms'],
+                            });
+                            toast.success('Task created — notifications will be sent');
+                          } catch {
+                            toast.error('Task saved locally but failed to sync to server');
+                          }
                         }}
                       >
                         Add Task

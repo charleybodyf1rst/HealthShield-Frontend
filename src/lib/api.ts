@@ -443,6 +443,49 @@ export const leadsApi = {
 
   deleteDocument: (documentId: string) =>
     api.delete<{ success: boolean; message: string }>(`/api/v1/crm/leads/documents/${documentId}`),
+
+  // CRM Tasks (persisted, with notifications)
+  createCrmTask: (data: {
+    title: string;
+    description?: string;
+    priority?: 'low' | 'medium' | 'high' | 'urgent';
+    status?: string;
+    due_date?: string;
+    linked_lead_id?: string | number;
+    assigned_to?: string | number;
+    notify_via?: ('app' | 'email' | 'sms')[];
+  }) =>
+    api.post<{ success: boolean; data: Record<string, unknown> }>('/api/v1/crm/tasks', data),
+
+  getCrmTasks: (filters?: { linked_lead_id?: string; status?: string; priority?: string }) => {
+    const params: Record<string, string> = {};
+    if (filters?.linked_lead_id) params.linked_lead_id = filters.linked_lead_id;
+    if (filters?.status) params.status = filters.status;
+    if (filters?.priority) params.priority = filters.priority;
+    return api.get<{ success: boolean; data: { data: Array<Record<string, unknown>> } }>('/api/v1/crm/tasks', params);
+  },
+
+  updateCrmTask: (taskId: string, data: Record<string, unknown>) =>
+    api.put<{ success: boolean; data: Record<string, unknown> }>(`/api/v1/crm/tasks/${taskId}`, data),
+
+  deleteCrmTask: (taskId: string) =>
+    api.delete<{ success: boolean }>(`/api/v1/crm/tasks/${taskId}`),
+};
+
+// ==================== NOTIFICATIONS API ====================
+
+export const notificationsApi = {
+  getAll: (params?: { page?: number; per_page?: number }) =>
+    api.get<{ success: boolean; data: Array<{ id: number; title: string; message: string; cta_link?: string; redirect_url?: string; metadata?: Record<string, unknown>; created_at: string; read_at?: string | null; }> }>('/api/v1/crm/notifications', params as Record<string, string>),
+
+  markRead: (notificationId: number) =>
+    api.put<{ success: boolean }>(`/api/v1/crm/notifications/${notificationId}/read`),
+
+  markAllRead: () =>
+    api.put<{ success: boolean }>('/api/v1/crm/notifications/mark-all-read'),
+
+  getUnreadCount: () =>
+    api.get<{ success: boolean; count: number }>('/api/v1/crm/notifications/count'),
 };
 
 // ==================== PIPELINE API ====================
