@@ -9,6 +9,7 @@ import {
   Calendar,
   CheckSquare,
   ChevronDown,
+  Bell,
   ClipboardList,
   Database,
   DollarSign,
@@ -156,6 +157,11 @@ const baseCommunicationItems = [
     title: 'Campaigns',
     href: '/dashboard/campaigns',
     icon: Megaphone,
+  },
+  {
+    title: 'Notifications',
+    href: '/dashboard/notifications',
+    icon: Bell,
   },
 ];
 
