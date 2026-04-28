@@ -131,6 +131,7 @@ export const LEAD_CLASSIFICATIONS = [
   { id: 'short_term', name: 'Short-Term Health', color: 'bg-orange-500' },
   { id: 'group_health', name: 'Group / Employer Health', color: 'bg-indigo-500' },
   { id: 'life_insurance', name: 'Life Insurance', color: 'bg-pink-500' },
+  { id: 'corporate_wellness', name: 'Corporate Wellness', color: 'bg-flame-500' },
   { id: 'other', name: 'Other', color: 'bg-gray-500' },
 ] as const;
 

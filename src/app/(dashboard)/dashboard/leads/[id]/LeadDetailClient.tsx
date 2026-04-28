@@ -182,7 +182,7 @@ export default function LeadDetailClient() {
   const handleStatusChange = async (newStatus: string) => {
     setLead((prev) => ({ ...prev, status: newStatus as Lead['status'] }));
     try {
-      await updateLead(Number(lead.id), { status: newStatus as Lead['status'] });
+      await updateLead(lead.id, { status: newStatus as Lead['status'] });
       toast.success('Status updated');
     } catch {
       toast.error('Failed to update status');
