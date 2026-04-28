@@ -292,8 +292,10 @@ export default function LeadDetailClient() {
         title: 'Note added',
         description: noteText,
       });
-    } catch {
-      toast.error('Note saved locally but failed to sync');
+      toast.success('Note saved');
+    } catch (err) {
+      console.error('Failed to save note:', err);
+      toast.error('Failed to save note to server');
     }
   };
 
