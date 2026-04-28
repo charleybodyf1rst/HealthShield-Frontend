@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -93,6 +94,7 @@ export default function LeadDetailClient() {
   const router = useRouter();
   const params = useParams();
   const { fetchLead, updateLead } = useHealthShieldCrmStore();
+  const authUser = useAuthStore((s) => s.user);
   const [lead, setLead] = useState<Lead>(emptyLead);
   const [activities, setActivities] = useState<LeadActivity[]>([]);
   const [newNote, setNewNote] = useState('');
@@ -182,7 +184,7 @@ export default function LeadDetailClient() {
   const handleStatusChange = async (newStatus: string) => {
     setLead((prev) => ({ ...prev, status: newStatus as Lead['status'] }));
     try {
-      await updateLead(lead.id, { status: newStatus as Lead['status'] });
+      await updateLead(Number(lead.id), { status: newStatus } as never);
       toast.success('Status updated');
     } catch {
       toast.error('Failed to update status');
@@ -190,8 +192,12 @@ export default function LeadDetailClient() {
     }
   };
 
-  const handleAddNote = () => {
+  const handleAddNote = async () => {
     if (!newNote.trim()) return;
+
+    const userName = authUser
+      ? `${authUser.firstName || ''} ${authUser.lastName || ''}`.trim()
+      : 'Unknown';
 
     const newActivity: LeadActivity = {
       id: Date.now().toString(),
@@ -199,18 +205,30 @@ export default function LeadDetailClient() {
       type: 'note',
       title: 'Note added',
       description: newNote,
-      createdBy: 'user1',
+      createdBy: authUser?.id || 'unknown',
       createdByUser: {
-        id: 'user1',
-        firstName: 'You',
-        lastName: '',
+        id: authUser?.id || 'unknown',
+        firstName: authUser?.firstName || userName || 'You',
+        lastName: authUser?.lastName || '',
       },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
     setActivities((prev) => [newActivity, ...prev]);
+    const noteText = newNote;
     setNewNote('');
+
+    // Persist to backend
+    try {
+      await leadsApi.addActivity(lead.id, {
+        type: 'note',
+        title: 'Note added',
+        description: noteText,
+      });
+    } catch {
+      toast.error('Note saved locally but failed to sync');
+    }
   };
 
   const activityIcon = (type: LeadActivity['type']) => {
@@ -317,7 +335,7 @@ export default function LeadDetailClient() {
               if (isEditing) {
                 // Save changes
                 setIsSaving(true);
-                updateLead(lead.id, {
+                updateLead(Number(lead.id), {
                   contactFirstName: editForm.firstName,
                   contactLastName: editForm.lastName,
                   contactEmail: editForm.email,

@@ -80,6 +80,7 @@ export default function LeadsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
+  const [industryFilter, setIndustryFilter] = useState<string>('all');
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'pipeline'>('all');
 
@@ -122,8 +123,9 @@ export default function LeadsPage() {
 
     const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
     const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
+    const matchesIndustry = industryFilter === 'all' || lead.industry === industryFilter;
 
-    return matchesSearch && matchesStatus && matchesSource;
+    return matchesSearch && matchesStatus && matchesSource && matchesIndustry;
   });
 
   const toggleSelectAll = () => {
@@ -301,6 +303,19 @@ export default function LeadsPage() {
                   {LEAD_SOURCES.map((source) => (
                     <SelectItem key={source.id} value={source.id}>
                       {source.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={industryFilter} onValueChange={setIndustryFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Industry" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Industries</SelectItem>
+                  {[...new Set((leads ?? []).map((l) => l.industry).filter(Boolean))].sort().map((ind) => (
+                    <SelectItem key={ind} value={ind!}>
+                      {ind}
                     </SelectItem>
                   ))}
                 </SelectContent>
