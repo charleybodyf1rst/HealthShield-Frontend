@@ -185,7 +185,8 @@ export default function LeadDetailClient() {
     // Fetch tasks
     try {
       const result = await leadsApi.getTasks(String(id));
-      const rawTasks = result?.tasks || (result as any)?.data?.tasks || [];
+      const r = result as any;
+      const rawTasks = r?.data || r?.tasks || [];
       const backendTasks = rawTasks.map((t: any) => ({
         id: String(t.id),
         title: t.title || '',
@@ -203,35 +204,41 @@ export default function LeadDetailClient() {
       // Tasks endpoint may not exist — ignore
     }
 
-    // Fetch activities (notes saved via addActivity go to sales endpoint, not CRM interactions)
+    // Fetch activities from CRM lead activities table
     try {
       const result = await leadsApi.getActivities(String(id));
-      const rawActivities = result?.activities || (result as any)?.data?.activities || [];
+      const rawActivities = result?.activities || [];
       if (rawActivities.length > 0) {
-        const mapped = rawActivities.map((a: any) => ({
-          id: String(a.id),
-          leadId: String(id),
-          type: (a.type || 'note') as LeadActivity['type'],
-          title: a.title || 'Note',
-          description: a.description || a.content || undefined,
-          outcome: a.outcome || undefined,
-          duration: a.duration || undefined,
-          createdBy: String(a.created_by || a.createdBy || ''),
-          createdByUser: a.created_by_user || a.createdByUser
-            ? { id: String((a.created_by_user || a.createdByUser)?.id || ''), firstName: (a.created_by_user || a.createdByUser)?.name || (a.created_by_user || a.createdByUser)?.first_name || '', lastName: '' }
-            : undefined,
-          createdAt: a.created_at || a.createdAt || a.activity_at || new Date().toISOString(),
-          updatedAt: a.updated_at || a.updatedAt || a.created_at || new Date().toISOString(),
-        }));
+        const mapped = rawActivities.map((a: any) => {
+          // Parse metadata JSON if present (contains full_note for note activities)
+          let metadata: any = {};
+          try { metadata = a.metadata ? JSON.parse(a.metadata) : {}; } catch { /* ignore */ }
+
+          const actType = a.activity_type || a.type || 'note';
+          const isNote = actType === 'note_added' || actType === 'note';
+
+          return {
+            id: `activity-${a.id}`,
+            leadId: String(id),
+            type: (isNote ? 'note' : actType) as LeadActivity['type'],
+            title: isNote ? 'Note added' : (a.description?.split(':')[0] || actType.replace('_', ' ')),
+            description: metadata.full_note || a.description || undefined,
+            outcome: undefined,
+            duration: undefined,
+            createdBy: String(a.user_id || ''),
+            createdByUser: undefined,
+            createdAt: a.activity_at || a.created_at || new Date().toISOString(),
+            updatedAt: a.created_at || new Date().toISOString(),
+          };
+        });
         setActivities((prev) => {
-          // Merge: keep existing from CRM interactions, add from sales activities (dedupe by id)
           const existingIds = new Set(prev.map((p) => p.id));
           const newOnes = mapped.filter((m: LeadActivity) => !existingIds.has(m.id));
-          return [...prev, ...newOnes];
+          return [...newOnes, ...prev]; // Notes first, then interactions
         });
       }
     } catch {
-      // Activities endpoint may not exist — ignore
+      // Activities endpoint may not exist yet — ignore
     }
   }, [params?.id]);
 

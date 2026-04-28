@@ -404,22 +404,28 @@ export const leadsApi = {
   getStats: () =>
     api.get<{ status: number; stats: LeadStats }>('/api/v1/sales/leads/stats'),
 
-  // Activities
+  // Activities / Notes — uses CRM endpoints
   getActivities: (leadId: string) =>
-    api.get<{ status: number; activities: LeadActivity[] }>(`/api/v1/sales/leads/${leadId}/activities`),
+    api.get<{ success: boolean; activities: Array<{ id: number; lead_id: number; activity_type: string; description: string; metadata: string | null; user_id: number | null; activity_at: string; created_at: string; }> }>(`/api/v1/crm/leads/${leadId}/activities`).catch(() => ({ success: false, activities: [] })),
 
   addActivity: (leadId: string, data: Partial<LeadActivity>) =>
-    api.post<{ status: number; message: string; activity: LeadActivity }>(`/api/v1/sales/leads/${leadId}/activities`, data),
+    api.post<{ success: boolean; message: string; lead: unknown }>(`/api/v1/crm/leads/${leadId}/note`, {
+      note: data.description || data.title || '',
+      note_type: data.type || 'general',
+    }),
 
-  // Tasks
+  // Tasks — uses CRM tasks endpoint (GET/POST /crm/tasks)
   getTasks: (leadId: string) =>
-    api.get<{ status: number; tasks: LeadTask[] }>(`/api/v1/sales/leads/${leadId}/tasks`),
+    api.get<{ success: boolean; data: LeadTask[] }>(`/api/v1/crm/tasks`, { linked_lead_id: leadId } as Record<string, string>).catch(() => ({ success: false, data: [] })),
 
   addTask: (leadId: string, data: Partial<LeadTask>) =>
-    api.post<{ status: number; message: string; task: LeadTask }>(`/api/v1/sales/leads/${leadId}/tasks`, data),
+    api.post<{ success: boolean; data: LeadTask }>(`/api/v1/crm/tasks`, {
+      ...data,
+      linked_lead_id: leadId,
+    }),
 
   updateTask: (leadId: string, taskId: string, data: Partial<LeadTask>) =>
-    api.patch<{ status: number; message: string; task: LeadTask }>(`/api/v1/sales/leads/${leadId}/tasks/${taskId}`, data),
+    api.put<{ success: boolean; data: LeadTask }>(`/api/v1/crm/tasks/${taskId}`, data),
 
   // Comments
   getComments: (leadId: string) =>
