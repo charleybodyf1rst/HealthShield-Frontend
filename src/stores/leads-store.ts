@@ -53,13 +53,13 @@ export const useLeadsStore = create<LeadsStore>((set, get) => ({
   pagination: {
     total: 0,
     page: 1,
-    limit: 300,
+    limit: 1500,
   },
   isLoading: false,
   error: null,
 
   // Fetch leads with filters — default 300 per page to load all leads at once
-  fetchLeads: async (filters?: LeadFilters, page = 1, limit = 300) => {
+  fetchLeads: async (filters?: LeadFilters, page = 1, limit = 1500) => {
     set({ isLoading: true, error: null });
     try {
       const response = await leadsApi.getAll({ ...filters, page, per_page: limit } as LeadFilters & { page?: number; per_page?: number });

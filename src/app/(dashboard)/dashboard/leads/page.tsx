@@ -102,9 +102,12 @@ export default function LeadsPage() {
 
   // Pending approval sources (from corporate wellness site)
   const PENDING_SOURCES = ['tablet-presentation', 'demo_request'];
-  const isPendingLead = (lead: Lead) =>
-    (PENDING_SOURCES.includes(lead.source) || lead.classification === 'corporate_wellness') &&
-    lead.status === 'new';
+  const isPendingLead = (lead: Lead) => {
+    const r = lead as unknown as Record<string, unknown>;
+    const src = (r.lead_source as string) || lead.source || '';
+    return (PENDING_SOURCES.includes(src) || lead.classification === 'corporate_wellness') &&
+      lead.status === 'new';
+  };
   const PIPELINE_STATUSES = ['contacted_1', 'contacted_2', 'census_requested', 'proposal_sent', 'group_info', 'agreement_signed', 'implementation', 'census_final', 'go_live'];
 
   const pendingCount = (leads ?? []).filter(isPendingLead).length;
@@ -116,19 +119,28 @@ export default function LeadsPage() {
     if (activeTab === 'pending' && !isPendingLead(lead)) return false;
     if (activeTab === 'pipeline' && !PIPELINE_STATUSES.includes(lead.status)) return false;
 
+    // Raw API data uses snake_case — support both formats
+    const raw = lead as unknown as Record<string, unknown>;
+    const firstName = (raw.contact_first_name as string) || lead.firstName || '';
+    const lastName = (raw.contact_last_name as string) || lead.lastName || '';
+    const email = (raw.contact_email as string) || lead.email || '';
+    const phone = (raw.contact_phone as string) || lead.phone || '';
+    const company = (raw.company_name as string) || lead.company || '';
+    const leadStatus = (raw.status as string) || lead.status || '';
+    const leadSource = (raw.lead_source as string) || lead.source || '';
+    const leadIndustry = (raw.industry as string) || lead.industry || '';
+    const empCount = Number(raw.estimated_employees || lead.estimatedEmployees || 0);
+
     const matchesSearch =
       !search ||
-      `${lead.firstName} ${lead.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-      lead.email.toLowerCase().includes(search.toLowerCase()) ||
-      lead.phone?.toLowerCase().includes(search.toLowerCase());
+      `${firstName} ${lastName}`.toLowerCase().includes(search.toLowerCase()) ||
+      email.toLowerCase().includes(search.toLowerCase()) ||
+      phone.toLowerCase().includes(search.toLowerCase()) ||
+      company.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
-    const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
-    // Support both camelCase and snake_case field names from API
-    const raw = lead as unknown as Record<string, unknown>;
-    const leadIndustry = (raw.industry as string) || '';
+    const matchesStatus = statusFilter === 'all' || leadStatus === statusFilter;
+    const matchesSource = sourceFilter === 'all' || leadSource === sourceFilter;
     const matchesIndustry = industryFilter === 'all' || leadIndustry === industryFilter;
-    const empCount = Number(raw.estimated_employees || lead.estimatedEmployees || 0);
     const matchesSize = sizeFilter === 'all' ||
       (sizeFilter === '20-50' && empCount >= 20 && empCount <= 50) ||
       (sizeFilter === '51-100' && empCount >= 51 && empCount <= 100) ||
@@ -396,12 +408,12 @@ export default function LeadsPage() {
                   />
                 </TableHead>
                 <TableHead>Lead</TableHead>
-                <TableHead>Plan Type</TableHead>
+                <TableHead>Industry</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Source</TableHead>
                 <TableHead>
                   <div className="flex items-center gap-1">
-                    Value
+                    Size / Value
                     <ArrowUpDown className="h-3 w-3" />
                   </div>
                 </TableHead>
@@ -455,26 +467,42 @@ export default function LeadsPage() {
                       onCheckedChange={() => toggleSelect(lead.id)}
                     />
                   </TableCell>
+                  {(() => {
+                    // Normalize raw API snake_case fields
+                    const r = lead as unknown as Record<string, unknown>;
+                    const fn = (r.contact_first_name as string) || lead.firstName || '';
+                    const ln = (r.contact_last_name as string) || lead.lastName || '';
+                    const em = (r.contact_email as string) || lead.email || '';
+                    const src = (r.lead_source as string) || lead.source || '';
+                    const val = Number(r.deal_value || lead.value || 0);
+                    const lastContact = (r.last_contacted_at as string) || lead.lastContactedAt || '';
+                    const ind = (r.industry as string) || lead.industry || '';
+                    const emp = Number(r.estimated_employees || lead.estimatedEmployees || 0);
+
+                    return (<>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                          {lead.firstName[0]}
-                          {lead.lastName[0]}
+                          {fn?.[0] || '?'}{ln?.[0] || '?'}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-medium">
-                          {lead.firstName} {lead.lastName}
+                          {fn} {ln}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {lead.email}
+                          {em}
                         </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    {lead.classification ? (
+                    {ind ? (
+                      <Badge variant="outline" className="text-xs">
+                        {ind}
+                      </Badge>
+                    ) : lead.classification ? (
                       <Badge variant="outline" className="text-xs">
                         {LEAD_CLASSIFICATIONS.find(c => c.id === lead.classification)?.name || lead.classification}
                       </Badge>
@@ -485,7 +513,7 @@ export default function LeadsPage() {
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className={statusColors[lead.status]}
+                      className={statusColors[lead.status] || 'bg-gray-500/10 text-gray-500 border-gray-500/20'}
                     >
                       {LEAD_STATUSES.find((s) => s.id === lead.status)?.name ||
                         lead.status}
@@ -493,23 +521,24 @@ export default function LeadsPage() {
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">
-                      {LEAD_SOURCES.find((s) => s.id === lead.source)?.name ||
-                        lead.source}
+                      {LEAD_SOURCES.find((s) => s.id === src)?.name || src || '-'}
                     </span>
                   </TableCell>
                   <TableCell>
-                    {lead.value ? (
+                    {val ? (
                       <span className="font-medium">
-                        ${lead.value.toLocaleString()}
+                        ${val.toLocaleString()}
                       </span>
+                    ) : emp ? (
+                      <span className="text-sm text-muted-foreground">{emp} emp</span>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
                   <TableCell>
-                    {lead.lastContactedAt ? (
+                    {lastContact ? (
                       <span className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(lead.lastContactedAt), {
+                        {formatDistanceToNow(new Date(lastContact), {
                           addSuffix: true,
                         })}
                       </span>
@@ -545,7 +574,7 @@ export default function LeadsPage() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => handleDeleteLead(lead.id, `${lead.firstName} ${lead.lastName}`)}
+                          onClick={() => handleDeleteLead(lead.id, `${fn} ${ln}`)}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
@@ -553,6 +582,8 @@ export default function LeadsPage() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
+                  </>);
+                  })()}
                 </TableRow>
               ))
               )}
