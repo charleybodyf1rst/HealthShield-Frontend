@@ -81,6 +81,7 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [industryFilter, setIndustryFilter] = useState<string>('all');
+  const [sizeFilter, setSizeFilter] = useState<string>('all');
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'pipeline'>('all');
 
@@ -123,9 +124,19 @@ export default function LeadsPage() {
 
     const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
     const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
-    const matchesIndustry = industryFilter === 'all' || lead.industry === industryFilter;
+    // Support both camelCase and snake_case field names from API
+    const raw = lead as unknown as Record<string, unknown>;
+    const leadIndustry = (raw.industry as string) || '';
+    const matchesIndustry = industryFilter === 'all' || leadIndustry === industryFilter;
+    const empCount = Number(raw.estimated_employees || lead.estimatedEmployees || 0);
+    const matchesSize = sizeFilter === 'all' ||
+      (sizeFilter === '20-50' && empCount >= 20 && empCount <= 50) ||
+      (sizeFilter === '51-100' && empCount >= 51 && empCount <= 100) ||
+      (sizeFilter === '101-200' && empCount >= 101 && empCount <= 200) ||
+      (sizeFilter === '201-1000' && empCount >= 201 && empCount <= 1000) ||
+      (sizeFilter === '1001+' && empCount > 1000);
 
-    return matchesSearch && matchesStatus && matchesSource && matchesIndustry;
+    return matchesSearch && matchesStatus && matchesSource && matchesIndustry && matchesSize;
   });
 
   const toggleSelectAll = () => {
@@ -308,16 +319,29 @@ export default function LeadsPage() {
                 </SelectContent>
               </Select>
               <Select value={industryFilter} onValueChange={setIndustryFilter}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-[160px]">
                   <SelectValue placeholder="Industry" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Industries</SelectItem>
-                  {[...new Set((leads ?? []).map((l) => l.industry).filter(Boolean))].sort().map((ind) => (
-                    <SelectItem key={ind} value={ind!}>
+                  {[...new Set((leads ?? []).map((l) => ((l as unknown as Record<string, unknown>).industry as string) || '').filter(Boolean))].sort().map((ind) => (
+                    <SelectItem key={ind} value={ind}>
                       {ind}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+              <Select value={sizeFilter} onValueChange={setSizeFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Company Size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sizes</SelectItem>
+                  <SelectItem value="20-50">20–50 employees</SelectItem>
+                  <SelectItem value="51-100">51–100 employees</SelectItem>
+                  <SelectItem value="101-200">101–200 employees</SelectItem>
+                  <SelectItem value="201-1000">201–1,000 employees</SelectItem>
+                  <SelectItem value="1001+">1,000+ employees</SelectItem>
                 </SelectContent>
               </Select>
             </div>
