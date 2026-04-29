@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -390,6 +390,40 @@ export default function PipelinePage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
 
+  // ── Drag-to-scroll (click empty space and drag left/right) ──
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isDraggingScroll = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+  const handleScrollMouseDown = useCallback((e: React.MouseEvent) => {
+    // Only activate on the background — not on cards or buttons
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-card]') || target.closest('button') || target.closest('a') || target.closest('[role="menu"]')) return;
+    if (!scrollRef.current) return;
+    isDraggingScroll.current = true;
+    startX.current = e.pageX - scrollRef.current.offsetLeft;
+    scrollLeft.current = scrollRef.current.scrollLeft;
+    scrollRef.current.style.cursor = 'grabbing';
+    scrollRef.current.style.userSelect = 'none';
+  }, []);
+
+  const handleScrollMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDraggingScroll.current || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.5; // scroll speed multiplier
+    scrollRef.current.scrollLeft = scrollLeft.current - walk;
+  }, []);
+
+  const handleScrollMouseUp = useCallback(() => {
+    isDraggingScroll.current = false;
+    if (scrollRef.current) {
+      scrollRef.current.style.cursor = 'grab';
+      scrollRef.current.style.userSelect = '';
+    }
+  }, []);
+
   // Load pipeline on mount
   useEffect(() => {
     fetchPipeline();
@@ -661,7 +695,8 @@ export default function PipelinePage() {
         onDragEnd={handleDragEnd}
       >
         <div
-          className="pb-6 -mx-4 md:-mx-6 pipeline-scroll"
+          ref={scrollRef}
+          className="pb-6 -mx-4 md:-mx-6"
           style={{
             overflowX: 'auto',
             overflowY: 'visible',
@@ -670,7 +705,12 @@ export default function PipelinePage() {
             paddingRight: '1rem',
             scrollbarWidth: 'thin',
             scrollbarColor: '#666 #222',
+            cursor: 'grab',
           }}
+          onMouseDown={handleScrollMouseDown}
+          onMouseMove={handleScrollMouseMove}
+          onMouseUp={handleScrollMouseUp}
+          onMouseLeave={handleScrollMouseUp}
         >
           <div className="flex gap-3" style={{ width: 'max-content' }}>
             {(stages ?? []).map((stage) => (
