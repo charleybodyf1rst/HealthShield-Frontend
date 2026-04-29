@@ -660,8 +660,8 @@ export default function PipelinePage() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="overflow-x-auto w-full pb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800" style={{ scrollbarWidth: 'thin' }}>
-          <div className="flex gap-3 min-w-max">
+        <div className="overflow-x-scroll w-full pb-4 -mx-4 md:-mx-6 px-4 md:px-6" style={{ scrollbarWidth: 'thin', WebkitOverflowScrolling: 'touch' }}>
+          <div className="flex gap-3 min-w-max pr-4 md:pr-6">
             {(stages ?? []).map((stage) => (
               <StageColumn key={stage.id} stage={stage} />
             ))}
