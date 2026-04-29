@@ -14,6 +14,7 @@ import {
   Database,
   DollarSign,
   FileText,
+  FolderOpen,
   GitBranch,
   Heart,
   Inbox,
@@ -157,6 +158,16 @@ const baseCommunicationItems = [
     title: 'Campaigns',
     href: '/dashboard/campaigns',
     icon: Megaphone,
+  },
+  {
+    title: 'Email Templates',
+    href: '/dashboard/email-templates',
+    icon: FileText,
+  },
+  {
+    title: 'Documents',
+    href: '/dashboard/documents',
+    icon: FolderOpen,
   },
   {
     title: 'Notifications',
