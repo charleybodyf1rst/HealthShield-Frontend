@@ -661,14 +661,15 @@ export default function PipelinePage() {
         onDragEnd={handleDragEnd}
       >
         <div
-          className="pb-6 -mx-4 md:-mx-6"
+          className="pb-6 -mx-4 md:-mx-6 pipeline-scroll"
           style={{
-            overflowX: 'scroll',
+            overflowX: 'auto',
             overflowY: 'visible',
-            scrollbarWidth: 'auto',
             WebkitOverflowScrolling: 'touch',
             paddingLeft: '1rem',
             paddingRight: '1rem',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#666 #222',
           }}
         >
           <div className="flex gap-3" style={{ width: 'max-content' }}>

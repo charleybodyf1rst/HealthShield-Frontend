@@ -70,6 +70,9 @@ function camelToSnake(obj: Record<string, any>): Record<string, any> {
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  headers: {
+    'X-Organization-ID': '12',
+  },
 });
 
 // Attach auth token from Zustand persisted storage to every request
