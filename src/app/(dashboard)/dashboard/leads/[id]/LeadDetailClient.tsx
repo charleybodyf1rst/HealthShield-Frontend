@@ -287,15 +287,22 @@ export default function LeadDetailClient() {
 
     // Persist to backend
     try {
-      await leadsApi.addActivity(lead.id, {
+      console.log('[NOTE] Saving note for lead:', lead.id, 'text:', noteText.substring(0, 50));
+      const result = await leadsApi.addActivity(lead.id, {
         type: 'note',
         title: 'Note added',
         description: noteText,
       });
+      console.log('[NOTE] Save result:', result);
       toast.success('Note saved');
-    } catch (err) {
-      console.error('Failed to save note:', err);
-      toast.error('Failed to save note to server');
+    } catch (err: any) {
+      console.error('[NOTE] Failed to save note:', {
+        leadId: lead.id,
+        error: err?.message || err,
+        status: err?.status,
+        url: `/api/v1/crm/leads/${lead.id}/note`,
+      });
+      toast.error(`Failed to save note: ${err?.message || 'Unknown error'}`);
     }
   };
 
