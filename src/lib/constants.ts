@@ -85,6 +85,11 @@ export const LEAD_STATUSES = [
   { id: 'new', name: 'New Inquiry', color: 'bg-blue-500' },
   { id: 'contacted_1', name: 'Contacted (1st)', color: 'bg-yellow-500' },
   { id: 'contacted_2', name: 'Contacted (2nd)', color: 'bg-amber-500' },
+  { id: 'contacted_3', name: 'Contacted (3rd)', color: 'bg-amber-600' },
+  { id: 'contacted_5', name: 'Contacted (5th)', color: 'bg-amber-700' },
+  { id: 'contacted_6', name: 'Contacted (6th)', color: 'bg-amber-800' },
+  { id: 'pending', name: 'Pending', color: 'bg-violet-500' },
+  { id: 'demo', name: 'Demo', color: 'bg-sky-500' },
   { id: 'census_requested', name: 'Census Requested', color: 'bg-orange-500' },
   { id: 'proposal_sent', name: 'Proposal Sent', color: 'bg-purple-500' },
   { id: 'group_info', name: 'Group Info Submitted', color: 'bg-indigo-500' },
@@ -93,6 +98,7 @@ export const LEAD_STATUSES = [
   { id: 'census_final', name: 'Census Finalized', color: 'bg-cyan-500' },
   { id: 'go_live', name: 'Go-Live', color: 'bg-emerald-500' },
   { id: 'active', name: 'Active Client', color: 'bg-green-500' },
+  { id: 'bad_number', name: 'Bad Number', color: 'bg-rose-500' },
   { id: 'lost', name: 'Lost', color: 'bg-red-500' },
 ] as const;
 

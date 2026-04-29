@@ -67,6 +67,11 @@ const stageConfig: Record<string, { bg: string; gradient: string; text: string; 
   new: { bg: 'bg-blue-500', gradient: 'from-blue-500 to-blue-600', text: 'text-blue-600', light: 'bg-blue-50 dark:bg-blue-950/30' },
   contacted_1: { bg: 'bg-yellow-500', gradient: 'from-yellow-500 to-yellow-600', text: 'text-yellow-600', light: 'bg-yellow-50 dark:bg-yellow-950/30' },
   contacted_2: { bg: 'bg-amber-500', gradient: 'from-amber-500 to-amber-600', text: 'text-amber-600', light: 'bg-amber-50 dark:bg-amber-950/30' },
+  contacted_3: { bg: 'bg-amber-600', gradient: 'from-amber-600 to-amber-700', text: 'text-amber-700', light: 'bg-amber-50 dark:bg-amber-950/40' },
+  contacted_5: { bg: 'bg-amber-700', gradient: 'from-amber-700 to-amber-800', text: 'text-amber-800', light: 'bg-amber-100 dark:bg-amber-950/50' },
+  contacted_6: { bg: 'bg-amber-800', gradient: 'from-amber-800 to-amber-900', text: 'text-amber-900', light: 'bg-amber-100 dark:bg-amber-950/60' },
+  pending: { bg: 'bg-violet-500', gradient: 'from-violet-500 to-violet-600', text: 'text-violet-600', light: 'bg-violet-50 dark:bg-violet-950/30' },
+  demo: { bg: 'bg-sky-500', gradient: 'from-sky-500 to-sky-600', text: 'text-sky-600', light: 'bg-sky-50 dark:bg-sky-950/30' },
   census_requested: { bg: 'bg-orange-500', gradient: 'from-orange-500 to-orange-600', text: 'text-orange-600', light: 'bg-orange-50 dark:bg-orange-950/30' },
   proposal_sent: { bg: 'bg-purple-500', gradient: 'from-purple-500 to-purple-600', text: 'text-purple-600', light: 'bg-purple-50 dark:bg-purple-950/30' },
   group_info: { bg: 'bg-indigo-500', gradient: 'from-indigo-500 to-indigo-600', text: 'text-indigo-600', light: 'bg-indigo-50 dark:bg-indigo-950/30' },
@@ -75,6 +80,7 @@ const stageConfig: Record<string, { bg: string; gradient: string; text: string; 
   census_final: { bg: 'bg-cyan-500', gradient: 'from-cyan-500 to-cyan-600', text: 'text-cyan-600', light: 'bg-cyan-50 dark:bg-cyan-950/30' },
   go_live: { bg: 'bg-emerald-500', gradient: 'from-emerald-500 to-emerald-600', text: 'text-emerald-600', light: 'bg-emerald-50 dark:bg-emerald-950/30' },
   active: { bg: 'bg-green-500', gradient: 'from-green-500 to-green-600', text: 'text-green-600', light: 'bg-green-50 dark:bg-green-950/30' },
+  bad_number: { bg: 'bg-rose-500', gradient: 'from-rose-500 to-rose-600', text: 'text-rose-600', light: 'bg-rose-50 dark:bg-rose-950/30' },
   lost: { bg: 'bg-red-500', gradient: 'from-red-500 to-red-600', text: 'text-red-600', light: 'bg-red-50 dark:bg-red-950/30' },
 };
 
@@ -245,7 +251,7 @@ function StageColumn({ stage }: { stage: PipelineStage }) {
   const progressWidth = `${probability}%`;
 
   return (
-    <div className="flex flex-col w-[320px] flex-shrink-0">
+    <div className="flex flex-col w-[280px] flex-shrink-0">
       {/* Enhanced Stage Header */}
       <div className={`rounded-t-xl overflow-hidden shadow-sm`}>
         {/* Gradient Header Bar */}
@@ -654,8 +660,8 @@ export default function PipelinePage() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="overflow-x-auto w-full pb-4">
-          <div className="flex gap-4 min-w-max">
+        <div className="overflow-x-auto w-full pb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800" style={{ scrollbarWidth: 'thin' }}>
+          <div className="flex gap-3 min-w-max">
             {(stages ?? []).map((stage) => (
               <StageColumn key={stage.id} stage={stage} />
             ))}
