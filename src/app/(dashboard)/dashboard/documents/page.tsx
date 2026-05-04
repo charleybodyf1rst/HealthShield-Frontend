@@ -5,16 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Download, ExternalLink, FileText, Film, Globe, FolderOpen } from 'lucide-react';
+import { Download, ExternalLink, FileText, Film, Globe, FolderOpen, FileSpreadsheet, Mail } from 'lucide-react';
 
 interface Document {
   id: string;
   name: string;
   description: string;
   category: string;
-  type: 'pdf' | 'link' | 'video';
+  type: 'pdf' | 'link' | 'video' | 'template' | 'xlsx';
   url: string;
-  icon: 'pdf' | 'link' | 'video';
+  icon: 'pdf' | 'link' | 'video' | 'template' | 'xlsx';
+  download?: boolean;
 }
 
 const documents: Document[] = [
@@ -86,18 +87,43 @@ const documents: Document[] = [
     url: 'https://vimeo.com/1097456061',
     icon: 'video',
   },
+
+  // SilverPoint Onboarding Templates
+  {
+    id: '8',
+    name: 'SilverPoint Initial Census Template',
+    description: 'Excel template for collecting employee census data — first names, last names, DOB, employee class, dependents, salary. Required for proposal generation.',
+    category: 'Templates',
+    type: 'xlsx',
+    url: '/templates/silverpoint-initial-census.xlsx',
+    icon: 'xlsx',
+    download: true,
+  },
+  {
+    id: '9',
+    name: 'Group Information Form',
+    description: 'PDF form for collecting company demographics, payroll details, broker info, and authorized signer. Required to prepare the SilverPoint agreement.',
+    category: 'Templates',
+    type: 'template',
+    url: '/templates/group-information-form.pdf',
+    icon: 'template',
+    download: true,
+  },
 ];
 
 const categoryColors: Record<string, string> = {
   'Sales Collateral': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
   'Websites': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
   'Videos': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  'Templates': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
 };
 
 const iconMap = {
   pdf: FileText,
   link: Globe,
   video: Film,
+  template: FileText,
+  xlsx: FileSpreadsheet,
 };
 
 export default function DocumentsPage() {
@@ -107,12 +133,31 @@ export default function DocumentsPage() {
   const filtered = filter === 'all' ? documents : documents.filter((d) => d.category === filter);
 
   const handleOpen = (doc: Document) => {
-    window.open(doc.url, '_blank');
+    if (doc.download) {
+      // Trigger download
+      const a = document.createElement('a');
+      a.href = doc.url;
+      a.download = doc.url.split('/').pop() || 'download';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast.success('Downloading ' + doc.name);
+    } else {
+      window.open(doc.url, '_blank');
+    }
   };
 
   const handleCopyLink = (url: string) => {
-    navigator.clipboard.writeText(url);
+    const fullUrl = url.startsWith('http') ? url : window.location.origin + url;
+    navigator.clipboard.writeText(fullUrl);
     toast.success('Link copied to clipboard');
+  };
+
+  const handleEmailLead = (doc: Document) => {
+    const fullUrl = doc.url.startsWith('http') ? doc.url : window.location.origin + doc.url;
+    const subject = encodeURIComponent('HealthShield: ' + doc.name);
+    const body = encodeURIComponent('Hi,\n\nAttached is the ' + doc.name + ' you can download here:\n' + fullUrl + '\n\n' + doc.description + '\n\nBest,\nHealthShield Team');
+    window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
   };
 
   return (
@@ -151,11 +196,15 @@ export default function DocumentsPage() {
                   <div className={`h-12 w-12 rounded-lg flex items-center justify-center shrink-0 ${
                     doc.type === 'pdf' ? 'bg-red-100 dark:bg-red-900/30' :
                     doc.type === 'video' ? 'bg-purple-100 dark:bg-purple-900/30' :
+                    doc.type === 'xlsx' ? 'bg-green-100 dark:bg-green-900/30' :
+                    doc.type === 'template' ? 'bg-amber-100 dark:bg-amber-900/30' :
                     'bg-blue-100 dark:bg-blue-900/30'
                   }`}>
                     <Icon className={`h-6 w-6 ${
                       doc.type === 'pdf' ? 'text-red-600 dark:text-red-400' :
                       doc.type === 'video' ? 'text-purple-600 dark:text-purple-400' :
+                      doc.type === 'xlsx' ? 'text-green-600 dark:text-green-400' :
+                      doc.type === 'template' ? 'text-amber-600 dark:text-amber-400' :
                       'text-blue-600 dark:text-blue-400'
                     }`} />
                   </div>
@@ -167,11 +216,17 @@ export default function DocumentsPage() {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">{doc.description}</p>
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-3 flex-wrap">
                       <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleOpen(doc); }}>
-                        <ExternalLink className="h-3 w-3 mr-1" />
-                        {doc.type === 'pdf' ? 'View PDF' : doc.type === 'video' ? 'Watch' : 'Visit'}
+                        {doc.download ? <Download className="h-3 w-3 mr-1" /> : <ExternalLink className="h-3 w-3 mr-1" />}
+                        {doc.download ? 'Download' : doc.type === 'pdf' ? 'View PDF' : doc.type === 'video' ? 'Watch' : 'Visit'}
                       </Button>
+                      {doc.category === 'Templates' && (
+                        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); handleEmailLead(doc); }}>
+                          <Mail className="h-3 w-3 mr-1" />
+                          Email to Lead
+                        </Button>
+                      )}
                       <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleCopyLink(doc.url); }}>
                         Copy Link
                       </Button>
