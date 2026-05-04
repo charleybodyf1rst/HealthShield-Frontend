@@ -416,11 +416,15 @@ export const leadsApi = {
   getActivities: (leadId: string) =>
     api.get<{ success: boolean; activities: Array<{ id: number; lead_id: number; activity_type: string; description: string; metadata: string | null; user_id: number | null; activity_at: string; created_at: string; }> }>(`/api/v1/crm/leads/${leadId}/activities`).catch(() => ({ success: false, activities: [] })),
 
-  addActivity: (leadId: string, data: Partial<LeadActivity>) =>
-    api.post<{ success: boolean; message: string; lead: unknown }>(`/api/v1/crm/leads/${leadId}/note`, {
+  addActivity: (leadId: string, data: Partial<LeadActivity>) => {
+    // Backend only accepts these note_type values; map LeadActivity types accordingly
+    const allowedTypes = ['general', 'call', 'meeting', 'email', 'task'];
+    const noteType = data.type && allowedTypes.includes(data.type) ? data.type : 'general';
+    return api.post<{ success: boolean; message: string; lead: unknown }>(`/api/v1/crm/leads/${leadId}/note`, {
       note: data.description || data.title || '',
-      note_type: data.type || 'general',
-    }),
+      note_type: noteType,
+    });
+  },
 
   // Tasks — uses CRM tasks endpoint (GET/POST /crm/tasks)
   getTasks: (leadId: string) =>
