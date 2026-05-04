@@ -1097,19 +1097,33 @@ export const useHealthShieldCrmStore = create<CrmState>((set, get) => ({
     set({ leadsLoading: true, error: null });
 
     try {
-      const response = await api.put(`${API_URL}/api/v1/crm/leads/${id}`, camelToSnake(data as Record<string, any>));
-      const updatedLead = snakeToCamel(response.data.data) as CrmLead;
+      // Strip undefined/empty values so we don't send invalid data to validators
+      const snakePayload = camelToSnake(data as Record<string, any>);
+      const cleanPayload: Record<string, unknown> = {};
+      Object.entries(snakePayload).forEach(([k, v]) => {
+        if (v !== undefined && v !== '' && v !== null) cleanPayload[k] = v;
+      });
+
+      const response = await api.put(`${API_URL}/api/v1/crm/leads/${id}`, cleanPayload);
+      // Backend returns lead at top level OR wrapped in {data: ...} OR {data: {data: ...}}
+      const raw = response.data?.data?.data || response.data?.data || response.data;
+      const updatedLead = (raw && typeof raw === 'object' && 'id' in raw)
+        ? snakeToCamel(raw as Record<string, any>) as CrmLead
+        : null;
 
       set((state) => ({
-        leads: state.leads.map((l) => (l.id === id ? updatedLead : l)),
+        leads: updatedLead ? state.leads.map((l) => (l.id === id ? updatedLead : l)) : state.leads,
         leadsLoading: false,
       }));
 
-      return updatedLead;
+      return updatedLead as CrmLead;
     } catch (error) {
       const message = axios.isAxiosError(error)
-        ? error.response?.data?.message || 'Failed to update lead'
+        ? error.response?.data?.message || error.response?.data?.errors
+          ? JSON.stringify(error.response.data.errors)
+          : error.message
         : 'Failed to update lead';
+      console.error('[updateLead] failed:', { id, data, error: axios.isAxiosError(error) ? error.response?.data : error });
       set({ error: message, leadsLoading: false });
       throw new Error(message);
     }
