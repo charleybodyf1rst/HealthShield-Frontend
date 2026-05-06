@@ -210,10 +210,6 @@ export default function LeadDetailClient() {
       const rawActivities = result?.activities || [];
       if (rawActivities.length > 0) {
         const mapped = rawActivities.map((a: any) => {
-          // Parse metadata JSON if present (contains full_note for note activities)
-          let metadata: any = {};
-          try { metadata = a.metadata ? JSON.parse(a.metadata) : {}; } catch { /* ignore */ }
-
           const actType = a.activity_type || a.type || 'note';
           const isNote = actType === 'note_added' || actType === 'note';
 
@@ -221,8 +217,8 @@ export default function LeadDetailClient() {
             id: `activity-${a.id}`,
             leadId: String(id),
             type: (isNote ? 'note' : actType) as LeadActivity['type'],
-            title: isNote ? 'Note added' : (a.description?.split(':')[0] || actType.replace('_', ' ')),
-            description: metadata.full_note || a.description || undefined,
+            title: isNote ? 'Note added' : (actType.replace(/_/g, ' ')),
+            description: a.description || undefined,
             outcome: undefined,
             duration: undefined,
             createdBy: String(a.user_id || ''),
