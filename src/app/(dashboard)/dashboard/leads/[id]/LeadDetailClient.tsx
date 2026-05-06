@@ -709,9 +709,9 @@ export default function LeadDetailClient() {
                           </SelectContent>
                         </Select>
                         <input
-                          type="date"
-                          title="Due date"
-                          placeholder="Due date"
+                          type="datetime-local"
+                          title="Due date and time"
+                          placeholder="Due date and time"
                           className="rounded-md border px-3 py-2 text-sm bg-background"
                           value={taskForm.dueAt}
                           onChange={(e) => setTaskForm({ ...taskForm, dueAt: e.target.value })}
@@ -813,7 +813,10 @@ export default function LeadDetailClient() {
                               </Badge>
                               {task.dueAt && (
                                 <span className="text-xs text-muted-foreground">
-                                  Due: {safeFormat(task.dueAt, 'MMM d, yyyy')}
+                                  Due: {safeFormat(
+                                    task.dueAt,
+                                    /T\d{2}:\d{2}/.test(task.dueAt) ? 'MMM d, yyyy h:mm a' : 'MMM d, yyyy'
+                                  )}
                                 </span>
                               )}
                             </div>

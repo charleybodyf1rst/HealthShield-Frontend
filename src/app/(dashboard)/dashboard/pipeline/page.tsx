@@ -18,6 +18,8 @@ import {
   Building2,
   Calendar,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   DollarSign,
   GripVertical,
@@ -424,6 +426,51 @@ export default function PipelinePage() {
     }
   }, []);
 
+  // Translate vertical mouse-wheel into horizontal scroll when over the pipeline.
+  // Only kicks in when the user isn't already scrolling horizontally (deltaX === 0).
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaX !== 0) return;
+      if (e.deltaY === 0) return;
+      // Only intercept if there's actually horizontal overflow to scroll.
+      if (el.scrollWidth <= el.clientWidth) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
+  // Track scroll position so we can show/hide the left/right arrow buttons.
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () => {
+      setCanScrollLeft(el.scrollLeft > 4);
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    };
+    update();
+    el.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    // Re-check after content settles (next frame) since stages render async.
+    const timeout = setTimeout(update, 100);
+    return () => {
+      el.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      clearTimeout(timeout);
+    };
+  });
+
+  const scrollByAmount = (delta: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: delta, behavior: 'smooth' });
+  };
+
   // Load pipeline on mount
   useEffect(() => {
     fetchPipeline();
@@ -694,28 +741,50 @@ export default function PipelinePage() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div
-          ref={scrollRef}
-          className="pb-6 -mx-4 md:-mx-6"
-          style={{
-            overflowX: 'auto',
-            overflowY: 'visible',
-            WebkitOverflowScrolling: 'touch',
-            paddingLeft: '1rem',
-            paddingRight: '1rem',
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#666 #222',
-            cursor: 'grab',
-          }}
-          onMouseDown={handleScrollMouseDown}
-          onMouseMove={handleScrollMouseMove}
-          onMouseUp={handleScrollMouseUp}
-          onMouseLeave={handleScrollMouseUp}
-        >
-          <div className="flex gap-3" style={{ width: 'max-content' }}>
-            {(stages ?? []).map((stage) => (
-              <StageColumn key={stage.id} stage={stage} />
-            ))}
+        <div className="relative">
+          {canScrollLeft && (
+            <button
+              type="button"
+              aria-label="Scroll pipeline left"
+              onClick={() => scrollByAmount(-600)}
+              className="absolute left-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-background/95 border shadow-md flex items-center justify-center hover:bg-accent transition"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+          )}
+          {canScrollRight && (
+            <button
+              type="button"
+              aria-label="Scroll pipeline right"
+              onClick={() => scrollByAmount(600)}
+              className="absolute right-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-background/95 border shadow-md flex items-center justify-center hover:bg-accent transition"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          )}
+          <div
+            ref={scrollRef}
+            className="pb-6 -mx-4 md:-mx-6"
+            style={{
+              overflowX: 'auto',
+              overflowY: 'visible',
+              WebkitOverflowScrolling: 'touch',
+              paddingLeft: '1rem',
+              paddingRight: '1rem',
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#666 #222',
+              cursor: 'grab',
+            }}
+            onMouseDown={handleScrollMouseDown}
+            onMouseMove={handleScrollMouseMove}
+            onMouseUp={handleScrollMouseUp}
+            onMouseLeave={handleScrollMouseUp}
+          >
+            <div className="flex gap-3" style={{ width: 'max-content' }}>
+              {(stages ?? []).map((stage) => (
+                <StageColumn key={stage.id} stage={stage} />
+              ))}
+            </div>
           </div>
         </div>
 
