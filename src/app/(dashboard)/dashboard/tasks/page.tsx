@@ -43,6 +43,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import Link from 'next/link';
 import {
   Plus,
   Calendar,
@@ -54,6 +55,9 @@ import {
   CheckCircle2,
   Clock,
   ClipboardList,
+  Phone,
+  Mail,
+  User,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -93,6 +97,17 @@ function getHeaders(): Record<string, string> {
 // Types
 // ---------------------------------------------------------------------------
 
+interface LinkedLead {
+  id: number;
+  contact_first_name: string | null;
+  contact_last_name: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  company_name: string | null;
+  lead_source: string | null;
+  status: string | null;
+}
+
 interface Task {
   id: number;
   title: string;
@@ -103,6 +118,7 @@ interface Task {
   category: string | null;
   created_at: string;
   cover_image?: string | null;
+  lead?: LinkedLead | null;
 }
 
 // Store cover image URL in description as [cover:URL] prefix
@@ -347,6 +363,54 @@ function TaskCard({
         </p>
       )}
 
+      {/* Linked lead — shown when this task was created from a lead detail page */}
+      {task.lead && (
+        <div className="mt-2.5 pl-6 rounded-md bg-white/[0.04] border border-white/5 px-2 py-1.5 space-y-1">
+          <Link
+            href={`/dashboard/leads/${task.lead.id}`}
+            className="flex items-center gap-1.5 text-xs text-white/80 hover:text-orange-400 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <User className="h-3 w-3 shrink-0" />
+            <span className="font-medium truncate">
+              {[task.lead.contact_first_name, task.lead.contact_last_name].filter(Boolean).join(' ') || 'Unnamed lead'}
+            </span>
+            {task.lead.company_name && (
+              <span className="text-white/40 truncate">· {task.lead.company_name}</span>
+            )}
+          </Link>
+          <div className="flex items-center gap-3 flex-wrap">
+            {task.lead.contact_phone && (
+              <a
+                href={`tel:${task.lead.contact_phone}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-xs text-white/60 hover:text-orange-400"
+                title="Call"
+              >
+                <Phone className="h-3 w-3" />
+                {task.lead.contact_phone}
+              </a>
+            )}
+            {task.lead.contact_email && (
+              <a
+                href={`mailto:${task.lead.contact_email}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-xs text-white/60 hover:text-orange-400"
+                title="Email"
+              >
+                <Mail className="h-3 w-3" />
+                <span className="truncate max-w-[180px]">{task.lead.contact_email}</span>
+              </a>
+            )}
+            {task.lead.lead_source && (
+              <span className="text-[10px] text-white/30 uppercase tracking-wide">
+                {task.lead.lead_source}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Badges row */}
       <div className="flex items-center gap-1.5 flex-wrap mt-2.5 pl-6">
         <span
@@ -562,6 +626,19 @@ export default function TasksPage() {
           const description = (raw.description as string | null) ?? null;
           const { cover, text } = parseCoverFromDescription(description);
           const status = (raw.status as Task['status']) || 'pending';
+          const rawLead = raw.lead as Record<string, unknown> | null | undefined;
+          const lead: LinkedLead | null = rawLead && rawLead.id
+            ? {
+                id: Number(rawLead.id),
+                contact_first_name: (rawLead.contact_first_name as string | null) ?? null,
+                contact_last_name: (rawLead.contact_last_name as string | null) ?? null,
+                contact_phone: (rawLead.contact_phone as string | null) ?? null,
+                contact_email: (rawLead.contact_email as string | null) ?? null,
+                company_name: (rawLead.company_name as string | null) ?? null,
+                lead_source: (rawLead.lead_source as string | null) ?? null,
+                status: (rawLead.status as string | null) ?? null,
+              }
+            : null;
           return {
             id: Number(raw.id),
             title: (raw.title as string) ?? '',
@@ -572,6 +649,7 @@ export default function TasksPage() {
             category: ((raw.category as string | null) ?? (raw.task_type as string | null)) ?? null,
             created_at: (raw.created_at as string) ?? '',
             cover_image: cover,
+            lead,
           };
         });
         setTasks(enriched);
