@@ -405,7 +405,10 @@ export const leadsApi = {
     }),
 
   bulkDelete: (leadIds: string[]) =>
-    api.post<{ status: number; message: string; deleted: number }>('/api/v1/sales/leads/bulk-delete', {
+    // Hits CrmLeadController::bulkDestroy so we delete from crm_leads (the same
+    // table the dashboard reads from). The /api/v1/sales/leads/bulk-delete
+    // endpoint deletes from a different `leads` table and won't see CRM rows.
+    api.post<{ status: number; message: string; data: { deleted: number } }>('/api/v1/crm/leads/bulk-delete', {
       lead_ids: leadIds,
     }),
 
