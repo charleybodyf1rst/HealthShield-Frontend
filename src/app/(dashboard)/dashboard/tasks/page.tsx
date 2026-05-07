@@ -543,22 +543,36 @@ export default function TasksPage() {
   const loadTasks = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/crm/todos`, {
+      // Unified on /api/v1/crm/tasks — same backend table that lead-detail tasks
+      // write to (CrmTaskController). Older /crm/todos was a parallel system.
+      const res = await fetch(`${API_BASE}/api/v1/crm/tasks?per_page=100`, {
         headers: getHeaders(),
       });
       if (res.ok) {
         const data = await res.json();
-        const list: Task[] = Array.isArray(data.data)
+        const list: Array<Record<string, unknown>> = Array.isArray(data.data)
           ? data.data
-          : Array.isArray(data.todos)
-            ? data.todos
+          : Array.isArray(data.tasks)
+            ? data.tasks
             : Array.isArray(data)
               ? data
               : [];
-        // Parse cover images from description
-        const enriched = list.map((t: Task) => {
-          const { cover, text } = parseCoverFromDescription(t.description);
-          return { ...t, cover_image: cover, description: text };
+        // Map backend shape → page shape (task_type → category, fallback status to pending).
+        const enriched: Task[] = list.map((raw) => {
+          const description = (raw.description as string | null) ?? null;
+          const { cover, text } = parseCoverFromDescription(description);
+          const status = (raw.status as Task['status']) || 'pending';
+          return {
+            id: Number(raw.id),
+            title: (raw.title as string) ?? '',
+            description: text,
+            status: ['pending', 'in_progress', 'completed'].includes(status) ? status : 'pending',
+            priority: ((raw.priority as Task['priority']) || 'medium'),
+            due_date: (raw.due_date as string | null) ?? null,
+            category: ((raw.category as string | null) ?? (raw.task_type as string | null)) ?? null,
+            created_at: (raw.created_at as string) ?? '',
+            cover_image: cover,
+          };
         });
         setTasks(enriched);
       } else {
@@ -575,26 +589,36 @@ export default function TasksPage() {
     loadTasks();
   }, [loadTasks]);
 
+  // Translate page-shape body to CrmTask-shape (category → task_type).
+  const toBackendBody = (body: Record<string, string>): Record<string, string> => {
+    const out: Record<string, string> = { ...body };
+    if (out.category && !out.task_type) {
+      out.task_type = out.category;
+      delete out.category;
+    }
+    return out;
+  };
+
   const apiCreateTask = async (body: Record<string, string>) => {
-    const res = await fetch(`${API_BASE}/api/v1/crm/todos`, {
+    const res = await fetch(`${API_BASE}/api/v1/crm/tasks`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify(body),
+      body: JSON.stringify(toBackendBody(body)),
     });
     return res;
   };
 
   const apiUpdateTask = async (id: number, body: Record<string, string>) => {
-    const res = await fetch(`${API_BASE}/api/v1/crm/todos/${id}`, {
+    const res = await fetch(`${API_BASE}/api/v1/crm/tasks/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
-      body: JSON.stringify(body),
+      body: JSON.stringify(toBackendBody(body)),
     });
     return res;
   };
 
   const apiDeleteTask = async (id: number) => {
-    await fetch(`${API_BASE}/api/v1/crm/todos/${id}`, {
+    await fetch(`${API_BASE}/api/v1/crm/tasks/${id}`, {
       method: 'DELETE',
       headers: getHeaders(),
     });
@@ -725,6 +749,7 @@ export default function TasksPage() {
       priority: 'medium',
       category: '',
       due_date: '',
+      cover_image: '',
     });
     setDialogOpen(true);
   };
