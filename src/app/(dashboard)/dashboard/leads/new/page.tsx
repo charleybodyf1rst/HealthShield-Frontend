@@ -45,6 +45,7 @@ export default function NewLeadPage() {
     consultation_date: '',
     consultation_time: '',
     serviceName: undefined,
+    industry: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -189,6 +190,19 @@ export default function NewLeadPage() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="industry">Industry</Label>
+              <Input
+                id="industry"
+                placeholder="e.g. Healthcare, Tech, Banking, Education, Fitness"
+                value={formData.industry || ''}
+                onChange={(e) => updateField('industry', e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                What industry is this lead's company in? Shown in the Industry column on the leads list.
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

@@ -356,7 +356,7 @@ export const leadsApi = {
       contact_email: data.email,
       contact_phone: data.phone,
       lead_source: mapLeadSource(data.source),
-      industry: data.serviceName || undefined,
+      industry: data.industry?.trim() || undefined,
       deal_value: data.value,
       notes: data.notes,
     };

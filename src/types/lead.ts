@@ -153,6 +153,7 @@ export interface CreateLeadData {
   consultation_date?: string;
   consultation_time?: string;
   serviceName?: string;
+  industry?: string;
 }
 
 export interface UpdateLeadData extends Partial<CreateLeadData> {
