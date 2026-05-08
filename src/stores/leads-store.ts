@@ -299,7 +299,8 @@ export const usePipelineStore = create<PipelineStore>((set) => ({
         { id: 'go_live', name: 'Go-Live', color: '#10B981', order: 14, probability: 95 },
         { id: 'active', name: 'Active Client', color: '#22C55E', order: 15, probability: 100 },
         { id: 'bad_number', name: 'Bad Number', color: '#F43F5E', order: 16, probability: 0 },
-        { id: 'lost', name: 'Lost', color: '#EF4444', order: 17, probability: 0 },
+        { id: 'email_only', name: 'Email Only', color: '#1D4ED8', order: 17, probability: 10 },
+        { id: 'lost', name: 'Lost', color: '#EF4444', order: 18, probability: 0 },
       ];
 
       set({

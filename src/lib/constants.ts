@@ -99,6 +99,7 @@ export const LEAD_STATUSES = [
   { id: 'go_live', name: 'Go-Live', color: 'bg-emerald-500' },
   { id: 'active', name: 'Active Client', color: 'bg-green-500' },
   { id: 'bad_number', name: 'Bad Number', color: 'bg-rose-500' },
+  { id: 'email_only', name: 'Email Only', color: 'bg-blue-700' },
   { id: 'lost', name: 'Lost', color: 'bg-red-500' },
 ] as const;
 

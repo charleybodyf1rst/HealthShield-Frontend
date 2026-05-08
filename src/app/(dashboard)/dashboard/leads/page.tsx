@@ -67,6 +67,8 @@ const statusColors: Record<string, string> = {
   census_final: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20',
   go_live: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
   active: 'bg-green-500/10 text-green-500 border-green-500/20',
+  bad_number: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+  email_only: 'bg-blue-700/10 text-blue-400 border-blue-700/30',
   lost: 'bg-red-500/10 text-red-500 border-red-500/20',
   unresponsive: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
 };

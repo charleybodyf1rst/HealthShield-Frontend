@@ -83,6 +83,7 @@ const stageConfig: Record<string, { bg: string; gradient: string; text: string; 
   go_live: { bg: 'bg-emerald-500', gradient: 'from-emerald-500 to-emerald-600', text: 'text-emerald-600', light: 'bg-emerald-50 dark:bg-emerald-950/30' },
   active: { bg: 'bg-green-500', gradient: 'from-green-500 to-green-600', text: 'text-green-600', light: 'bg-green-50 dark:bg-green-950/30' },
   bad_number: { bg: 'bg-rose-500', gradient: 'from-rose-500 to-rose-600', text: 'text-rose-600', light: 'bg-rose-50 dark:bg-rose-950/30' },
+  email_only: { bg: 'bg-blue-700', gradient: 'from-blue-700 to-blue-800', text: 'text-blue-700', light: 'bg-blue-50 dark:bg-blue-950/30' },
   lost: { bg: 'bg-red-500', gradient: 'from-red-500 to-red-600', text: 'text-red-600', light: 'bg-red-50 dark:bg-red-950/30' },
 };
 
