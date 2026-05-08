@@ -399,6 +399,33 @@ export default function LeadDetailClient() {
             size="default"
             className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
           />
+          {/* Personal Pipeline toggle */}
+          <Button
+            size="sm"
+            variant={(lead.tags || []).includes('personal') ? 'default' : 'outline'}
+            onClick={async () => {
+              const current = Array.isArray(lead.tags) ? lead.tags : [];
+              const isPersonal = current.includes('personal');
+              const next = isPersonal
+                ? current.filter((t) => t !== 'personal')
+                : [...current, 'personal'];
+              try {
+                await updateLead(Number(lead.id), { tags: next } as never);
+                setLead((prev) => ({ ...prev, tags: next }));
+                toast.success(isPersonal ? 'Removed from Personal Pipeline' : 'Added to Personal Pipeline');
+              } catch {
+                toast.error('Failed to update tag');
+              }
+            }}
+            className={
+              (lead.tags || []).includes('personal')
+                ? 'bg-pink-500 hover:bg-pink-600 text-white border-pink-500'
+                : 'text-pink-600 hover:text-pink-700 hover:bg-pink-50'
+            }
+            title={(lead.tags || []).includes('personal') ? 'Remove from Personal Pipeline' : 'Add to Personal Pipeline'}
+          >
+            <span className="mr-1">★</span> Personal
+          </Button>
           <Button
             size="sm"
             variant={isEditing ? 'default' : 'outline'}

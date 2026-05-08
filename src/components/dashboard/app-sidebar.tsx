@@ -83,6 +83,11 @@ const mainNavItems = [
     icon: Sparkles,
   },
   {
+    title: 'Personal Pipeline',
+    href: '/dashboard/personal-pipeline',
+    icon: Heart,
+  },
+  {
     title: 'Policyholders',
     href: '/dashboard/contacts',
     icon: Users,

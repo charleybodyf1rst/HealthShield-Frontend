@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,8 @@ import type { CreateLeadData } from '@/types/lead';
 
 export default function NewLeadPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isPersonal = searchParams?.get('personal') === '1';
   const { createLead } = useLeadsStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<CreateLeadData>({
@@ -46,6 +48,7 @@ export default function NewLeadPage() {
     consultation_time: '',
     serviceName: undefined,
     industry: '',
+    tags: isPersonal ? ['personal'] : undefined,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,8 +57,8 @@ export default function NewLeadPage() {
 
     try {
       await createLead(formData);
-      toast.success('Lead created successfully!');
-      router.push('/dashboard/leads');
+      toast.success(isPersonal ? 'Personal lead added!' : 'Lead created successfully!');
+      router.push(isPersonal ? '/dashboard/personal-pipeline' : '/dashboard/leads');
     } catch (error) {
       console.error('Failed to create lead:', error);
       toast.error('Failed to create lead. Please try again.');
@@ -76,9 +79,13 @@ export default function NewLeadPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Add New Lead</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {isPersonal ? '★ Add Personal Lead' : 'Add New Lead'}
+          </h1>
           <p className="text-muted-foreground">
-            Enter the lead's information below
+            {isPersonal
+              ? "Someone you know personally — they'll land in your Personal Pipeline."
+              : "Enter the lead's information below"}
           </p>
         </div>
       </div>

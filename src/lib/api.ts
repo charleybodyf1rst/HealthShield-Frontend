@@ -350,7 +350,7 @@ export const leadsApi = {
   },
 
   create: async (data: CreateLeadData) => {
-    const payload = {
+    const payload: Record<string, unknown> = {
       company_name: data.serviceName || `${data.firstName} ${data.lastName}`.trim(),
       contact_first_name: data.firstName,
       contact_last_name: data.lastName,
@@ -361,6 +361,9 @@ export const leadsApi = {
       deal_value: data.value,
       notes: data.notes,
     };
+    if (Array.isArray(data.tags) && data.tags.length > 0) {
+      payload.tags = data.tags;
+    }
     const response = await api.post<any>(
       '/api/v1/crm/leads',
       payload
@@ -383,6 +386,13 @@ export const leadsApi = {
     if (data.assignedTo !== undefined) payload.assigned_to_user_id = data.assignedTo;
     if (data.nextFollowUpAt !== undefined) payload.next_follow_up_at = data.nextFollowUpAt;
     if (data.lostReason !== undefined) payload.lost_reason = data.lostReason;
+    // Pass through any extra snake_case fields the caller threaded onto the
+    // partial — we cast to Record<string, unknown> at the call site, so fields
+    // like `tags`, `industry`, `contact_title` etc. should reach the backend.
+    const passthrough = data as unknown as Record<string, unknown>;
+    for (const key of ['tags', 'industry', 'contact_title', 'contact_linkedin', 'company_name'] as const) {
+      if (passthrough[key] !== undefined) payload[key] = passthrough[key];
+    }
 
     const response = await api.put<unknown>(`/api/v1/crm/leads/${id}`, payload);
     return {
