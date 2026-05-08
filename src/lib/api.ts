@@ -306,6 +306,7 @@ function mapCrmLeadToLead(raw: any): Lead {
     classificationLabel: raw.company_type !== 'organization' ? raw.company_type : undefined,
     value: raw.deal_value ? Number(raw.deal_value) : raw.value ? Number(raw.value) : undefined,
     notes: raw.notes,
+    tags: Array.isArray(raw.tags) ? raw.tags : undefined,
     assignedTo: raw.assigned_to_user_id != null ? String(raw.assigned_to_user_id) : raw.assignedTo,
     lastContactedAt: raw.last_contacted_at || raw.lastContactedAt,
     nextFollowUpAt: raw.next_follow_up_at || raw.nextFollowUpAt,

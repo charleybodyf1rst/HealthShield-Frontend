@@ -16,6 +16,7 @@ import {
   FileText,
   FolderOpen,
   GitBranch,
+  Sparkles,
   Heart,
   Inbox,
   LayoutDashboard,
@@ -75,6 +76,11 @@ const mainNavItems = [
     title: 'Pipeline',
     href: '/dashboard/pipeline',
     icon: GitBranch,
+  },
+  {
+    title: 'Primed Pipeline',
+    href: '/dashboard/primed-pipeline',
+    icon: Sparkles,
   },
   {
     title: 'Policyholders',
