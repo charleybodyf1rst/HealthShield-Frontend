@@ -279,7 +279,13 @@ export const usePipelineStore = create<PipelineStore>((set) => ({
     try {
       // Fetch all leads for current org and group by status into pipeline stages
       const response = await leadsApi.getAll({ per_page: 1500 } as Parameters<typeof leadsApi.getAll>[0]);
-      const allLeads: Lead[] = response.data?.data || [];
+      // Hide leads that belong in the Primed/Personal sections so they don't
+      // double-show on the main pipeline. Each tagged lead is visible in its
+      // own dedicated pipeline view (/dashboard/primed-pipeline,
+      // /dashboard/personal-pipeline).
+      const allLeads: Lead[] = (response.data?.data || []).filter(
+        (l: Lead) => !(l.tags ?? []).some((t) => t === 'primed' || t === 'personal')
+      );
 
       const stageDefs = [
         { id: 'new', name: 'New Inquiry', color: '#3B82F6', order: 0, probability: 5 },

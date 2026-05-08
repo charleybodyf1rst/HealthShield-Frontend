@@ -78,9 +78,19 @@ const mainNavItems = [
     icon: GitBranch,
   },
   {
+    title: 'Primed Leads',
+    href: '/dashboard/primed-leads',
+    icon: Sparkles,
+  },
+  {
     title: 'Primed Pipeline',
     href: '/dashboard/primed-pipeline',
     icon: Sparkles,
+  },
+  {
+    title: 'Personal Leads',
+    href: '/dashboard/personal-leads',
+    icon: Heart,
   },
   {
     title: 'Personal Pipeline',

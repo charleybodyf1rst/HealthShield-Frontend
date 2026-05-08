@@ -116,6 +116,7 @@ export interface LeadFilters {
   source?: LeadSource | LeadSource[];
   assignedTo?: string;
   tags?: string[];
+  exclude_tags?: string[];
   minValue?: number;
   maxValue?: number;
   createdAfter?: string;

@@ -114,6 +114,12 @@ export default function LeadsPage() {
 
   // Client-side filtering for immediate feedback
   const filteredLeads = (leads ?? []).filter((lead) => {
+    // Hide leads tagged 'primed' or 'personal' — they live on dedicated pages
+    // (/dashboard/primed-leads, /dashboard/personal-leads). Visible here would
+    // double-show.
+    const tags = lead.tags ?? [];
+    if (tags.some((t) => t === 'primed' || t === 'personal')) return false;
+
     // Tab filter
     if (activeTab === 'pending' && !isPendingLead(lead)) return false;
     if (activeTab === 'pipeline' && !PIPELINE_STATUSES.includes(lead.status)) return false;
