@@ -18,11 +18,11 @@ steps:
       - '-c'
       - |
         docker build \
-          --build-arg NEXT_PUBLIC_API_URL=https://systemsf1rst-backend-887571186773.us-central1.run.app \
+          --build-arg NEXT_PUBLIC_API_URL=https://systemsf1rst-backend-647660614641.us-central1.run.app \
           --build-arg NEXT_PUBLIC_BUILD_ID=$BUILD_ID \
           --build-arg NEXT_PUBLIC_HEALTHSHIELD_ORG_ID=${_HEALTHSHIELD_ORG_ID} \
           --build-arg NEXT_PUBLIC_REVERB_APP_KEY="$$REVERB_APP_KEY" \
-          --build-arg NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-887571186773.us-central1.run.app \
+          --build-arg NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-647660614641.us-central1.run.app \
           -t gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID \
           -t gcr.io/$PROJECT_ID/${_APP_NAME}:latest \
           .
@@ -50,7 +50,7 @@ steps:
           --cpu 1 \
           --min-instances 0 \
           --max-instances 5 \
-          --set-env-vars "NODE_ENV=production,NEXT_PUBLIC_API_URL=https://systemsf1rst-backend-887571186773.us-central1.run.app,BUILD_ID=$BUILD_ID,ANTHROPIC_API_KEY=$$ANTHROPIC_API_KEY,NEXT_PUBLIC_REVERB_APP_KEY=$$REVERB_APP_KEY,NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-887571186773.us-central1.run.app,NEXT_PUBLIC_REVERB_PORT=443,NEXT_PUBLIC_REVERB_SCHEME=https,NEXT_PUBLIC_HEALTHSHIELD_ORG_ID=${_HEALTHSHIELD_ORG_ID}"
+          --set-env-vars "NODE_ENV=production,NEXT_PUBLIC_API_URL=https://systemsf1rst-backend-647660614641.us-central1.run.app,BUILD_ID=$BUILD_ID,ANTHROPIC_API_KEY=$$ANTHROPIC_API_KEY,NEXT_PUBLIC_REVERB_APP_KEY=$$REVERB_APP_KEY,NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-647660614641.us-central1.run.app,NEXT_PUBLIC_REVERB_PORT=443,NEXT_PUBLIC_REVERB_SCHEME=https,NEXT_PUBLIC_HEALTHSHIELD_ORG_ID=${_HEALTHSHIELD_ORG_ID}"
     id: 'Deploy'
     waitFor: ['Push']
     secretEnv: ['ANTHROPIC_API_KEY', 'REVERB_APP_KEY']
