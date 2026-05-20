@@ -23,11 +23,12 @@ steps:
           --build-arg NEXT_PUBLIC_HEALTHSHIELD_ORG_ID=${_HEALTHSHIELD_ORG_ID} \
           --build-arg NEXT_PUBLIC_REVERB_APP_KEY="$$REVERB_APP_KEY" \
           --build-arg NEXT_PUBLIC_REVERB_HOST=systemsf1rst-reverb-647660614641.us-central1.run.app \
+          --build-arg NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="$$GOOGLE_MAPS_API_KEY" \
           -t gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID \
           -t gcr.io/$PROJECT_ID/${_APP_NAME}:latest \
           .
     id: 'Build'
-    secretEnv: ['REVERB_APP_KEY']
+    secretEnv: ['REVERB_APP_KEY', 'GOOGLE_MAPS_API_KEY']
 
   # Push to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -61,6 +62,8 @@ availableSecrets:
       env: 'ANTHROPIC_API_KEY'
     - versionName: projects/$PROJECT_ID/secrets/REVERB_APP_KEY/versions/latest
       env: 'REVERB_APP_KEY'
+    - versionName: projects/$PROJECT_ID/secrets/GOOGLE_MAPS_API_KEY/versions/latest
+      env: 'GOOGLE_MAPS_API_KEY'
 
 options:
   logging: CLOUD_LOGGING_ONLY

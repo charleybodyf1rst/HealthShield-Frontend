@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import {
   Shield,
   X,
   UserPlus,
+  Map as MapIcon,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
@@ -33,9 +35,12 @@ import { ApprovalsTab } from '@/components/crm/ApprovalsTab';
 import { AiCallerTab } from '@/components/crm/AiCallerTab';
 import { AnalyticsTab } from '@/components/crm/AnalyticsTab';
 import { LeadsTab } from '@/components/crm/LeadsTab';
+import { MapTab } from '@/components/crm/MapTab';
 
 export default function InsuranceCrmPage() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'overview';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const isConnected = false; // Realtime connection handled by polling
 
   const {
@@ -226,6 +231,10 @@ export default function InsuranceCrmPage() {
                 <UserPlus className="w-4 h-4" />
                 Leads
               </TabsTrigger>
+              <TabsTrigger value="map" className="gap-2">
+                <MapIcon className="w-4 h-4" />
+                Map
+              </TabsTrigger>
               <TabsTrigger value="customers" className="gap-2">
                 <Users className="w-4 h-4" />
                 Customers
@@ -260,6 +269,10 @@ export default function InsuranceCrmPage() {
 
             <TabsContent value="leads" className="h-full m-0">
               <LeadsTab />
+            </TabsContent>
+
+            <TabsContent value="map" className="h-full m-0">
+              <MapTab />
             </TabsContent>
 
             <TabsContent value="customers" className="h-full m-0">
