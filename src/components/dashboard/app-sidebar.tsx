@@ -22,6 +22,7 @@ import {
   LayoutDashboard,
   LogOut,
   Mail,
+  Map as MapIcon,
   Megaphone,
   MessageSquare,
   Phone,
@@ -96,6 +97,11 @@ const mainNavItems = [
     title: 'Personal Pipeline',
     href: '/dashboard/personal-pipeline',
     icon: Heart,
+  },
+  {
+    title: 'Map',
+    href: '/dashboard/crm?tab=map',
+    icon: MapIcon,
   },
   {
     title: 'Policyholders',
