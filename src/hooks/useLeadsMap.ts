@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 
 /**
@@ -57,11 +57,38 @@ function paramsFromFilters(filters: MapFilters): Record<string, string> {
   return out;
 }
 
+/**
+ * Plain useState/useEffect hook — HealthShield does not have a QueryClientProvider
+ * mounted, so calling useQuery would crash with "No QueryClient set".
+ */
 export function useLeadsMap(filters: MapFilters = {}) {
-  return useQuery<MapResponse, Error>({
-    queryKey: ['crm-leads-map', filters],
-    queryFn: () => api.get<MapResponse>('/api/v1/crm/leads/map', paramsFromFilters(filters)),
-    staleTime: 30_000,
-    refetchOnWindowFocus: false,
-  });
+  const [data, setData] = useState<MapResponse | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | undefined>(undefined);
+
+  // Stable key so we refetch only when filters actually change
+  const key = JSON.stringify(filters);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    setError(undefined);
+    api
+      .get<MapResponse>('/api/v1/crm/leads/map', paramsFromFilters(filters))
+      .then((res) => {
+        if (!cancelled) setData(res);
+      })
+      .catch((e) => {
+        if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  return { data, isLoading, error };
 }

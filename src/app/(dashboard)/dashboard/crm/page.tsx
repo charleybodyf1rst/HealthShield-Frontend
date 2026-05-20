@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -38,10 +37,15 @@ import { LeadsTab } from '@/components/crm/LeadsTab';
 import { MapTab } from '@/components/crm/MapTab';
 
 export default function InsuranceCrmPage() {
-  const searchParams = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'overview';
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState('overview');
   const isConnected = false; // Realtime connection handled by polling
+
+  // Read ?tab= deep-link param after mount (avoids Next.js useSearchParams Suspense bailout)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    if (tab) setActiveTab(tab);
+  }, []);
 
   const {
     kpis,
