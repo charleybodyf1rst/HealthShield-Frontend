@@ -109,11 +109,11 @@ export function middleware(request: NextRequest) {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
+      `script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.gstatic.com${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'https://systemsf1rst-backend-887571186773.us-central1.run.app'} wss://${process.env.NEXT_PUBLIC_REVERB_HOST || 'systemsf1rst-reverb-887571186773.us-central1.run.app'} https://storage.googleapis.com https://*.sentry.io`,
+      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'https://systemsf1rst-backend-887571186773.us-central1.run.app'} wss://${process.env.NEXT_PUBLIC_REVERB_HOST || 'systemsf1rst-reverb-887571186773.us-central1.run.app'} https://storage.googleapis.com https://*.sentry.io https://maps.googleapis.com https://maps.gstatic.com`,
       "frame-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",
