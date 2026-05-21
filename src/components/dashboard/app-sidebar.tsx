@@ -7,6 +7,7 @@ import {
   BarChart3,
   Bot,
   Calendar,
+  CalendarDays,
   CheckSquare,
   ChevronDown,
   Bell,
@@ -16,6 +17,7 @@ import {
   FileText,
   FolderOpen,
   GitBranch,
+  Handshake,
   Sparkles,
   Heart,
   Inbox,
@@ -99,8 +101,23 @@ const mainNavItems = [
     icon: Heart,
   },
   {
+    title: 'HR Staffing Leads',
+    href: '/dashboard/hr-staffing-leads',
+    icon: Handshake,
+  },
+  {
+    title: 'HR Staffing Pipeline',
+    href: '/dashboard/hr-staffing-pipeline',
+    icon: Handshake,
+  },
+  {
+    title: 'HR Events',
+    href: '/dashboard/hr-events',
+    icon: CalendarDays,
+  },
+  {
     title: 'Map',
-    href: '/dashboard/crm?tab=map',
+    href: '/dashboard/map',
     icon: MapIcon,
   },
   {
