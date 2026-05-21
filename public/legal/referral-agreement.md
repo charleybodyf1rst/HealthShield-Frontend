@@ -13,7 +13,7 @@ HealthShield and Partner are referred to individually as a "**Party**" and colle
 
 ## 1. Background
 
-HealthShield operates an AI-powered health and wellness benefits platform sold to mid-market employers (approximately 100 to 1,000 employees). Partner has existing business relationships with companies that fit this profile and is willing to make introductions to HealthShield in exchange for a referral fee on the terms set forth below.
+HealthShield operates an AI-powered health and wellness benefits platform sold to employers and other organizations. Partner has existing business relationships with companies that may fit this profile and is willing to make introductions to HealthShield in exchange for a referral fee on the terms set forth below.
 
 ## 2. Referral Services
 
