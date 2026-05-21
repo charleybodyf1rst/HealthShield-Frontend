@@ -27,6 +27,8 @@ import {
   Factory,
   MapPinned,
   GripVertical,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   DndContext,
@@ -48,6 +50,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { toast } from 'sonner';
+import { useHorizontalKanbanScroll } from '@/lib/scroll-kanban';
 import {
   useNamedPipelineStages,
   useNamedPipelineLeads,
@@ -200,6 +203,11 @@ export function NamedPipelineKanban({
     setActiveDragId(id);
   }, []);
 
+  const {
+    scrollRef, onMouseDown, onMouseMove, onMouseUp,
+    canScrollLeft, canScrollRight, scrollByAmount,
+  } = useHorizontalKanbanScroll<HTMLDivElement>();
+
   const handleDragEnd = useCallback(async (event: DragEndEvent) => {
     setActiveDragId(null);
     const { active, over } = event;
@@ -332,32 +340,61 @@ export function NamedPipelineKanban({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex-1 min-h-0 overflow-x-auto">
-          <div className="flex gap-4 h-full pb-2">
-            {stagesLoading && (
-              <div className="flex items-center justify-center w-full text-white/50 text-sm gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" /> Loading stages…
-              </div>
-            )}
-            {!stagesLoading && stages.length === 0 && (
-              <div className="flex items-center justify-center w-full text-white/50 text-sm">
-                No {displayName ?? pipelineSlug} stages yet.
-                {seederName && (
-                  <> Run <code className="mx-1 px-1.5 py-0.5 bg-white/10 rounded text-white/80">{seederName}</code>.</>
-                )}
-              </div>
-            )}
-            {stages.map((stage) => (
-              <StageColumn
-                key={stage.id}
-                stage={stage}
-                leads={leadsByStage[stage.slug] ?? []}
-                allStages={stages}
-                onMove={handleMoveStage}
-                movingLeadId={movingLeadId}
-                pitchSubjectTemplate={pitchSubjectTemplate}
-              />
-            ))}
+        <div className="relative flex-1 min-h-0">
+          {canScrollLeft && (
+            <button
+              type="button"
+              aria-label="Scroll pipeline left"
+              onClick={() => scrollByAmount(-600)}
+              className="absolute left-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-slate-900/95 border border-white/15 shadow-md flex items-center justify-center hover:bg-slate-800 transition"
+            >
+              <ChevronLeft className="h-5 w-5 text-white/80" />
+            </button>
+          )}
+          {canScrollRight && (
+            <button
+              type="button"
+              aria-label="Scroll pipeline right"
+              onClick={() => scrollByAmount(600)}
+              className="absolute right-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-slate-900/95 border border-white/15 shadow-md flex items-center justify-center hover:bg-slate-800 transition"
+            >
+              <ChevronRight className="h-5 w-5 text-white/80" />
+            </button>
+          )}
+          <div
+            ref={scrollRef}
+            className="h-full overflow-x-auto pb-2 cursor-grab"
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
+          >
+            <div className="flex gap-4 h-full w-max">
+              {stagesLoading && (
+                <div className="flex items-center justify-center w-full text-white/50 text-sm gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading stages…
+                </div>
+              )}
+              {!stagesLoading && stages.length === 0 && (
+                <div className="flex items-center justify-center w-full text-white/50 text-sm">
+                  No {displayName ?? pipelineSlug} stages yet.
+                  {seederName && (
+                    <> Run <code className="mx-1 px-1.5 py-0.5 bg-white/10 rounded text-white/80">{seederName}</code>.</>
+                  )}
+                </div>
+              )}
+              {stages.map((stage) => (
+                <StageColumn
+                  key={stage.id}
+                  stage={stage}
+                  leads={leadsByStage[stage.slug] ?? []}
+                  allStages={stages}
+                  onMove={handleMoveStage}
+                  movingLeadId={movingLeadId}
+                  pitchSubjectTemplate={pitchSubjectTemplate}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <DragOverlay>

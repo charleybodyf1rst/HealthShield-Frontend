@@ -20,6 +20,8 @@ import {
   Mail,
   ArrowUpRight,
   GripVertical,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   DndContext,
@@ -44,6 +46,7 @@ import { toast } from 'sonner';
 import type { Lead } from '@/types/lead';
 import { LEAD_STATUSES } from '@/lib/constants';
 import { useLeadFilters, LeadFilterBar } from './lead-filter-bar';
+import { useHorizontalKanbanScroll } from '@/lib/scroll-kanban';
 
 // Tailwind gradient + accent for each stage.
 const stageStyles: Record<string, { gradient: string; light: string }> = {
@@ -350,25 +353,61 @@ export function PipelineBoard({
     }
   }, [filtered, overrides, onMoveLead]);
 
+  const {
+    scrollRef, onMouseDown, onMouseMove, onMouseUp,
+    canScrollLeft, canScrollRight, scrollByAmount,
+  } = useHorizontalKanbanScroll<HTMLDivElement>();
+
   const board = (
-    <div className="flex gap-3 overflow-x-auto pb-4">
-      {stagesToRender.map((stage) => {
-        const stageLeads = byStage[stage.id] || [];
-        const styles = stageStyles[stage.id] || { gradient: 'from-gray-500 to-gray-600', light: 'bg-gray-50 dark:bg-gray-950/30' };
-        const totalValue = stageLeads.reduce((sum, l) => sum + (l.value || 0), 0);
-        return (
-          <StageColumn
-            key={stage.id}
-            stageId={stage.id}
-            stageName={stage.name}
-            styles={styles}
-            leads={stageLeads}
-            totalValue={totalValue}
-            accentClass={accentClass}
-            draggable={draggable}
-          />
-        );
-      })}
+    <div className="relative">
+      {canScrollLeft && (
+        <button
+          type="button"
+          aria-label="Scroll pipeline left"
+          onClick={() => scrollByAmount(-600)}
+          className="absolute left-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-slate-900/95 border border-white/15 shadow-md flex items-center justify-center hover:bg-slate-800 transition print:hidden"
+        >
+          <ChevronLeft className="h-5 w-5 text-white/80" />
+        </button>
+      )}
+      {canScrollRight && (
+        <button
+          type="button"
+          aria-label="Scroll pipeline right"
+          onClick={() => scrollByAmount(600)}
+          className="absolute right-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-slate-900/95 border border-white/15 shadow-md flex items-center justify-center hover:bg-slate-800 transition print:hidden"
+        >
+          <ChevronRight className="h-5 w-5 text-white/80" />
+        </button>
+      )}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-4 cursor-grab"
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+      >
+        <div className="flex gap-3 w-max">
+          {stagesToRender.map((stage) => {
+            const stageLeads = byStage[stage.id] || [];
+            const styles = stageStyles[stage.id] || { gradient: 'from-gray-500 to-gray-600', light: 'bg-gray-50 dark:bg-gray-950/30' };
+            const totalValue = stageLeads.reduce((sum, l) => sum + (l.value || 0), 0);
+            return (
+              <StageColumn
+                key={stage.id}
+                stageId={stage.id}
+                stageName={stage.name}
+                styles={styles}
+                leads={stageLeads}
+                totalValue={totalValue}
+                accentClass={accentClass}
+                draggable={draggable}
+              />
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 
