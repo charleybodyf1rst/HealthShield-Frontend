@@ -6,6 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Building2,
   Mail,
   Phone,
@@ -17,6 +24,8 @@ import {
   Send,
   ExternalLink,
   Loader2,
+  Factory,
+  MapPinned,
 } from 'lucide-react';
 import {
   useHrStaffingStages,
@@ -27,25 +36,79 @@ import {
 } from '@/hooks/useHrStaffingLeads';
 import { cn } from '@/lib/utils';
 
+const SIZE_RANGES: Record<string, { min?: number; max?: number; label: string }> = {
+  all: { label: 'All Sizes' },
+  '1-25': { min: 1, max: 25, label: '1-25' },
+  '25-50': { min: 25, max: 50, label: '25-50' },
+  '50-100': { min: 50, max: 100, label: '50-100' },
+  '100-200': { min: 100, max: 200, label: '100-200' },
+  '200-500': { min: 200, max: 500, label: '200-500' },
+  '500-1000': { min: 500, max: 1000, label: '500-1,000' },
+  '1000-5000': { min: 1000, max: 5000, label: '1,000-5,000' },
+  '5000+': { min: 5000, label: '5,000+' },
+};
+
 export function HrStaffingPipelineTab() {
   const { stages, isLoading: stagesLoading, error: stagesError } = useHrStaffingStages();
   const { leads, isLoading: leadsLoading, error: leadsError, reload: reloadLeads } = useHrStaffingLeads();
   const [search, setSearch] = useState('');
+  const [industryFilter, setIndustryFilter] = useState<string>('all');
+  const [sizeFilter, setSizeFilter] = useState<string>('all');
+  const [cityFilter, setCityFilter] = useState<string>('all');
   const [movingLeadId, setMovingLeadId] = useState<number | null>(null);
 
+  // Compute distinct industries + cities present in the loaded leads
+  const industries = useMemo(() => {
+    const s = new Set<string>();
+    leads.forEach((l) => l.industry && s.add(l.industry));
+    return Array.from(s).sort();
+  }, [leads]);
+
+  const cities = useMemo(() => {
+    const s = new Set<string>();
+    leads.forEach((l) => l.company_city && s.add(l.company_city));
+    return Array.from(s).sort();
+  }, [leads]);
+
   const filteredLeads = useMemo(() => {
-    if (!search.trim()) return leads;
-    const q = search.toLowerCase();
+    const q = search.trim().toLowerCase();
+    const sizeRange = SIZE_RANGES[sizeFilter] || {};
     return leads.filter((l) => {
-      return (
-        l.company_name?.toLowerCase().includes(q) ||
-        l.contact_email?.toLowerCase().includes(q) ||
-        l.company_city?.toLowerCase().includes(q) ||
-        l.contact_first_name?.toLowerCase().includes(q) ||
-        l.contact_last_name?.toLowerCase().includes(q)
-      );
+      if (q) {
+        const matches = (
+          l.company_name?.toLowerCase().includes(q) ||
+          l.contact_email?.toLowerCase().includes(q) ||
+          l.company_city?.toLowerCase().includes(q) ||
+          l.contact_first_name?.toLowerCase().includes(q) ||
+          l.contact_last_name?.toLowerCase().includes(q)
+        );
+        if (!matches) return false;
+      }
+      if (industryFilter !== 'all' && l.industry !== industryFilter) return false;
+      if (cityFilter !== 'all' && l.company_city !== cityFilter) return false;
+      if (sizeRange.min !== undefined || sizeRange.max !== undefined) {
+        const emp = l.estimated_employees ?? null;
+        if (emp === null) return false;
+        if (sizeRange.min !== undefined && emp < sizeRange.min) return false;
+        if (sizeRange.max !== undefined && emp >= sizeRange.max) return false;
+      }
+      return true;
     });
-  }, [leads, search]);
+  }, [leads, search, industryFilter, sizeFilter, cityFilter]);
+
+  const activeFilterCount = [
+    industryFilter !== 'all',
+    sizeFilter !== 'all',
+    cityFilter !== 'all',
+    search.trim() !== '',
+  ].filter(Boolean).length;
+
+  const clearFilters = () => {
+    setIndustryFilter('all');
+    setSizeFilter('all');
+    setCityFilter('all');
+    setSearch('');
+  };
 
   const leadsByStage = useMemo(() => {
     const groups: Record<string, HrStaffingLead[]> = {};
@@ -89,31 +152,78 @@ export function HrStaffingPipelineTab() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-16rem)] gap-4">
-      {/* Header bar */}
+      {/* Summary line */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="text-sm">
-            <span className="text-gray-500">Total leads:</span>{' '}
-            <strong>{leads.length}</strong>
-            <span className="text-gray-400 mx-2">·</span>
-            <span className="text-gray-500">Weighted pipeline value:</span>{' '}
-            <strong>${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
-          </div>
+        <div className="text-sm">
+          <span className="text-gray-500">Showing:</span>{' '}
+          <strong>{filteredLeads.length}</strong>
+          {filteredLeads.length !== leads.length && (
+            <span className="text-gray-400"> of {leads.length}</span>
+          )}
+          <span className="text-gray-400 mx-2">·</span>
+          <span className="text-gray-500">Weighted pipeline value:</span>{' '}
+          <strong>${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search firms / contacts / cities…"
-              className="pl-8 h-8 text-sm w-72"
-            />
-          </div>
-          <Button variant="ghost" size="sm" onClick={reloadLeads} disabled={leadsLoading}>
-            <RefreshCw className={cn('w-4 h-4', leadsLoading && 'animate-spin')} />
+        <Button variant="ghost" size="sm" onClick={reloadLeads} disabled={leadsLoading}>
+          <RefreshCw className={cn('w-4 h-4', leadsLoading && 'animate-spin')} />
+        </Button>
+      </div>
+
+      {/* Filter bar — matches Leads tab UX */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative flex-1 min-w-64">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search firms / contacts / cities…"
+            className="pl-8 h-9 text-sm"
+          />
+        </div>
+
+        <Select value={industryFilter} onValueChange={setIndustryFilter}>
+          <SelectTrigger className="w-44 h-9">
+            <Factory className="w-3.5 h-3.5 mr-1.5" />
+            <SelectValue placeholder="All Industries" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Industries</SelectItem>
+            {industries.map((ind) => (
+              <SelectItem key={ind} value={ind}>{ind}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={sizeFilter} onValueChange={setSizeFilter}>
+          <SelectTrigger className="w-40 h-9">
+            <Users className="w-3.5 h-3.5 mr-1.5" />
+            <SelectValue placeholder="All Sizes" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(SIZE_RANGES).map(([key, range]) => (
+              <SelectItem key={key} value={key}>{range.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={cityFilter} onValueChange={setCityFilter}>
+          <SelectTrigger className="w-40 h-9">
+            <MapPinned className="w-3.5 h-3.5 mr-1.5" />
+            <SelectValue placeholder="All Cities" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Cities</SelectItem>
+            {cities.map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {activeFilterCount > 0 && (
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9 text-xs">
+            Clear ({activeFilterCount})
           </Button>
-        </div>
+        )}
       </div>
 
       {/* Kanban */}
