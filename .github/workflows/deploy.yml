@@ -34,6 +34,8 @@ jobs:
           mv src/middleware.ts src/middleware.ts.bak || true
           # Remove API routes (incompatible with static export unless force-static)
           rm -rf src/app/api || true
+          # Strip force-dynamic directives (incompatible with static export; runtime cache-busting handled by Firebase deploys)
+          find src/app -name "layout.tsx" -o -name "page.tsx" | xargs sed -i "/export const dynamic = 'force-dynamic';/d"
           npm run build
         env:
           NODE_ENV: production
