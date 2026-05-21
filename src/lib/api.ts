@@ -2455,3 +2455,59 @@ export const insuranceApi = {
   verifyPolicy: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/public/verify-policy', data),
   checkClaimStatus: (data: Record<string, any>) => api.post<any>('/api/v1/insurance/public/claim-status', data),
 };
+
+// ============================================================================
+// BUSINESS CARDS API
+// ============================================================================
+
+export interface BusinessCard {
+  id: number;
+  organization_id: number;
+  slug: string;
+  name: string;
+  role: string;
+  email: string | null;
+  phone: string | null;
+  front_logo_url: string | null;
+  pdf_path: string | null;
+  front_png_path: string | null;
+  back_png_path: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateBusinessCardData {
+  name: string;
+  role: string;
+  email?: string;
+  phone?: string;
+  slug?: string;
+  front_logo_url?: string;
+  is_active?: boolean;
+}
+
+interface PaginatedBusinessCards {
+  data: BusinessCard[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+export const businessCardsApi = {
+  list: (params?: { active_only?: string; per_page?: string }) =>
+    api.get<PaginatedBusinessCards>('/api/v1/crm/business-cards', params),
+
+  get: (id: number | string) =>
+    api.get<BusinessCard>(`/api/v1/crm/business-cards/${id}`),
+
+  create: (data: CreateBusinessCardData) =>
+    api.post<BusinessCard>('/api/v1/crm/business-cards', data),
+
+  update: (id: number | string, data: Partial<CreateBusinessCardData>) =>
+    api.put<BusinessCard>(`/api/v1/crm/business-cards/${id}`, data),
+
+  delete: (id: number | string) =>
+    api.delete<{ message: string }>(`/api/v1/crm/business-cards/${id}`),
+};

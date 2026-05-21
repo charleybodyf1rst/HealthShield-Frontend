@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Bell,
   ClipboardList,
+  CreditCard,
   Database,
   DollarSign,
   FileSignature,
@@ -151,6 +152,11 @@ const mainNavItems = [
     title: 'Tasks',
     href: '/dashboard/tasks',
     icon: CheckSquare,
+  },
+  {
+    title: 'Business Cards',
+    href: '/dashboard/business-cards',
+    icon: CreditCard,
   },
 ];
 
