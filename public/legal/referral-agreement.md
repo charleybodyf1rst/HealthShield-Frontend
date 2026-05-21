@@ -1,43 +1,43 @@
-# HealthShield Referral Partner Agreement
+# BodyF1RST Referral Partner Agreement
 
 **Effective Date:** {{effective_date}}
 
 This Referral Partner Agreement (the "**Agreement**") is entered into as of the Effective Date by and between:
 
-- **HealthShield, Inc.**, a Texas corporation with its principal place of business at {{healthshield_address}} ("**HealthShield**"), and
+- **BodyF1RST, LLC**, a Texas limited liability company with its principal place of business at {{bodyfirst_address}} ("**BodyF1RST**"), and
 - **{{partner_company}}**, with its principal place of business at {{partner_address}} ("**Partner**").
 
-HealthShield and Partner are referred to individually as a "**Party**" and collectively as the "**Parties**."
+BodyF1RST and Partner are referred to individually as a "**Party**" and collectively as the "**Parties**."
 
 ---
 
 ## 1. Background
 
-HealthShield operates an AI-powered health and wellness benefits platform sold to employers and other organizations. Partner has existing business relationships with companies that may fit this profile and is willing to make introductions to HealthShield in exchange for a referral fee on the terms set forth below.
+BodyF1RST operates an AI-powered health and wellness benefits program sold to employers and other organizations. Partner has existing business relationships with companies that may fit this profile and is willing to make introductions to BodyF1RST in exchange for a referral fee on the terms set forth below.
 
 ## 2. Referral Services
 
-2.1 During the Term, Partner may, in its sole discretion, introduce prospective customers to HealthShield (each a "**Prospect**"). A Prospect becomes a "**Referred Client**" once HealthShield has executed a paid subscription agreement with that Prospect and HealthShield has confirmed in writing that the introduction is attributable to Partner.
+2.1 During the Term, Partner may, in its sole discretion, introduce prospective customers to BodyF1RST (each a "**Prospect**"). A Prospect becomes a "**Referred Client**" once BodyF1RST has executed a paid subscription agreement with that Prospect and BodyF1RST has confirmed in writing that the introduction is attributable to Partner.
 
-2.2 **Attribution.** Partner indicates a Prospect by sending an email to `partners@healthshield.com` (or such other address as HealthShield may designate in writing) with the subject line "Referral: [Prospect Company Name]" and a brief identification of the Prospect and the relevant contact. The first such email received by HealthShield is dispositive for attribution. Partner has no obligation to refer any minimum number of Prospects.
+2.2 **Attribution.** Partner indicates a Prospect by sending an email to `{{attribution_email}}` (or such other address as BodyF1RST may designate in writing) with the subject line "Referral: [Prospect Company Name]" and a brief identification of the Prospect and the relevant contact. The first such email received by BodyF1RST is dispositive for attribution. Partner has no obligation to refer any minimum number of Prospects.
 
-2.3 **No exclusivity.** Neither Party is obligated to deal exclusively with the other. HealthShield retains sole discretion to accept or decline any Prospect and to negotiate the commercial terms of any subscription agreement with a Referred Client.
+2.3 **No exclusivity.** Neither Party is obligated to deal exclusively with the other. BodyF1RST retains sole discretion to accept or decline any Prospect and to negotiate the commercial terms of any subscription agreement with a Referred Client.
 
 ## 3. Compensation
 
-3.1 **Referral Fee.** For each Referred Client, HealthShield will pay Partner a referral fee equal to **ten percent (10%) of Net Revenue** collected by HealthShield from the Referred Client during the **first twelve (12) months** after that Referred Client's subscription goes live (the "**Commission Window**").
+3.1 **Referral Fee.** For each Referred Client, BodyF1RST will pay Partner a referral fee equal to **ten percent (10%) of Net Revenue** collected by BodyF1RST from the Referred Client during the **first twelve (12) months** after that Referred Client's subscription goes live (the "**Commission Window**").
 
-3.2 **"Net Revenue"** means gross subscription fees actually collected by HealthShield from the Referred Client, less (a) refunds, (b) credits, (c) chargebacks, and (d) taxes collected on behalf of taxing authorities. It does not include amounts paid by the Referred Client for one-time implementation services, professional services, or third-party pass-through fees.
+3.2 **"Net Revenue"** means gross subscription fees actually collected by BodyF1RST from the Referred Client, less (a) refunds, (b) credits, (c) chargebacks, and (d) taxes collected on behalf of taxing authorities. It does not include amounts paid by the Referred Client for one-time implementation services, professional services, or third-party pass-through fees.
 
 3.3 **Payment schedule.** Referral fees are calculated on a calendar-quarter basis and paid **quarterly in arrears** within thirty (30) days of the close of each calendar quarter in which Net Revenue was collected.
 
 3.4 **No claw-back.** Once a referral fee has been earned and paid, it is not subject to claw-back if the Referred Client subsequently churns, defaults, or otherwise stops paying — provided the fee was paid in accordance with Section 3.1 above.
 
-3.5 **No fees after the Commission Window.** No referral fee is owed on any Net Revenue collected by HealthShield from the Referred Client after the close of that Referred Client's twelve-month Commission Window, even if the Referred Client renews or expands its subscription.
+3.5 **No fees after the Commission Window.** No referral fee is owed on any Net Revenue collected by BodyF1RST from the Referred Client after the close of that Referred Client's twelve-month Commission Window, even if the Referred Client renews or expands its subscription.
 
 3.6 **Reporting.** Each quarterly payment will be accompanied by a statement listing each Referred Client, the Net Revenue collected from that client during the quarter, and the resulting referral fee.
 
-3.7 **Taxes.** Partner is responsible for all taxes owed on referral fees. HealthShield will issue a Form 1099 (or local equivalent) for each calendar year in which referral fees paid to Partner exceed the applicable reporting threshold.
+3.7 **Taxes.** Partner is responsible for all taxes owed on referral fees. BodyF1RST will issue a Form 1099 (or local equivalent) for each calendar year in which referral fees paid to Partner exceed the applicable reporting threshold.
 
 ## 4. Term and Termination
 
@@ -49,13 +49,13 @@ HealthShield operates an AI-powered health and wellness benefits platform sold t
 
 4.4 **Termination for cause.** Either Party may terminate this Agreement immediately upon written notice if the other Party (a) materially breaches this Agreement and fails to cure that breach within fifteen (15) days after receiving notice, or (b) becomes insolvent, files for bankruptcy, or has a receiver appointed.
 
-4.5 **Survival of earned commissions.** Termination of this Agreement does not affect referral fees that have already been earned on Referred Clients whose Commission Window is still running at the time of termination. HealthShield will continue to pay Partner the 10% referral fee on Net Revenue collected from each such Referred Client through the end of that Referred Client's twelve-month Commission Window, on the same quarterly schedule.
+4.5 **Survival of earned commissions.** Termination of this Agreement does not affect referral fees that have already been earned on Referred Clients whose Commission Window is still running at the time of termination. BodyF1RST will continue to pay Partner the 10% referral fee on Net Revenue collected from each such Referred Client through the end of that Referred Client's twelve-month Commission Window, on the same quarterly schedule.
 
 ## 5. Independent Contractor
 
 5.1 Partner is an independent contractor. Nothing in this Agreement creates an employment, agency, joint-venture, or partnership relationship between the Parties.
 
-5.2 Partner has no authority to bind HealthShield, sign contracts on HealthShield's behalf, make representations or warranties about HealthShield's services beyond those approved in writing by HealthShield, or accept payments on HealthShield's behalf.
+5.2 Partner has no authority to bind BodyF1RST, sign contracts on BodyF1RST's behalf, make representations or warranties about BodyF1RST's services beyond those approved in writing by BodyF1RST, or accept payments on BodyF1RST's behalf.
 
 ## 6. Confidentiality
 
@@ -73,7 +73,7 @@ During the Term and for twelve (12) months thereafter, neither Party will solici
 
 8.1 Each Party represents that (a) it has full power and authority to enter into this Agreement, (b) entering into this Agreement does not violate any other agreement to which it is a party, and (c) it will comply with all applicable laws in performing under this Agreement.
 
-8.2 Partner additionally represents that (a) it will only refer Prospects with whom Partner has a legitimate pre-existing business relationship or who have consented to be referred, (b) it will not make any unauthorized representations about HealthShield's services, pricing, or performance, and (c) it will comply with all applicable anti-spam, anti-bribery, and data-protection laws when communicating with Prospects.
+8.2 Partner additionally represents that (a) it will only refer Prospects with whom Partner has a legitimate pre-existing business relationship or who have consented to be referred, (b) it will not make any unauthorized representations about BodyF1RST's services, pricing, or performance, and (c) it will comply with all applicable anti-spam, anti-bribery, and data-protection laws when communicating with Prospects.
 
 ## 9. Indemnification
 
@@ -93,7 +93,7 @@ This Agreement is governed by the laws of the State of Texas, without regard to 
 
 12.2 **Amendment.** This Agreement may be amended only by a written instrument signed by both Parties.
 
-12.3 **Assignment.** Neither Party may assign this Agreement without the other Party's prior written consent, except that HealthShield may assign this Agreement to an affiliate or to a successor in connection with a merger, acquisition, or sale of substantially all of its assets.
+12.3 **Assignment.** Neither Party may assign this Agreement without the other Party's prior written consent, except that BodyF1RST may assign this Agreement to an affiliate or to a successor in connection with a merger, acquisition, or sale of substantially all of its assets.
 
 12.4 **Notices.** All notices under this Agreement must be in writing and sent by email (with confirmation of receipt) or by overnight courier to the addresses set forth above (or such other address as a Party may designate in writing).
 
@@ -107,7 +107,7 @@ This Agreement is governed by the laws of the State of Texas, without regard to 
 
 ## Signatures
 
-**HEALTHSHIELD, INC.**
+**BODYF1RST, LLC**
 
 By: ______________________________
 

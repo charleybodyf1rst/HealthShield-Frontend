@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { FileSignature, Printer, Loader2, RotateCcw } from 'lucide-react';
 import { renderMarkdown } from '@/lib/render-markdown';
 
-const DEFAULT_HEALTHSHIELD_ADDRESS = '3651 Greystone Drive, Suite 302, Austin, TX 78731';
+const DEFAULT_BODYFIRST_ADDRESS = '3651 Greystone Drive, Suite 302, Austin, TX 78731';
 
 function todayLongDate(): string {
   return new Date().toLocaleDateString('en-US', {
@@ -32,7 +32,8 @@ export default function ReferralAgreementPage() {
   const [partnerTitle, setPartnerTitle] = useState('');
   const [partnerAddress, setPartnerAddress] = useState('');
   const [effectiveDate, setEffectiveDate] = useState(todayLongDate());
-  const [healthshieldAddress, setHealthshieldAddress] = useState(DEFAULT_HEALTHSHIELD_ADDRESS);
+  const [bodyfirstAddress, setBodyfirstAddress] = useState(DEFAULT_BODYFIRST_ADDRESS);
+  const [attributionEmail, setAttributionEmail] = useState('');
 
   useEffect(() => {
     fetch('/legal/referral-agreement.md')
@@ -52,7 +53,8 @@ export default function ReferralAgreementPage() {
       partner_title: partnerTitle,
       partner_address: partnerAddress,
       effective_date: effectiveDate,
-      healthshield_address: healthshieldAddress,
+      bodyfirst_address: bodyfirstAddress,
+      attribution_email: attributionEmail,
     });
   }, [
     markdown,
@@ -61,7 +63,8 @@ export default function ReferralAgreementPage() {
     partnerTitle,
     partnerAddress,
     effectiveDate,
-    healthshieldAddress,
+    bodyfirstAddress,
+    attributionEmail,
   ]);
 
   const handlePrint = () => window.print();
@@ -71,7 +74,8 @@ export default function ReferralAgreementPage() {
     setPartnerTitle('');
     setPartnerAddress('');
     setEffectiveDate(todayLongDate());
-    setHealthshieldAddress(DEFAULT_HEALTHSHIELD_ADDRESS);
+    setBodyfirstAddress(DEFAULT_BODYFIRST_ADDRESS);
+    setAttributionEmail('');
   };
 
   return (
@@ -135,15 +139,22 @@ export default function ReferralAgreementPage() {
             className="md:col-span-2"
           />
           <Field
-            label="HealthShield Address"
-            value={healthshieldAddress}
-            onChange={setHealthshieldAddress}
-            placeholder={DEFAULT_HEALTHSHIELD_ADDRESS}
+            label="BodyF1RST Address"
+            value={bodyfirstAddress}
+            onChange={setBodyfirstAddress}
+            placeholder={DEFAULT_BODYFIRST_ADDRESS}
+            className="md:col-span-2"
+          />
+          <Field
+            label="Your Email (for attribution)"
+            value={attributionEmail}
+            onChange={setAttributionEmail}
+            placeholder="charley@bodyf1rst.com"
             className="md:col-span-2"
           />
         </div>
         <p className="text-xs text-white/40 mt-3">
-          Empty fields render as blank lines in the printed PDF for handwritten fill-in.
+          Empty fields render as blank lines in the printed PDF for handwritten fill-in. Your email appears in Section 2.2 as the referral inbox for this partner.
         </p>
       </Card>
 
@@ -151,15 +162,15 @@ export default function ReferralAgreementPage() {
         {/* Branded header */}
         <div className="bg-slate-950 text-white px-10 py-7 border-b-4 border-orange-500 flex items-center justify-between gap-6">
           <img
-            src="/logos/bodyf1rst-metallic-logo.png"
-            alt="BodyF1RST | Performance Optimization"
-            className="h-14 w-auto"
+            src="/logos/b1-performance-optimization.png"
+            alt="BodyF1RST · Performance Optimization"
+            className="h-16 w-auto"
           />
           <div className="text-right">
             <div className="text-orange-400 text-[10px] font-bold tracking-[0.25em] uppercase">
               Partnership Agreement
             </div>
-            <div className="text-white/60 text-xs mt-1">HealthShield Referral Program</div>
+            <div className="text-white/60 text-xs mt-1">BodyF1RST Referral Program</div>
             <div className="text-white/40 text-[10px] mt-1">10% · 12 Months · Paid Quarterly</div>
           </div>
         </div>
@@ -185,7 +196,7 @@ export default function ReferralAgreementPage() {
 
         {/* Branded footer */}
         <div className="bg-slate-50 border-t border-slate-200 px-10 py-4 text-[11px] text-slate-500 flex justify-between items-center">
-          <span>BodyF1RST · HealthShield · Confidential</span>
+          <span>BodyF1RST, LLC · Confidential</span>
           <span className="font-semibold text-slate-600">Performance Optimization</span>
         </div>
       </Card>
