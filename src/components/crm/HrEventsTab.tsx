@@ -254,10 +254,16 @@ function EventCard({ event }: { event: CrmEvent }) {
       'p-4 flex flex-col transition-all border bg-white/[0.02] hover:bg-white/[0.04]',
       isMust ? 'border-amber-400/40 bg-amber-500/[0.05] hover:border-amber-400/60' : 'border-white/10 hover:border-white/20',
     )}>
-      <div className="flex items-start justify-between gap-2 mb-2.5">
-        <h3 className="font-semibold text-sm text-white leading-tight">{event.name}</h3>
+      {/* Prominent date chip — visual anchor of each card */}
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.06] border border-white/10 text-xs font-semibold text-white">
+          <Calendar className="w-3.5 h-3.5 text-amber-400" />
+          {dateRange}
+        </div>
         {isMust && <Star className="w-4 h-4 text-amber-400 flex-shrink-0" fill="currentColor" />}
       </div>
+
+      <h3 className="font-semibold text-sm text-white leading-tight mb-2.5">{event.name}</h3>
 
       <div className="flex flex-wrap gap-1 mb-3">
         <Badge className={cn(typeColor, 'text-xs')}>{event.type.replace('_', ' ')}</Badge>
@@ -265,10 +271,6 @@ function EventCard({ event }: { event: CrmEvent }) {
       </div>
 
       <div className="space-y-1.5 text-xs text-white/75 mb-3 flex-1">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
-          <span>{dateRange}</span>
-        </div>
         {(event.location_name || event.city) && (
           <div className="flex items-start gap-2">
             <MapPin className="w-3.5 h-3.5 text-white/40 flex-shrink-0 mt-0.5" />

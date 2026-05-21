@@ -92,6 +92,16 @@ export default function PersonalPipelinePage() {
     }
   }, []);
 
+  const moveLead = useCallback(async (leadId: string, newStageId: string) => {
+    const res = await fetch(`${API_BASE}/api/v1/crm/leads/${leadId}/move-stage`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ stage: newStageId }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await load();
+  }, [load]);
+
   useEffect(() => {
     load();
   }, [load]);
@@ -180,6 +190,7 @@ export default function PersonalPipelinePage() {
         <PipelineBoard
           leads={leads}
           accentClass="bg-gradient-to-br from-pink-500 to-rose-500"
+          onMoveLead={moveLead}
         />
       )}
     </div>

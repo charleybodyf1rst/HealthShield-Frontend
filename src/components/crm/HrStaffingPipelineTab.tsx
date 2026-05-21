@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +26,28 @@ import {
   Loader2,
   Factory,
   MapPinned,
+  GripVertical,
 } from 'lucide-react';
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  useDroppable,
+  type DragStartEvent,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { toast } from 'sonner';
 import {
   useHrStaffingStages,
   useHrStaffingLeads,
@@ -110,14 +131,19 @@ export function HrStaffingPipelineTab() {
     setSearch('');
   };
 
+  // Optimistic per-lead stage overrides while drag-move is in flight
+  const [stageOverrides, setStageOverrides] = useState<Record<number, string>>({});
+  const [activeDragId, setActiveDragId] = useState<number | null>(null);
+
   const leadsByStage = useMemo(() => {
     const groups: Record<string, HrStaffingLead[]> = {};
     for (const stage of stages) groups[stage.slug] = [];
     for (const l of filteredLeads) {
-      if (groups[l.stage]) groups[l.stage].push(l);
+      const stageSlug = stageOverrides[l.id] ?? l.stage;
+      if (groups[stageSlug]) groups[stageSlug].push(l);
     }
     return groups;
-  }, [filteredLeads, stages]);
+  }, [filteredLeads, stages, stageOverrides]);
 
   const totalValue = useMemo(() => {
     // $25/employee × probability — quick estimate of pipeline value
@@ -128,19 +154,73 @@ export function HrStaffingPipelineTab() {
     }, 0);
   }, [stages, leadsByStage]);
 
-  const handleMoveStage = async (lead: HrStaffingLead, newStageSlug: string) => {
+  const handleMoveStage = useCallback(async (lead: HrStaffingLead, newStageSlug: string) => {
     setMovingLeadId(lead.id);
     try {
       await moveLeadToStage(lead.id, newStageSlug);
       reloadLeads();
     } catch (e) {
       console.error('Failed to move lead', e);
-      // eslint-disable-next-line no-alert
-      alert('Failed to move lead. Check console.');
+      toast.error('Failed to move lead.');
     } finally {
       setMovingLeadId(null);
     }
-  };
+  }, [reloadLeads]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const activeDragLead = useMemo(
+    () => (activeDragId ? filteredLeads.find((l) => l.id === activeDragId) ?? null : null),
+    [activeDragId, filteredLeads],
+  );
+
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const id = typeof event.active.id === 'string' ? Number(event.active.id) : (event.active.id as number);
+    setActiveDragId(id);
+  }, []);
+
+  const handleDragEnd = useCallback(async (event: DragEndEvent) => {
+    setActiveDragId(null);
+    const { active, over } = event;
+    if (!over) return;
+    const leadId = typeof active.id === 'string' ? Number(active.id) : (active.id as number);
+    const lead = filteredLeads.find((l) => l.id === leadId);
+    if (!lead) return;
+
+    const currentStage = stageOverrides[leadId] ?? lead.stage;
+    const overId = String(over.id);
+
+    // Drop target is either a stage slug (hr-staffing-*) or another lead id.
+    let destStage: string | null = null;
+    if (stages.some((s) => s.slug === overId)) {
+      destStage = overId;
+    } else {
+      const overLeadId = Number(overId);
+      const overLead = filteredLeads.find((l) => l.id === overLeadId);
+      if (overLead) destStage = stageOverrides[overLead.id] ?? overLead.stage;
+    }
+    if (!destStage || destStage === currentStage) return;
+
+    setStageOverrides((o) => ({ ...o, [leadId]: destStage! }));
+    try {
+      await moveLeadToStage(leadId, destStage);
+      await reloadLeads();
+      setStageOverrides((o) => {
+        const { [leadId]: _, ...rest } = o;
+        return rest;
+      });
+    } catch (e) {
+      console.error('Drag move failed', e);
+      setStageOverrides((o) => {
+        const { [leadId]: _, ...rest } = o;
+        return rest;
+      });
+      toast.error('Failed to move lead.');
+    }
+  }, [filteredLeads, stages, stageOverrides, reloadLeads]);
 
   if (stagesError || leadsError) {
     return (
@@ -229,30 +309,52 @@ export function HrStaffingPipelineTab() {
       </div>
 
       {/* Kanban */}
-      <div className="flex-1 min-h-0 overflow-x-auto">
-        <div className="flex gap-4 h-full pb-2">
-          {stagesLoading && (
-            <div className="flex items-center justify-center w-full text-white/50 text-sm gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> Loading stages…
-            </div>
-          )}
-          {!stagesLoading && stages.length === 0 && (
-            <div className="flex items-center justify-center w-full text-white/50 text-sm">
-              No HR Staffing stages yet. Run <code className="mx-1 px-1.5 py-0.5 bg-white/10 rounded text-white/80">HrStaffingPipelineStagesSeeder</code>.
-            </div>
-          )}
-          {stages.map((stage) => (
-            <StageColumn
-              key={stage.id}
-              stage={stage}
-              leads={leadsByStage[stage.slug] ?? []}
-              allStages={stages}
-              onMove={handleMoveStage}
-              movingLeadId={movingLeadId}
-            />
-          ))}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="flex-1 min-h-0 overflow-x-auto">
+          <div className="flex gap-4 h-full pb-2">
+            {stagesLoading && (
+              <div className="flex items-center justify-center w-full text-white/50 text-sm gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" /> Loading stages…
+              </div>
+            )}
+            {!stagesLoading && stages.length === 0 && (
+              <div className="flex items-center justify-center w-full text-white/50 text-sm">
+                No HR Staffing stages yet. Run <code className="mx-1 px-1.5 py-0.5 bg-white/10 rounded text-white/80">HrStaffingPipelineStagesSeeder</code>.
+              </div>
+            )}
+            {stages.map((stage) => (
+              <StageColumn
+                key={stage.id}
+                stage={stage}
+                leads={leadsByStage[stage.slug] ?? []}
+                allStages={stages}
+                onMove={handleMoveStage}
+                movingLeadId={movingLeadId}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+        <DragOverlay>
+          {activeDragLead ? (
+            <Card className="p-3 bg-slate-900 border border-white/20 shadow-2xl w-72">
+              <div className="flex items-start gap-2 mb-2">
+                <Building2 className="w-3.5 h-3.5 mt-0.5 text-white/40 flex-shrink-0" />
+                <div className="font-semibold text-sm text-white leading-tight">{activeDragLead.company_name}</div>
+              </div>
+              {activeDragLead.contact_first_name !== 'HR' && (
+                <div className="text-xs text-white/75 ml-5">
+                  {activeDragLead.contact_first_name} {activeDragLead.contact_last_name}
+                </div>
+              )}
+            </Card>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }
@@ -268,6 +370,7 @@ interface StageColumnProps {
 function StageColumn({ stage, leads, allStages, onMove, movingLeadId }: StageColumnProps) {
   const stageRevenue = leads.reduce((sum, l) => sum + (l.estimated_employees ?? 0) * 25, 0);
   const color = stage.color ?? '#64748b';
+  const { setNodeRef, isOver } = useDroppable({ id: stage.slug });
 
   return (
     <div className="flex flex-col w-72 min-w-72 bg-white/[0.02] rounded-lg border border-white/10">
@@ -291,21 +394,29 @@ function StageColumn({ stage, leads, allStages, onMove, movingLeadId }: StageCol
           )}
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-2 space-y-2">
+      <div
+        ref={setNodeRef}
+        className={cn(
+          'flex-1 overflow-y-auto p-2 space-y-2 transition-colors',
+          isOver && 'bg-white/[0.04] ring-2 ring-inset ring-white/20',
+        )}
+      >
         {leads.length === 0 && (
           <div className="text-xs text-white/30 italic py-6 text-center">
-            No leads in this stage
+            {isOver ? 'Drop here' : 'No leads in this stage'}
           </div>
         )}
-        {leads.map((lead) => (
-          <LeadCard
-            key={lead.id}
-            lead={lead}
-            allStages={allStages}
-            onMove={(slug) => onMove(lead, slug)}
-            isMoving={movingLeadId === lead.id}
-          />
-        ))}
+        <SortableContext items={leads.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+          {leads.map((lead) => (
+            <LeadCard
+              key={lead.id}
+              lead={lead}
+              allStages={allStages}
+              onMove={(slug) => onMove(lead, slug)}
+              isMoving={movingLeadId === lead.id}
+            />
+          ))}
+        </SortableContext>
       </div>
     </div>
   );
@@ -323,6 +434,13 @@ function LeadCard({ lead, allStages, onMove, isMoving }: LeadCardProps) {
   const contactName = [lead.contact_first_name, lead.contact_last_name].filter(Boolean).join(' ');
   const isPlaceholderEmail = lead.contact_email?.startsWith('info@') || lead.contact_email === 'unknown@example.com';
 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: lead.id });
+  const dragStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.35 : 1,
+  };
+
   const composeEmailLink = () => {
     if (!lead.contact_email || isPlaceholderEmail) return '#';
     const subject = encodeURIComponent(`A revenue share idea for ${lead.company_name}`);
@@ -330,16 +448,29 @@ function LeadCard({ lead, allStages, onMove, isMoving }: LeadCardProps) {
   };
 
   return (
-    <Card className="p-3 bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all relative">
+    <Card
+      ref={setNodeRef}
+      style={dragStyle}
+      className="p-3 bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all relative"
+    >
       {isMoving && (
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center rounded">
           <Loader2 className="w-4 h-4 animate-spin text-white/70" />
         </div>
       )}
 
-      <div className="flex items-start gap-2 mb-2">
+      <div className="flex items-start gap-1 mb-2">
+        <button
+          type="button"
+          {...attributes}
+          {...listeners}
+          className="flex-shrink-0 -ml-1 p-1 text-white/30 hover:text-white/70 cursor-grab active:cursor-grabbing"
+          aria-label="Drag to move"
+        >
+          <GripVertical className="h-3.5 w-3.5" />
+        </button>
         <Building2 className="w-3.5 h-3.5 mt-0.5 text-white/40 flex-shrink-0" />
-        <div className="font-semibold text-sm text-white leading-tight">{lead.company_name}</div>
+        <div className="font-semibold text-sm text-white leading-tight flex-1">{lead.company_name}</div>
       </div>
 
       {contactName && contactName !== 'HR Contact' && (

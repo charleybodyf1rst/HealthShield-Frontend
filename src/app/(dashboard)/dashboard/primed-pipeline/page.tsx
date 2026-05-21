@@ -93,6 +93,16 @@ export default function PrimedPipelinePage() {
     }
   }, []);
 
+  const moveLead = useCallback(async (leadId: string, newStageId: string) => {
+    const res = await fetch(`${API_BASE}/api/v1/crm/leads/${leadId}/move-stage`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ stage: newStageId }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await load();
+  }, [load]);
+
   useEffect(() => {
     load();
   }, [load]);
@@ -164,6 +174,7 @@ export default function PrimedPipelinePage() {
         <PipelineBoard
           leads={leads}
           accentClass="bg-gradient-to-br from-orange-500 to-amber-500"
+          onMoveLead={moveLead}
         />
       )}
     </div>
