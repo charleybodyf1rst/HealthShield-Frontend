@@ -144,9 +144,11 @@ export function HrStaffingPipelineTab() {
 
   if (stagesError || leadsError) {
     return (
-      <div className="p-6 text-sm text-red-600">
-        Failed to load HR Staffing pipeline. {stagesError?.message || leadsError?.message}
-      </div>
+      <Card className="p-6 border border-red-500/30 bg-red-500/[0.08]">
+        <div className="text-sm text-red-200">
+          Failed to load HR Staffing pipeline. {stagesError?.message || leadsError?.message}
+        </div>
+      </Card>
     );
   }
 
@@ -154,25 +156,25 @@ export function HrStaffingPipelineTab() {
     <div className="flex flex-col h-[calc(100vh-16rem)] gap-4">
       {/* Summary line */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm">
-          <span className="text-gray-500">Showing:</span>{' '}
-          <strong>{filteredLeads.length}</strong>
+        <div className="text-sm text-white/70">
+          <span className="text-white/50">Showing:</span>{' '}
+          <strong className="text-white">{filteredLeads.length}</strong>
           {filteredLeads.length !== leads.length && (
-            <span className="text-gray-400"> of {leads.length}</span>
+            <span className="text-white/40"> of {leads.length}</span>
           )}
-          <span className="text-gray-400 mx-2">·</span>
-          <span className="text-gray-500">Weighted pipeline value:</span>{' '}
-          <strong>${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
+          <span className="text-white/30 mx-2">·</span>
+          <span className="text-white/50">Weighted pipeline value:</span>{' '}
+          <strong className="text-emerald-300">${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
         </div>
-        <Button variant="ghost" size="sm" onClick={reloadLeads} disabled={leadsLoading}>
+        <Button variant="ghost" size="sm" onClick={reloadLeads} disabled={leadsLoading} className="text-white/70 hover:text-white">
           <RefreshCw className={cn('w-4 h-4', leadsLoading && 'animate-spin')} />
         </Button>
       </div>
 
-      {/* Filter bar — matches Leads tab UX */}
+      {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-64">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -230,13 +232,13 @@ export function HrStaffingPipelineTab() {
       <div className="flex-1 min-h-0 overflow-x-auto">
         <div className="flex gap-4 h-full pb-2">
           {stagesLoading && (
-            <div className="flex items-center justify-center w-full text-gray-500 text-sm gap-2">
+            <div className="flex items-center justify-center w-full text-white/50 text-sm gap-2">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading stages…
             </div>
           )}
           {!stagesLoading && stages.length === 0 && (
-            <div className="flex items-center justify-center w-full text-gray-500 text-sm">
-              No HR Staffing stages yet. Run <code className="mx-1 px-1 bg-gray-100 rounded">HrStaffingPipelineStagesSeeder</code>.
+            <div className="flex items-center justify-center w-full text-white/50 text-sm">
+              No HR Staffing stages yet. Run <code className="mx-1 px-1.5 py-0.5 bg-white/10 rounded text-white/80">HrStaffingPipelineStagesSeeder</code>.
             </div>
           )}
           {stages.map((stage) => (
@@ -268,23 +270,30 @@ function StageColumn({ stage, leads, allStages, onMove, movingLeadId }: StageCol
   const color = stage.color ?? '#64748b';
 
   return (
-    <div className="flex flex-col w-72 min-w-72 bg-slate-50 rounded-lg border border-slate-200">
-      <div className="p-3 border-b border-slate-200 bg-white rounded-t-lg">
+    <div className="flex flex-col w-72 min-w-72 bg-white/[0.02] rounded-lg border border-white/10">
+      <div
+        className="p-3 border-b border-white/10 rounded-t-lg"
+        style={{ backgroundColor: `${color}15` }}
+      >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-            <h3 className="font-semibold text-sm text-slate-900">{stage.name}</h3>
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+            <h3 className="font-semibold text-sm text-white">{stage.name}</h3>
           </div>
-          <Badge variant="outline" className="text-xs">{leads.length}</Badge>
+          <Badge variant="outline" className="text-xs border-white/20 text-white/80 bg-white/[0.05]">
+            {leads.length}
+          </Badge>
         </div>
-        <div className="text-xs text-gray-500 mt-1">
-          {stage.probability_percentage}% probability ·{' '}
-          ${stageRevenue.toLocaleString()} est.
+        <div className="text-xs text-white/55 mt-1.5">
+          {stage.probability_percentage}% probability
+          {stageRevenue > 0 && (
+            <> · <span className="text-emerald-300">${stageRevenue.toLocaleString()} est.</span></>
+          )}
         </div>
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {leads.length === 0 && (
-          <div className="text-xs text-gray-400 italic py-6 text-center">
+          <div className="text-xs text-white/30 italic py-6 text-center">
             No leads in this stage
           </div>
         )}
@@ -321,60 +330,60 @@ function LeadCard({ lead, allStages, onMove, isMoving }: LeadCardProps) {
   };
 
   return (
-    <Card className="p-3 bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all relative">
+    <Card className="p-3 bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all relative">
       {isMoving && (
-        <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded">
-          <Loader2 className="w-4 h-4 animate-spin text-slate-500" />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center rounded">
+          <Loader2 className="w-4 h-4 animate-spin text-white/70" />
         </div>
       )}
 
       <div className="flex items-start gap-2 mb-2">
-        <Building2 className="w-3.5 h-3.5 mt-0.5 text-slate-400 flex-shrink-0" />
-        <div className="font-medium text-sm text-slate-900 leading-tight">{lead.company_name}</div>
+        <Building2 className="w-3.5 h-3.5 mt-0.5 text-white/40 flex-shrink-0" />
+        <div className="font-semibold text-sm text-white leading-tight">{lead.company_name}</div>
       </div>
 
       {contactName && contactName !== 'HR Contact' && (
-        <div className="text-xs text-slate-600 ml-5 mb-1">
+        <div className="text-xs text-white/75 ml-5 mb-1.5">
           {contactName}
-          {lead.contact_title && <span className="text-slate-400"> · {lead.contact_title}</span>}
+          {lead.contact_title && <span className="text-white/40"> · {lead.contact_title}</span>}
         </div>
       )}
 
-      <div className="ml-5 space-y-0.5 text-xs text-slate-500">
+      <div className="ml-5 space-y-1 text-xs text-white/60">
         {lead.contact_email && (
-          <div className="flex items-center gap-1 truncate">
-            <Mail className="w-3 h-3 flex-shrink-0" />
-            <span className={cn('truncate', isPlaceholderEmail && 'text-slate-400 italic')}>{lead.contact_email}</span>
+          <div className="flex items-center gap-1.5 truncate">
+            <Mail className="w-3 h-3 flex-shrink-0 text-white/40" />
+            <span className={cn('truncate', isPlaceholderEmail && 'text-white/35 italic')}>{lead.contact_email}</span>
           </div>
         )}
         {lead.contact_phone && (
-          <div className="flex items-center gap-1">
-            <Phone className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1.5">
+            <Phone className="w-3 h-3 flex-shrink-0 text-white/40" />
             <span>{lead.contact_phone}</span>
           </div>
         )}
         {(lead.company_city || lead.company_zip) && (
-          <div className="flex items-center gap-1">
-            <MapPin className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1.5">
+            <MapPin className="w-3 h-3 flex-shrink-0 text-white/40" />
             <span>
               {[lead.company_city, lead.company_zip].filter(Boolean).join(', ')}
             </span>
           </div>
         )}
         {lead.estimated_employees && (
-          <div className="flex items-center gap-1">
-            <Users className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1.5">
+            <Users className="w-3 h-3 flex-shrink-0 text-white/40" />
             <span>{lead.estimated_employees.toLocaleString()} employees</span>
           </div>
         )}
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1 mt-2 pt-2 border-t border-slate-100">
+      <div className="flex items-center gap-1 mt-2.5 pt-2 border-t border-white/10">
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 px-2 text-xs flex-1"
+          className="h-7 px-2 text-xs flex-1 text-white/80 hover:text-white hover:bg-cyan-500/15 disabled:opacity-40"
           onClick={() => window.open(composeEmailLink(), '_blank')}
           disabled={isPlaceholderEmail}
           title={isPlaceholderEmail ? 'No direct email yet — enrich via Hunter or LinkedIn first' : 'Compose partnership pitch'}
@@ -386,13 +395,13 @@ function LeadCard({ lead, allStages, onMove, isMoving }: LeadCardProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 px-2 text-xs"
+            className="h-7 px-2 text-xs text-white/80 hover:text-white hover:bg-white/10"
             onClick={() => setShowMoveMenu((s) => !s)}
           >
             Move <ChevronDown className="w-3 h-3 ml-1" />
           </Button>
           {showMoveMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded shadow-lg z-10 w-48">
+            <div className="absolute right-0 top-full mt-1 bg-slate-900 border border-white/15 rounded-md shadow-xl z-10 w-48 overflow-hidden">
               {allStages
                 .filter((s) => s.slug !== lead.stage)
                 .map((s) => (
@@ -403,7 +412,7 @@ function LeadCard({ lead, allStages, onMove, isMoving }: LeadCardProps) {
                       setShowMoveMenu(false);
                       onMove(s.slug);
                     }}
-                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 text-xs text-white/85 hover:bg-white/10 flex items-center gap-2"
                   >
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color ?? '#64748b' }} />
                     {s.name}
@@ -417,7 +426,7 @@ function LeadCard({ lead, allStages, onMove, isMoving }: LeadCardProps) {
             href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="h-7 w-7 inline-flex items-center justify-center text-slate-400 hover:text-slate-600"
+            className="h-7 w-7 inline-flex items-center justify-center text-white/40 hover:text-white/80 rounded hover:bg-white/10"
             title="Open website"
           >
             <ExternalLink className="w-3 h-3" />
