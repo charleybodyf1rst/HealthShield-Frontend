@@ -49,8 +49,8 @@ const documents: Document[] = [
   },
   {
     id: '10',
-    name: 'HealthShield Insurance Call Scripts',
-    description: '8 ready-to-use scripts for cold outreach, follow-ups, renewals, and cross-sell. Includes opener, body, objection handlers, and close for each.',
+    name: 'HealthShield Sales Call Script',
+    description: '10-section demo-setting playbook: stat hooks, qualification, pitch, objection handlers, voicemail, follow-up email, 14-day cadence, do\'s & don\'ts, and a key-numbers reference. Print-to-PDF ready.',
     category: 'Sales Collateral',
     type: 'template',
     url: '/dashboard/documents/call-scripts',
