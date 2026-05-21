@@ -23,6 +23,8 @@ import {
   X,
   UserPlus,
   Map as MapIcon,
+  Handshake,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
 import { useHealthShieldCrmStore } from '@/stores/healthshield-crm-store';
 import { cn } from '@/lib/utils';
@@ -35,6 +37,8 @@ import { AiCallerTab } from '@/components/crm/AiCallerTab';
 import { AnalyticsTab } from '@/components/crm/AnalyticsTab';
 import { LeadsTab } from '@/components/crm/LeadsTab';
 import { MapTab } from '@/components/crm/MapTab';
+import { HrStaffingPipelineTab } from '@/components/crm/HrStaffingPipelineTab';
+import { HrEventsTab } from '@/components/crm/HrEventsTab';
 
 export default function InsuranceCrmPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -239,6 +243,14 @@ export default function InsuranceCrmPage() {
                 <MapIcon className="w-4 h-4" />
                 Map
               </TabsTrigger>
+              <TabsTrigger value="hr-staffing" className="gap-2">
+                <Handshake className="w-4 h-4" />
+                HR Staffing
+              </TabsTrigger>
+              <TabsTrigger value="hr-events" className="gap-2">
+                <CalendarIcon className="w-4 h-4" />
+                HR Events
+              </TabsTrigger>
               <TabsTrigger value="customers" className="gap-2">
                 <Users className="w-4 h-4" />
                 Customers
@@ -277,6 +289,14 @@ export default function InsuranceCrmPage() {
 
             <TabsContent value="map" className="h-full m-0">
               <MapTab />
+            </TabsContent>
+
+            <TabsContent value="hr-staffing" className="h-full m-0">
+              <HrStaffingPipelineTab />
+            </TabsContent>
+
+            <TabsContent value="hr-events" className="h-full m-0">
+              <HrEventsTab />
             </TabsContent>
 
             <TabsContent value="customers" className="h-full m-0">
