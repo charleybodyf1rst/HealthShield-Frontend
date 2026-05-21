@@ -63,6 +63,7 @@ import { LEAD_STATUSES, LEAD_CLASSIFICATIONS } from '@/lib/constants';
 import { usePipelineStore, useLeadsStore } from '@/stores/leads-store';
 import { toast } from 'sonner';
 import type { Lead, PipelineStage } from '@/types/lead';
+import { useLeadFilters, LeadFilterBar, SIZE_RANGES } from '@/components/dashboard/lead-filter-bar';
 
 // Stage color configurations with gradients and background colors
 const stageConfig: Record<string, { bg: string; gradient: string; text: string; light: string }> = {
@@ -392,6 +393,37 @@ export default function PipelinePage() {
   const [activeLead, setActiveLead] = useState<Lead | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+
+  // Flatten all leads across stages so the filter UI can derive industries/sizes
+  const allLeads = (stages ?? []).flatMap((s) => s.leads ?? []);
+  const { filters, setFilters, reset, industries, activeCount } = useLeadFilters(allLeads);
+
+  // Apply filter to each stage's leads (status filter is hidden — stages already
+  // ARE statuses, so filtering by status doesn't make sense here)
+  const matchesFilter = (lead: Lead): boolean => {
+    const q = filters.search.trim().toLowerCase();
+    const sizeRange = SIZE_RANGES[filters.size] || {};
+    if (q) {
+      const haystack = `${lead.firstName || ''} ${lead.lastName || ''} ${lead.email || ''} ${lead.company || ''} ${lead.phone || ''}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    if (filters.industry !== 'all' && lead.industry !== filters.industry) return false;
+    if (sizeRange.min !== undefined || sizeRange.max !== undefined) {
+      const emp = lead.estimatedEmployees ?? null;
+      if (emp === null) return false;
+      if (sizeRange.min !== undefined && emp < sizeRange.min) return false;
+      if (sizeRange.max !== undefined && emp >= sizeRange.max) return false;
+    }
+    return true;
+  };
+
+  const filteredStages: PipelineStage[] = (stages ?? []).map((s) => ({
+    ...s,
+    leads: (s.leads ?? []).filter(matchesFilter),
+  }));
+
+  const totalFiltered = filteredStages.reduce((sum, s) => sum + (s.leads ?? []).length, 0);
+  const totalUnfiltered = allLeads.length;
 
   // ── Drag-to-scroll (click empty space and drag left/right) ──
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -727,6 +759,24 @@ export default function PipelinePage() {
         </div>
       )}
 
+      {/* Filter bar */}
+      <div className="space-y-2">
+        <LeadFilterBar
+          filters={filters}
+          onChange={setFilters}
+          industries={industries}
+          showStatus={false}
+          activeCount={activeCount}
+          onReset={reset}
+          theme="light"
+        />
+        {totalFiltered !== totalUnfiltered && (
+          <p className="text-xs text-muted-foreground">
+            Showing {totalFiltered} of {totalUnfiltered} leads
+          </p>
+        )}
+      </div>
+
       {/* Moving indicator */}
       {isMoving && (
         <div className="fixed top-4 right-4 z-50 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg animate-pulse">
@@ -782,7 +832,7 @@ export default function PipelinePage() {
             onMouseLeave={handleScrollMouseUp}
           >
             <div className="flex gap-3" style={{ width: 'max-content' }}>
-              {(stages ?? []).map((stage) => (
+              {filteredStages.map((stage) => (
                 <StageColumn key={stage.id} stage={stage} />
               ))}
             </div>

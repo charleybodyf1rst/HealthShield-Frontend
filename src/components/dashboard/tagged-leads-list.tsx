@@ -13,18 +13,17 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
 import {
   Phone,
   Mail,
   Building2,
   RefreshCw,
   ArrowUpRight,
-  Search,
 } from 'lucide-react';
 import type { Lead } from '@/types/lead';
 import { LEAD_STATUSES } from '@/lib/constants';
 import { toast } from 'sonner';
+import { useLeadFilters, LeadFilterBar } from './lead-filter-bar';
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ||
@@ -139,7 +138,7 @@ export function TaggedLeadsList({
 }: TaggedLeadsListProps) {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const { filters, setFilters, filtered, reset, industries, statuses, activeCount } = useLeadFilters(leads);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -164,12 +163,6 @@ export function TaggedLeadsList({
   useEffect(() => {
     load();
   }, [load]);
-
-  const filtered = leads.filter((l) => {
-    if (!search) return true;
-    const haystack = `${l.firstName} ${l.lastName} ${l.email} ${l.company ?? ''} ${l.phone ?? ''}`.toLowerCase();
-    return haystack.includes(search.toLowerCase());
-  });
 
   const totalValue = leads.reduce((sum, l) => sum + (l.value || 0), 0);
   const activeLeads = leads.filter(
@@ -218,15 +211,21 @@ export function TaggedLeadsList({
 
       <Card>
         <CardContent className="pt-5 space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name, email, company, phone..."
-              className="pl-9"
-            />
-          </div>
+          <LeadFilterBar
+            filters={filters}
+            onChange={setFilters}
+            industries={industries}
+            statuses={statuses}
+            activeCount={activeCount}
+            onReset={reset}
+            theme="dark"
+          />
+
+          {filtered.length !== leads.length && (
+            <p className="text-xs text-white/40">
+              Showing {filtered.length} of {leads.length}
+            </p>
+          )}
 
           {isLoading ? (
             <div className="space-y-2">

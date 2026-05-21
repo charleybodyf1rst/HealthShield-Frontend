@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import type { Lead } from '@/types/lead';
 import { LEAD_STATUSES } from '@/lib/constants';
+import { useLeadFilters, LeadFilterBar } from './lead-filter-bar';
 
 // Tailwind gradient + accent for each stage. Mirrors the colors used on the
 // main Pipeline page so everything stays visually consistent.
@@ -117,9 +118,12 @@ export interface PipelineBoardProps {
 }
 
 export function PipelineBoard({ leads, hideEmptyStages = true, accentClass = 'bg-gradient-to-br from-orange-500 to-amber-500' }: PipelineBoardProps) {
-  // Group by status
+  const { filters, setFilters, filtered, reset, industries, activeCount } = useLeadFilters(leads);
+
+  // Group filtered leads by status (status filter is hidden — the kanban already
+  // groups by status, so it would be redundant here).
   const byStage: Record<string, Lead[]> = {};
-  for (const lead of leads) {
+  for (const lead of filtered) {
     const s = lead.status || 'new';
     (byStage[s] = byStage[s] || []).push(lead);
   }
@@ -131,8 +135,23 @@ export function PipelineBoard({ leads, hideEmptyStages = true, accentClass = 'bg
   );
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-4">
-      {stagesToRender.map((stage) => {
+    <div className="space-y-4">
+      <LeadFilterBar
+        filters={filters}
+        onChange={setFilters}
+        industries={industries}
+        showStatus={false}
+        activeCount={activeCount}
+        onReset={reset}
+        theme="dark"
+      />
+      {filtered.length !== leads.length && (
+        <p className="text-xs text-white/40">
+          Showing {filtered.length} of {leads.length} leads
+        </p>
+      )}
+      <div className="flex gap-3 overflow-x-auto pb-4">
+        {stagesToRender.map((stage) => {
         const stageLeads = byStage[stage.id] || [];
         const styles = stageStyles[stage.id] || { gradient: 'from-gray-500 to-gray-600', light: 'bg-gray-50 dark:bg-gray-950/30' };
         const totalValue = stageLeads.reduce((sum, l) => sum + (l.value || 0), 0);
@@ -161,6 +180,7 @@ export function PipelineBoard({ leads, hideEmptyStages = true, accentClass = 'bg
           </div>
         );
       })}
+      </div>
     </div>
   );
 }
