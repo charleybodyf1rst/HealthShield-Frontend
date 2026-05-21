@@ -17,9 +17,12 @@
 
 ### Deployment Method
 
-- Platform: Cloud Build → Cloud Run (SSR standalone)
-- Triggered by: Git push to `main` branch (automatic)
-- Build config: `cloudbuild.yaml`
+- **GCP project**: `systemsf1rst-prod` (NOT `healthshield-frontend` — that project does not exist)
+- **Cloud Run service**: `healthshield-frontend` in region `us-central1`
+- **Prod URL**: `https://healthshield-frontend-go6eof7d6a-uc.a.run.app`
+- **Cloud Build trigger**: `healthshield-frontend-deploy` (regional: `us-central1`) watches `^main$` and runs `cloudbuild.yaml`
+- **List builds**: `gcloud builds list --project=systemsf1rst-prod --region=us-central1` (the default `--region=global` will NOT see these builds — they're regional)
+- Triggered by: Git push to `main` branch (automatic, ~5-7 min build)
 
 ## Purpose
 
