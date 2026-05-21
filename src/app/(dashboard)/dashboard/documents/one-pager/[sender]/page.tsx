@@ -5,6 +5,12 @@ export function generateStaticParams() {
     { sender: 'charley' },
     { sender: 'ken' },
     { sender: 'brian' },
+    { sender: 'jonathan' },
+    { sender: 'billy' },
+    { sender: 'nahid' },
+    { sender: 'dustin' },
+    { sender: 'chris' },
+    { sender: 'amy' },
   ];
 }
 

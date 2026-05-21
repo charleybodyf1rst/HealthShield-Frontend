@@ -4,19 +4,47 @@ import { use } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Printer, ArrowLeft, Mail, Phone } from 'lucide-react';
+import { Printer, ArrowLeft, Mail, Phone, ExternalLink } from 'lucide-react';
 
-const SENDERS: Record<string, { name: string; email: string; phone?: string }> = {
-  charley: { name: 'Charley Blanchard', email: 'charley@bodyf1rst.com', phone: '(512) 350-5372' },
-  ken: { name: 'Ken Laney', email: 'Ken@bodyf1rst.com', phone: '(512) 470-0454' },
-  brian: { name: 'Brian Johnson', email: 'brian@systemsf1rst.com', phone: '(512) 203-5598' },
+interface Sender {
+  name: string;
+  role: string;
+  email: string;
+  phone?: string;
+}
+
+const SENDERS: Record<string, Sender> = {
+  charley:  { name: 'Charley Blanchard', role: 'Co-Founder / Sales Manager',         email: 'charley@bodyf1rst.com',  phone: '(512) 350-5372' },
+  ken:      { name: 'Ken Laney',         role: 'Founder / CEO',                       email: 'ken@bodyf1rst.com',      phone: '(512) 470-0454' },
+  brian:    { name: 'Brian Johnson',     role: 'Nutrition Coach / Account Exec',      email: 'brian@bodyf1rst.com',    phone: '(512) 203-5598' },
+  jonathan: { name: 'Jonathan Bushell',  role: 'CTO',                                 email: 'jonathan@bodyf1rst.com', phone: '(760) 299-3577' },
+  billy:    { name: 'Billy Torgerson',   role: 'Chief of Operations',                 email: 'billy@bodyf1rst.com',    phone: '(469) 352-6110' },
+  nahid:    { name: 'Nahid Anowar',      role: 'YouTube Specialist',                  email: 'nahid@bodyf1rst.com',    phone: '(317) 418-9210' },
+  dustin:   { name: 'Dustin Combs',      role: 'Co-Founder / Sr. Software Engineer',  email: 'dustin@bodyf1rst.com',   phone: '(512) 644-9673' },
+  chris:    { name: 'Chris Vanberg',     role: 'Co-Founder / CRO',                    email: 'chris@bodyf1rst.com',    phone: '(512) 791-2185' },
+  amy:      { name: 'Amy Dickerson',     role: 'Pilates Coach / Sales',               email: 'amy@bodyf1rst.com',      phone: '(310) 357-3572' },
 };
 
 const ROI_TIERS: Array<{ size: number; label: string }> = [
-  { size: 50, label: '50 employees' },
+  { size: 50,  label: '50 employees' },
   { size: 100, label: '100 employees' },
   { size: 200, label: '200 employees' },
   { size: 500, label: '500 employees' },
+];
+
+const HOW_IT_WORKS: Array<{ title: string; desc: string }> = [
+  { title: 'Schedule a 10-minute call',  desc: 'We review your team size and current benefits.' },
+  { title: 'Get your custom ROI report', desc: 'See exact payroll tax savings for your company.' },
+  { title: 'Enroll in 2 weeks - 6 weeks', desc: 'Simple setup. No disruption to current insurance.' },
+  { title: 'Employees save Day 1',       desc: 'Free prescriptions, telehealth, urgent care — immediately.' },
+];
+
+const LEARN_MORE_LINKS: Array<{ label: string; href: string }> = [
+  { label: 'bodyf1rst.com',                          href: 'https://bodyf1rst.com' },
+  { label: 'B1 Corporate Wellness',                  href: 'https://b1-corporate-wellness-app.web.app' },
+  { label: 'HealthShield Page',                      href: 'https://healthshield.ai' },
+  { label: 'SilverPoint Health Overview (Video)',    href: 'https://www.youtube.com/results?search_query=silverpoint+health+overview' },
+  { label: 'HealthShield Explainer (Video)',         href: 'https://www.youtube.com/results?search_query=healthshield+explainer' },
 ];
 
 export default function OnePagerClient({ params }: { params: Promise<{ sender: string }> }) {
@@ -60,7 +88,7 @@ export default function OnePagerClient({ params }: { params: Promise<{ sender: s
 
         <div className="border-t border-white/10" />
 
-        {/* Two-column grid — BodyF1RST LEFT, HealthShield RIGHT (matches title order) */}
+        {/* Two-column grid — BodyF1RST LEFT, HealthShield RIGHT */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-10 py-7">
           {/* LEFT — BodyF1RST */}
           <section className="rounded-lg bg-slate-900/60 border-t-4 border-green-500 p-6">
@@ -99,7 +127,7 @@ export default function OnePagerClient({ params }: { params: Promise<{ sender: s
         </div>
 
         {/* ROI band */}
-        <section className="mx-10 mb-7 rounded-lg border-t-4 border-orange-500 bg-slate-900/60 px-6 py-5">
+        <section className="mx-10 mb-6 rounded-lg border-t-4 border-orange-500 bg-slate-900/60 px-6 py-5">
           <div className="flex items-baseline justify-between flex-wrap gap-2 mb-3">
             <h2 className="text-xl font-bold text-orange-400">Your ROI at a Glance</h2>
             <p className="text-xs text-white/60">Based on $681 savings per employee per year</p>
@@ -116,24 +144,70 @@ export default function OnePagerClient({ params }: { params: Promise<{ sender: s
           </div>
         </section>
 
-        {/* Contact strip */}
-        <footer className="bg-gradient-to-r from-slate-900 to-slate-800 px-10 py-5 border-t border-white/10">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-white/50">Your contact</p>
-              <p className="text-white font-semibold text-lg">{info.name}</p>
-            </div>
-            <div className="text-sm text-white/85 space-y-1">
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-400" />
-                <a href={`mailto:${info.email}`} className="hover:text-white">{info.email}</a>
-              </div>
-              {info.phone && (
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-green-400" />
-                  <a href={`tel:${info.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-white">{info.phone}</a>
+        {/* How It Works */}
+        <section className="px-10 pb-6">
+          <div className="flex items-baseline justify-between flex-wrap gap-2 mb-4">
+            <h2 className="text-xl font-bold text-white">How It Works</h2>
+            <p className="text-xs text-white/60">From first call to employee savings in under 6 weeks</p>
+          </div>
+          <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            {HOW_IT_WORKS.map((step, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-orange-500 text-white font-bold text-sm flex items-center justify-center">
+                  {i + 1}
+                </span>
+                <div>
+                  <p className="text-white font-semibold text-sm">{step.title}</p>
+                  <p className="text-white/65 text-xs mt-0.5">{step.desc}</p>
                 </div>
-              )}
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* Learn More & Watch Videos */}
+        <section className="mx-10 mb-7 rounded-lg bg-slate-900/60 border border-white/10 px-6 py-5">
+          <h2 className="text-sm font-bold text-blue-300 mb-3 uppercase tracking-wider">Learn More &amp; Watch Videos</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+            {LEARN_MORE_LINKS.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 text-sm inline-flex items-center gap-1.5 underline underline-offset-2 decoration-blue-400/40"
+              >
+                {label} <ExternalLink className="w-3 h-3 opacity-60" />
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* Ready to save? CTA + contact */}
+        <footer className="bg-orange-500 px-10 py-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h2 className="text-white text-2xl font-bold leading-tight">Ready to save? Let&apos;s talk.</h2>
+              <div className="mt-2 flex items-center flex-wrap gap-x-3 gap-y-1 text-sm text-white/95">
+                <span className="font-semibold">{info.name}</span>
+                {info.phone && (
+                  <>
+                    <span className="text-white/60">|</span>
+                    <a href={`tel:${info.phone.replace(/[^0-9+]/g, '')}`} className="inline-flex items-center gap-1 hover:underline">
+                      <Phone className="w-3.5 h-3.5" /> {info.phone}
+                    </a>
+                  </>
+                )}
+                <span className="text-white/60">|</span>
+                <a href={`mailto:${info.email}`} className="inline-flex items-center gap-1 hover:underline">
+                  <Mail className="w-3.5 h-3.5" /> {info.email}
+                </a>
+              </div>
+            </div>
+            <div className="text-right text-white">
+              <p className="font-bold text-lg leading-tight">BodyF1RST Corporate Wellness</p>
+              <p className="text-sm text-white/90">{info.role}</p>
+              <p className="text-xs text-white/80 mt-0.5">Austin, TX &nbsp;|&nbsp; bodyf1rst.com</p>
             </div>
           </div>
         </footer>
@@ -143,7 +217,11 @@ export default function OnePagerClient({ params }: { params: Promise<{ sender: s
         @media print {
           @page { size: letter; margin: 0.4in; }
           body { background: white; }
-          article { background: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          article {
+            background: #0f172a !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
         }
       `}</style>
     </div>
