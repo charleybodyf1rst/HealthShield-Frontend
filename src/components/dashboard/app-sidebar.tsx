@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   BarChart3,
   Bot,
+  Briefcase,
   Calendar,
   CalendarDays,
   CheckSquare,
@@ -14,6 +15,7 @@ import {
   ClipboardList,
   Database,
   DollarSign,
+  FileSignature,
   FileText,
   FolderOpen,
   GitBranch,
@@ -114,6 +116,21 @@ const mainNavItems = [
     title: 'HR Events',
     href: '/dashboard/hr-events',
     icon: CalendarDays,
+  },
+  {
+    title: 'Insurance Broker Leads',
+    href: '/dashboard/insurance-broker-leads',
+    icon: Briefcase,
+  },
+  {
+    title: 'Insurance Broker Pipeline',
+    href: '/dashboard/insurance-broker-pipeline',
+    icon: Briefcase,
+  },
+  {
+    title: 'Referral Agreement',
+    href: '/dashboard/referral-agreement',
+    icon: FileSignature,
   },
   {
     title: 'Map',

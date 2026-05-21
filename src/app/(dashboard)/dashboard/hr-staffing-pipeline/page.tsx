@@ -1,7 +1,7 @@
 'use client';
 
 import { Handshake } from 'lucide-react';
-import { HrStaffingPipelineTab } from '@/components/crm/HrStaffingPipelineTab';
+import { NamedPipelineKanban } from '@/components/crm/NamedPipelineKanban';
 
 export default function HrStaffingPipelinePage() {
   return (
@@ -20,7 +20,12 @@ export default function HrStaffingPipelinePage() {
         </div>
       </div>
 
-      <HrStaffingPipelineTab />
+      <NamedPipelineKanban
+        pipelineSlug="hr-staffing"
+        leadTag="hr-staffing"
+        displayName="HR Staffing"
+        seederName="HrStaffingPipelineStagesSeeder"
+      />
     </div>
   );
 }

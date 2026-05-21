@@ -38,6 +38,15 @@ const documents: Document[] = [
     url: '/documents/HealthShield-BodyF1RST-Overview-KenLaney.pdf',
     icon: 'pdf',
   },
+  {
+    id: '10',
+    name: 'HealthShield Insurance Call Scripts',
+    description: '8 ready-to-use scripts for cold outreach, follow-ups, renewals, and cross-sell. Includes opener, body, objection handlers, and close for each.',
+    category: 'Sales Collateral',
+    type: 'template',
+    url: '/dashboard/documents/call-scripts',
+    icon: 'template',
+  },
 
   // Websites
   {
