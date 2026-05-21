@@ -147,57 +147,87 @@ export default function ReferralAgreementPage() {
         </p>
       </Card>
 
-      <Card className="bg-white text-slate-900 p-10 print:shadow-none print:border-0 max-w-4xl mx-auto">
-        {error && (
-          <div className="text-sm text-red-700">
-            Failed to load agreement: {error}
+      <Card className="bg-white text-slate-900 p-0 print:shadow-none print:border-0 max-w-4xl mx-auto overflow-hidden">
+        {/* Branded header */}
+        <div className="bg-slate-950 text-white px-10 py-7 border-b-4 border-orange-500 flex items-center justify-between gap-6">
+          <img
+            src="/logos/bodyf1rst-metallic-logo.png"
+            alt="BodyF1RST | Performance Optimization"
+            className="h-14 w-auto"
+          />
+          <div className="text-right">
+            <div className="text-orange-400 text-[10px] font-bold tracking-[0.25em] uppercase">
+              Partnership Agreement
+            </div>
+            <div className="text-white/60 text-xs mt-1">HealthShield Referral Program</div>
+            <div className="text-white/40 text-[10px] mt-1">10% · 12 Months · Paid Quarterly</div>
           </div>
-        )}
-        {!filledMarkdown && !error && (
-          <div className="flex items-center justify-center py-10 text-slate-500 gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" /> Loading…
-          </div>
-        )}
-        {filledMarkdown && (
-          <article className="prose-agreement">
-            {renderMarkdown(filledMarkdown)}
-          </article>
-        )}
+        </div>
+
+        {/* Agreement body */}
+        <div className="px-10 py-8">
+          {error && (
+            <div className="text-sm text-red-700">
+              Failed to load agreement: {error}
+            </div>
+          )}
+          {!filledMarkdown && !error && (
+            <div className="flex items-center justify-center py-10 text-slate-500 gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" /> Loading…
+            </div>
+          )}
+          {filledMarkdown && (
+            <article className="prose-agreement">
+              {renderMarkdown(filledMarkdown)}
+            </article>
+          )}
+        </div>
+
+        {/* Branded footer */}
+        <div className="bg-slate-50 border-t border-slate-200 px-10 py-4 text-[11px] text-slate-500 flex justify-between items-center">
+          <span>BodyF1RST · HealthShield · Confidential</span>
+          <span className="font-semibold text-slate-600">Performance Optimization</span>
+        </div>
       </Card>
 
       <style jsx global>{`
         .prose-agreement h1 {
-          font-size: 1.875rem;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
+          font-size: 2rem;
+          font-weight: 800;
+          margin-bottom: 0.25rem;
           color: #0f172a;
+          letter-spacing: -0.01em;
         }
         .prose-agreement h2 {
-          font-size: 1.25rem;
-          font-weight: 600;
-          margin-top: 1.75rem;
-          margin-bottom: 0.5rem;
+          font-size: 1.15rem;
+          font-weight: 700;
+          margin-top: 1.5rem;
+          margin-bottom: 0.4rem;
           color: #0f172a;
+          padding-bottom: 0.35rem;
+          border-bottom: 2px solid #ea580c;
+          display: inline-block;
         }
         .prose-agreement h3 {
-          font-size: 1.05rem;
+          font-size: 1rem;
           font-weight: 600;
-          margin-top: 1.25rem;
-          margin-bottom: 0.35rem;
+          margin-top: 1.1rem;
+          margin-bottom: 0.3rem;
           color: #1e293b;
         }
         .prose-agreement p {
-          margin: 0.6rem 0;
-          line-height: 1.65;
+          margin: 0.55rem 0;
+          line-height: 1.6;
           color: #1e293b;
         }
         .prose-agreement strong {
           color: #0f172a;
+          font-weight: 600;
         }
         .prose-agreement ul,
         .prose-agreement ol {
           margin: 0.5rem 0 0.75rem 1.5rem;
-          line-height: 1.65;
+          line-height: 1.6;
           color: #1e293b;
         }
         .prose-agreement li {
@@ -209,12 +239,18 @@ export default function ReferralAgreementPage() {
           border-top: 1px solid #cbd5e1;
         }
         .prose-agreement code {
-          background: #f1f5f9;
-          padding: 0.1rem 0.3rem;
+          background: #fff7ed;
+          color: #9a3412;
+          padding: 0.1rem 0.35rem;
           border-radius: 3px;
-          font-size: 0.9em;
+          font-size: 0.88em;
         }
         @media print {
+          @page { margin: 0.5in; }
+          body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
           .prose-agreement h1,
           .prose-agreement h2,
           .prose-agreement h3 {

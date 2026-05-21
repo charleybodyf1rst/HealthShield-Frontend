@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Tag } from 'lucide-react';
+import { Layers, Palette } from 'lucide-react';
 import type { MapFilters } from '@/hooks/useLeadsMap';
 
 const LeadsMap = dynamic(() => import('@/components/crm/LeadsMap'), {
@@ -14,15 +14,30 @@ const LeadsMap = dynamic(() => import('@/components/crm/LeadsMap'), {
   ),
 });
 
+export type ColorMode = 'status' | 'employees';
+
+interface PipelineDef {
+  tag: string;
+  label: string;
+  color: string;
+}
+
+const PIPELINES: PipelineDef[] = [
+  { tag: 'primed', label: 'Primed', color: 'text-cyan-700 bg-cyan-50 border-cyan-300' },
+  { tag: 'personal', label: 'Personal', color: 'text-emerald-700 bg-emerald-50 border-emerald-300' },
+  { tag: 'hr-staffing', label: 'HR Staffing', color: 'text-purple-700 bg-purple-50 border-purple-300' },
+  { tag: 'insurance-broker', label: 'Insurance Broker', color: 'text-orange-700 bg-orange-50 border-orange-300' },
+];
+
 const STATUS_OPTIONS = ['new', 'contacted', 'qualified', 'quoted', 'negotiating', 'converted', 'lost', 'unresponsive'];
 const PRIORITY_OPTIONS = ['hot', 'warm', 'cold'];
-const TAG_PRESETS = ['personal', 'hit-list-2026-05-20', 'high-target', 'mid-target', 'ideal-fit'];
 
 export function MapTab() {
+  // Default to ALL pipelines visible
+  const [tagFilter, setTagFilter] = useState<string[]>(PIPELINES.map((p) => p.tag));
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
-  // Default to personal tag — Charley's run sheet
-  const [tagFilter, setTagFilter] = useState<string[]>(['personal']);
+  const [colorBy, setColorBy] = useState<ColorMode>('employees');
 
   const filters: MapFilters = {
     status: statusFilter,
@@ -34,9 +49,73 @@ export function MapTab() {
     setter(current.includes(value) ? current.filter((v) => v !== value) : [...current, value]);
   };
 
+  const allPipelines = PIPELINES.every((p) => tagFilter.includes(p.tag));
+  const togglePipelineAll = () => {
+    setTagFilter(allPipelines ? [] : PIPELINES.map((p) => p.tag));
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-16rem)] gap-3">
-      {/* Filter bar */}
+    <div className="flex flex-col h-[calc(100vh-12rem)] gap-3">
+      {/* Top bar: pipelines + color mode */}
+      <div className="flex flex-wrap items-center gap-3 text-xs">
+        {/* Pipelines */}
+        <div className="flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2">
+          <Layers className="w-3.5 h-3.5 text-white/60" />
+          <span className="text-white/60 font-medium">Pipelines:</span>
+          <button
+            type="button"
+            onClick={togglePipelineAll}
+            className="text-[10px] text-white/50 hover:text-white underline underline-offset-2"
+          >
+            {allPipelines ? 'none' : 'all'}
+          </button>
+          <div className="flex flex-wrap gap-1">
+            {PIPELINES.map((p) => {
+              const active = tagFilter.includes(p.tag);
+              return (
+                <button
+                  key={p.tag}
+                  type="button"
+                  onClick={() => toggle(p.tag, tagFilter, setTagFilter)}
+                  className={
+                    'px-2.5 py-0.5 rounded-full border text-xs transition-colors ' +
+                    (active
+                      ? p.color
+                      : 'bg-transparent border-white/15 text-white/50 hover:bg-white/5')
+                  }
+                >
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Color by */}
+        <div className="flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2">
+          <Palette className="w-3.5 h-3.5 text-white/60" />
+          <span className="text-white/60 font-medium">Color by:</span>
+          <div className="flex gap-1">
+            {(['employees', 'status'] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setColorBy(mode)}
+                className={
+                  'px-2.5 py-0.5 rounded-full border text-xs transition-colors capitalize ' +
+                  (colorBy === mode
+                    ? 'bg-blue-500/20 border-blue-400/40 text-blue-200'
+                    : 'bg-transparent border-white/15 text-white/50 hover:bg-white/5')
+                }
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Secondary filter row */}
       <div className="flex flex-wrap gap-3 text-xs">
         <FilterGroup
           label="Status"
@@ -50,17 +129,10 @@ export function MapTab() {
           selected={priorityFilter}
           onToggle={(v) => toggle(v, priorityFilter, setPriorityFilter)}
         />
-        <FilterGroup
-          label="Tags"
-          options={TAG_PRESETS}
-          selected={tagFilter}
-          onToggle={(v) => toggle(v, tagFilter, setTagFilter)}
-          icon={<Tag className="w-3 h-3" />}
-        />
       </div>
 
-      <div className="flex-1 min-h-0 rounded-lg overflow-hidden border border-gray-200 bg-white">
-        <LeadsMap filters={filters} />
+      <div className="flex-1 min-h-0 rounded-lg overflow-hidden border border-white/10 bg-white">
+        <LeadsMap filters={filters} colorBy={colorBy} />
       </div>
     </div>
   );
@@ -71,16 +143,12 @@ interface FilterGroupProps {
   options: string[];
   selected: string[];
   onToggle: (value: string) => void;
-  icon?: React.ReactNode;
 }
 
-function FilterGroup({ label, options, selected, onToggle, icon }: FilterGroupProps) {
+function FilterGroup({ label, options, selected, onToggle }: FilterGroupProps) {
   return (
     <div className="flex items-center gap-2">
-      <span className="flex items-center gap-1 text-gray-500 font-medium">
-        {icon}
-        {label}:
-      </span>
+      <span className="text-white/50 font-medium">{label}:</span>
       <div className="flex flex-wrap gap-1">
         {options.map((opt) => {
           const active = selected.includes(opt);
@@ -90,10 +158,10 @@ function FilterGroup({ label, options, selected, onToggle, icon }: FilterGroupPr
               type="button"
               onClick={() => onToggle(opt)}
               className={
-                'px-2 py-0.5 rounded-full border text-xs transition-colors ' +
+                'px-2 py-0.5 rounded-full border text-xs transition-colors capitalize ' +
                 (active
-                  ? 'bg-cyan-50 border-cyan-300 text-cyan-700'
-                  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50')
+                  ? 'bg-cyan-500/20 border-cyan-400/40 text-cyan-200'
+                  : 'bg-transparent border-white/15 text-white/50 hover:bg-white/5')
               }
             >
               {opt}
