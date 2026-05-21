@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Printer, ArrowLeft, Mail, Phone } from 'lucide-react';
 
 const SENDERS: Record<string, { name: string; email: string; phone?: string }> = {
-  charley: { name: 'Charley Blanchard', email: 'charley@bodyf1rst.com' },
+  charley: { name: 'Charley Blanchard', email: 'charley@bodyf1rst.com', phone: '(512) 350-5372' },
   ken: { name: 'Ken Laney', email: 'Ken@bodyf1rst.com', phone: '(512) 470-0454' },
   brian: { name: 'Brian Johnson', email: 'brian@systemsf1rst.com', phone: '(512) 203-5598' },
 };
