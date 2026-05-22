@@ -29,7 +29,8 @@ import { toast } from 'sonner';
 import {
   CreditCard,
   Plus,
-  Download,
+  FileDown,
+  Printer,
   Pencil,
   Trash2,
   RotateCcw,
@@ -246,12 +247,20 @@ export default function BusinessCardsPage() {
                       Flip
                     </Button>
                     {card.pdf_path && (
-                      <Button size="sm" variant="outline" asChild>
-                        <a href={card.pdf_path} download>
-                          <Download className="mr-1 h-3.5 w-3.5" />
-                          PDF
-                        </a>
-                      </Button>
+                      <>
+                        <Button size="sm" variant="outline" asChild>
+                          <a href={card.pdf_path} download>
+                            <FileDown className="mr-1 h-3.5 w-3.5" />
+                            PDF
+                          </a>
+                        </Button>
+                        <Button size="sm" variant="outline" asChild>
+                          <a href={card.pdf_path} target="_blank" rel="noopener noreferrer">
+                            <Printer className="mr-1 h-3.5 w-3.5" />
+                            Print
+                          </a>
+                        </Button>
+                      </>
                     )}
                     <Button size="sm" variant="outline" onClick={() => openEdit(card)}>
                       <Pencil className="mr-1 h-3.5 w-3.5" />

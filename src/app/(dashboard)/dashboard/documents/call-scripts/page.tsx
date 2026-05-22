@@ -1,13 +1,14 @@
 'use client';
 
+import { useRef } from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Phone, Printer, ArrowLeft } from 'lucide-react';
+import { Phone, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { DocumentActions } from '@/components/document-actions';
 
 export default function CallScriptsPage() {
-  const handlePrint = () => window.print();
+  const printableRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <div className="space-y-6">
@@ -26,12 +27,11 @@ export default function CallScriptsPage() {
           <Link href="/dashboard/documents" className="text-xs text-white/60 hover:text-white inline-flex items-center gap-1">
             <ArrowLeft className="w-3 h-3" /> Back to Documents
           </Link>
-          <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
-            <Printer className="w-4 h-4" /> Print / Save as PDF
-          </Button>
+          <DocumentActions targetRef={printableRef} filename="HealthShield-Sales-Call-Script" />
         </div>
       </div>
 
+      <div ref={printableRef}>
       <Card className="bg-white text-slate-900 p-0 print:shadow-none print:border-0 max-w-4xl mx-auto overflow-hidden">
         {/* Hero band */}
         <div className="bg-slate-900 text-white text-center py-10 px-8">
@@ -412,6 +412,7 @@ export default function CallScriptsPage() {
           </div>
         </div>
       </Card>
+      </div>
 
       <style jsx global>{`
         @media print {

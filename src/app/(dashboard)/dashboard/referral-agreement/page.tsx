@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileSignature, Printer, Loader2, RotateCcw } from 'lucide-react';
+import { FileSignature, Loader2, RotateCcw } from 'lucide-react';
 import { renderMarkdown } from '@/lib/render-markdown';
+import { DocumentActions } from '@/components/document-actions';
 
 const DEFAULT_BODYFIRST_ADDRESS = '3651 Greystone Drive, Suite 302, Austin, TX 78731';
 
@@ -67,7 +68,8 @@ export default function ReferralAgreementPage() {
     attributionEmail,
   ]);
 
-  const handlePrint = () => window.print();
+  const printableRef = useRef<HTMLDivElement | null>(null);
+
   const handleReset = () => {
     setPartnerCompany('');
     setPartnerName('');
@@ -92,11 +94,10 @@ export default function ReferralAgreementPage() {
             partner details below, then click Print / Save as PDF for a ready-to-sign copy.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
-            <Printer className="w-4 h-4" /> Print / Save as PDF
-          </Button>
-        </div>
+        <DocumentActions
+          targetRef={printableRef}
+          filename={partnerCompany ? `Referral-Agreement-${partnerCompany.replace(/[^A-Za-z0-9]+/g, '-')}` : 'Referral-Agreement'}
+        />
       </div>
 
       <Card className="bg-white/[0.03] border-white/10 p-5 print:hidden">
@@ -158,6 +159,7 @@ export default function ReferralAgreementPage() {
         </p>
       </Card>
 
+      <div ref={printableRef}>
       <Card className="bg-white text-slate-900 p-0 print:shadow-none print:border-0 max-w-4xl mx-auto overflow-hidden">
         {/* Branded header */}
         <div className="bg-slate-950 text-white px-10 py-7 border-b-4 border-orange-500 flex items-center justify-between gap-6">
@@ -200,6 +202,7 @@ export default function ReferralAgreementPage() {
           <span className="font-semibold text-slate-600">Performance Optimization</span>
         </div>
       </Card>
+      </div>
 
       <style jsx global>{`
         .prose-agreement h1 {

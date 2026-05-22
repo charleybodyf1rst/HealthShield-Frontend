@@ -1,10 +1,10 @@
 'use client';
 
-import { use } from 'react';
+import { use, useRef } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Printer, ArrowLeft, Mail, Phone, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, ExternalLink } from 'lucide-react';
+import { DocumentActions } from '@/components/document-actions';
 
 interface Sender {
   name: string;
@@ -50,9 +50,8 @@ const LEARN_MORE_LINKS: Array<{ label: string; href: string }> = [
 export default function OnePagerClient({ params }: { params: Promise<{ sender: string }> }) {
   const { sender } = use(params);
   const info = SENDERS[sender];
+  const printableRef = useRef<HTMLElement | null>(null);
   if (!info) notFound();
-
-  const handlePrint = () => window.print();
 
   return (
     <div className="space-y-6">
@@ -63,13 +62,15 @@ export default function OnePagerClient({ params }: { params: Promise<{ sender: s
             <ArrowLeft className="w-3 h-3" /> Back to Documents
           </Link>
         </div>
-        <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
-          <Printer className="w-4 h-4" /> Print / Save as PDF
-        </Button>
+        <DocumentActions
+          targetRef={printableRef}
+          filename={`BodyF1RST-One-Pager-${info.name.replace(/\s+/g, '-')}`}
+          orientation="portrait"
+        />
       </div>
 
       {/* The one-pager */}
-      <article className="max-w-5xl mx-auto bg-slate-950 text-white rounded-xl shadow-2xl overflow-hidden border-t-4 border-orange-500 print:shadow-none print:border-0 print:rounded-none">
+      <article ref={printableRef} className="max-w-5xl mx-auto bg-slate-950 text-white rounded-xl shadow-2xl overflow-hidden border-t-4 border-orange-500 print:shadow-none print:border-0 print:rounded-none">
         {/* Header */}
         <header className="px-10 pt-8 pb-6">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
