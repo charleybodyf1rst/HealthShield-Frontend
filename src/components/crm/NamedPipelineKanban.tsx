@@ -569,6 +569,16 @@ function LeadCard({ lead, allStages, onMove, isMoving, pitchSubjectTemplate }: L
             <span>{lead.estimated_employees.toLocaleString()} employees</span>
           </div>
         )}
+        {lead.deal_value != null && Number(lead.deal_value) > 0 && (
+          <div className="flex items-center justify-between gap-2 mt-1 pt-1 border-t border-white/5">
+            <span className="text-emerald-400 font-semibold">
+              ${Number(lead.deal_value).toLocaleString()}
+            </span>
+            <span className="text-amber-300 text-[10px]">
+              ${Math.round(Number(lead.deal_value) * 0.1).toLocaleString()} comm.
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-1 mt-2.5 pt-2 border-t border-white/10">

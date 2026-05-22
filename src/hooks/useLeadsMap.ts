@@ -31,6 +31,7 @@ export interface MapLead {
   priority: string | null;
   tags: string[] | null;
   lead_score: number | null;
+  deal_value: number | string | null;
   created_at: string;
   updated_at: string;
 }

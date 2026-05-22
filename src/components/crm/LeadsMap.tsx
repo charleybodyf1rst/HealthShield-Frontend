@@ -356,6 +356,7 @@ export default function LeadsMap({
   // --- Selection stats ---
   const stats = useMemo(() => {
     const totalEmp = selectedLeads.reduce((sum, l) => sum + (l.estimated_employees ?? 0), 0);
+    const totalDealValue = selectedLeads.reduce((sum, l) => sum + (l.deal_value != null ? Number(l.deal_value) : 0), 0);
     const byStatus: Record<string, number> = {};
     for (const l of selectedLeads) {
       const s = l.status || 'new';
@@ -365,6 +366,8 @@ export default function LeadsMap({
       count: selectedLeads.length,
       totalEmp,
       projectedSavings: totalEmp * 681,
+      totalDealValue,
+      totalCommission: Math.round(totalDealValue * 0.1),
       byStatus,
     };
   }, [selectedLeads]);
@@ -569,6 +572,12 @@ export default function LeadsMap({
           <div className="mb-2 bg-slate-50 border border-slate-200 rounded-md p-2 text-[11px] text-gray-700 space-y-0.5">
             <div className="flex justify-between"><span>Employees</span><strong className="text-gray-900">{stats.totalEmp.toLocaleString()}</strong></div>
             <div className="flex justify-between"><span>Projected savings</span><strong className="text-emerald-700">${stats.projectedSavings.toLocaleString()}/yr</strong></div>
+            {stats.totalDealValue > 0 && (
+              <>
+                <div className="flex justify-between"><span>Pipeline value</span><strong className="text-emerald-700">${stats.totalDealValue.toLocaleString()}</strong></div>
+                <div className="flex justify-between"><span>Your commission</span><strong className="text-amber-700">${stats.totalCommission.toLocaleString()}</strong></div>
+              </>
+            )}
             {Object.keys(stats.byStatus).length > 0 && (
               <div className="flex flex-wrap gap-1 pt-1">
                 {Object.entries(stats.byStatus).map(([s, n]) => {
@@ -825,6 +834,15 @@ export default function LeadsMap({
                 {picked.estimated_employees != null && (
                   <div className="text-xs text-gray-500 mt-0.5">
                     ~{Number(picked.estimated_employees).toLocaleString()} employees · {bandFor(picked.estimated_employees).label}
+                  </div>
+                )}
+                {picked.deal_value != null && Number(picked.deal_value) > 0 && (
+                  <div className="text-xs text-gray-700 mt-1">
+                    <strong className="text-emerald-700">${Number(picked.deal_value).toLocaleString()}</strong>
+                    <span className="text-gray-500"> deal value</span>
+                    <span className="ml-1.5 text-amber-700 font-semibold">
+                      · ${Math.round(Number(picked.deal_value) * 0.1).toLocaleString()} commission
+                    </span>
                   </div>
                 )}
                 {picked.company_address && (

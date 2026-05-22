@@ -526,6 +526,12 @@ export default function LeadDetailClient() {
                     <p className="text-xl font-bold">
                       ${lead.value?.toLocaleString() || 0}
                     </p>
+                    {lead.value != null && lead.value > 0 && (
+                      <p className="text-xs text-amber-400 mt-0.5">
+                        Your commission: ${Math.round(lead.value * 0.1).toLocaleString()}{' '}
+                        <span className="text-muted-foreground">(10%)</span>
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">

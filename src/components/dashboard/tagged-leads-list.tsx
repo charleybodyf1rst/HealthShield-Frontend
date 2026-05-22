@@ -185,7 +185,7 @@ export function TaggedLeadsList({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-5">
             <p className="text-xs text-white/50 uppercase tracking-wider">Total</p>
@@ -205,6 +205,15 @@ export function TaggedLeadsList({
             <p className="text-3xl font-bold text-emerald-400 mt-1">
               ${totalValue.toLocaleString()}
             </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5">
+            <p className="text-xs text-white/50 uppercase tracking-wider">Total Commission</p>
+            <p className="text-3xl font-bold text-amber-300 mt-1">
+              ${Math.round(totalValue * 0.1).toLocaleString()}
+            </p>
+            <p className="text-xs text-white/40 mt-1">10% of pipeline value</p>
           </CardContent>
         </Card>
       </div>
@@ -249,6 +258,7 @@ export function TaggedLeadsList({
                     <th className="font-semibold pb-3 pr-4">Phone</th>
                     <th className="font-semibold pb-3 pr-4 text-right">Employees</th>
                     <th className="font-semibold pb-3 pr-4 text-right">Value</th>
+                    <th className="font-semibold pb-3 pr-4 text-right">Commission</th>
                     <th className="font-semibold pb-3" />
                   </tr>
                 </thead>
@@ -313,6 +323,9 @@ export function TaggedLeadsList({
                         </td>
                         <td className="py-3 pr-4 text-right text-emerald-400 font-semibold">
                           {lead.value ? `$${lead.value.toLocaleString()}` : '—'}
+                        </td>
+                        <td className="py-3 pr-4 text-right text-amber-300 font-semibold">
+                          {lead.value ? `$${Math.round(lead.value * 0.1).toLocaleString()}` : '—'}
                         </td>
                         <td className="py-3">
                           <Link

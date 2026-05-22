@@ -48,6 +48,7 @@ export interface NamedPipelineLead {
   tags: string[];
   website: string | null;
   notes: string | null;
+  deal_value: number | string | null;
   created_at: string;
   updated_at: string;
 }
