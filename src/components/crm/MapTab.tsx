@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Layers, Palette } from 'lucide-react';
+import { Layers, Palette, Search, PanelRightOpen, PanelRightClose } from 'lucide-react';
 import type { MapFilters } from '@/hooks/useLeadsMap';
 
 const LeadsMap = dynamic(() => import('@/components/crm/LeadsMap'), {
@@ -38,6 +38,8 @@ export function MapTab() {
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
   const [colorBy, setColorBy] = useState<ColorMode>('employees');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
 
   const filters: MapFilters = {
     status: statusFilter,
@@ -113,6 +115,44 @@ export function MapTab() {
             ))}
           </div>
         </div>
+
+        {/* Search bar */}
+        <div className="flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-1.5 flex-1 min-w-[200px] max-w-md">
+          <Search className="w-3.5 h-3.5 text-white/60 flex-shrink-0" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search company name…"
+            aria-label="Search lead company names"
+            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="text-[10px] text-white/40 hover:text-white"
+            >
+              clear
+            </button>
+          )}
+        </div>
+
+        {/* Side panel toggle */}
+        <button
+          type="button"
+          onClick={() => setSidePanelOpen((v) => !v)}
+          className={
+            'flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs border transition-colors ' +
+            (sidePanelOpen
+              ? 'bg-blue-500/20 border-blue-400/40 text-blue-200'
+              : 'bg-white/[0.04] border-white/10 text-white/60 hover:text-white')
+          }
+          title={sidePanelOpen ? 'Close visible-area panel' : 'Open visible-area panel'}
+        >
+          {sidePanelOpen ? <PanelRightClose className="w-3.5 h-3.5" /> : <PanelRightOpen className="w-3.5 h-3.5" />}
+          Visible leads
+        </button>
       </div>
 
       {/* Secondary filter row */}
@@ -132,7 +172,12 @@ export function MapTab() {
       </div>
 
       <div className="flex-1 min-h-0 rounded-lg overflow-hidden border border-white/10 bg-white">
-        <LeadsMap filters={filters} colorBy={colorBy} />
+        <LeadsMap
+          filters={filters}
+          colorBy={colorBy}
+          searchQuery={searchQuery}
+          sidePanelOpen={sidePanelOpen}
+        />
       </div>
     </div>
   );

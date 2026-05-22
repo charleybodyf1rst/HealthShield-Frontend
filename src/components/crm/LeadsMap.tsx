@@ -23,6 +23,10 @@ import {
   X,
   CheckCircle2,
   XCircle,
+  BookmarkPlus,
+  List as ListIcon,
+  Search,
+  Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLeadsMap, type MapLead, type MapFilters } from '@/hooks/useLeadsMap';
@@ -224,6 +228,26 @@ function ClusteredMarkers({ leads, colorBy, selectedIds, onPick }: ClusteredMark
   );
 }
 
+// ----- Map bootstrap: captures the map instance + bounds-changed events -----
+
+interface MapBootstrapProps {
+  onMap: (m: google.maps.Map | null) => void;
+  onBounds: (b: google.maps.LatLngBounds | null) => void;
+}
+
+function MapBootstrap({ onMap, onBounds }: MapBootstrapProps) {
+  const map = useMap();
+  useEffect(() => {
+    onMap(map ?? null);
+    if (!map) return;
+    const update = () => onBounds(map.getBounds() ?? null);
+    update();
+    const listener = map.addListener('idle', update);
+    return () => listener.remove();
+  }, [map, onMap, onBounds]);
+  return null;
+}
+
 // ----- Main map component -----
 
 const STATUS_OPTIONS = ['new', 'contacted', 'qualified', 'quoted', 'negotiating', 'converted', 'lost', 'unresponsive'];
@@ -231,15 +255,53 @@ const STATUS_OPTIONS = ['new', 'contacted', 'qualified', 'quoted', 'negotiating'
 interface LeadsMapProps {
   filters?: MapFilters;
   colorBy?: ColorMode;
+  /** Search query from MapTab; pans to first match if non-empty. */
+  searchQuery?: string;
+  /** Toggle for the visible-area side panel. */
+  sidePanelOpen?: boolean;
 }
 
-export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsMapProps) {
+interface SavedList {
+  id: string;
+  name: string;
+  ids: number[];
+  createdAt: string;
+}
+
+const SAVED_LISTS_KEY = 'hs-map-saved-lists';
+
+function loadSavedLists(): SavedList[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(SAVED_LISTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistSavedLists(lists: SavedList[]) {
+  try { localStorage.setItem(SAVED_LISTS_KEY, JSON.stringify(lists)); } catch { /* quota */ }
+}
+
+export default function LeadsMap({
+  filters = {},
+  colorBy = 'employees',
+  searchQuery = '',
+  sidePanelOpen = false,
+}: LeadsMapProps) {
   const { data, isLoading, error } = useLeadsMap(filters);
   const [picked, setPicked] = useState<MapLead | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [selectMode, setSelectMode] = useState(false);
   const [localLeads, setLocalLeads] = useState<MapLead[]>([]);
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [viewportBounds, setViewportBounds] = useState<google.maps.LatLngBounds | null>(null);
+  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
+  const [savedLists, setSavedLists] = useState<SavedList[]>(() => loadSavedLists());
+  const [showSavedListsMenu, setShowSavedListsMenu] = useState(false);
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID ?? 'DEMO_MAP_ID';
@@ -256,6 +318,82 @@ export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsM
     () => leads.filter((l) => selectedIds.has(l.id)),
     [leads, selectedIds]
   );
+
+  // --- Search matching ---
+  const searchMatches = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [] as MapLead[];
+    return leads.filter((l) => (l.company_name ?? '').toLowerCase().includes(q));
+  }, [leads, searchQuery]);
+
+  // Auto-pan + open InfoWindow when a new search lands on exactly one or first match
+  const lastSearchRef = useRef('');
+  useEffect(() => {
+    if (!mapInstance) return;
+    if (!searchQuery.trim() || searchMatches.length === 0) return;
+    if (searchQuery === lastSearchRef.current) return;
+    lastSearchRef.current = searchQuery;
+    const first = searchMatches[0];
+    const c = leadCoords(first);
+    if (c) {
+      mapInstance.panTo(c);
+      mapInstance.setZoom(Math.max(mapInstance.getZoom() ?? 11, 12));
+      setPicked(first);
+    }
+  }, [searchQuery, searchMatches, mapInstance]);
+
+  // --- Viewport-visible leads (right panel) ---
+  const visibleLeads = useMemo(() => {
+    if (!viewportBounds) return leads;
+    return leads
+      .filter((l) => {
+        const c = leadCoords(l);
+        return c && viewportBounds.contains(c);
+      })
+      .sort((a, b) => (b.estimated_employees ?? 0) - (a.estimated_employees ?? 0));
+  }, [leads, viewportBounds]);
+
+  // --- Selection stats ---
+  const stats = useMemo(() => {
+    const totalEmp = selectedLeads.reduce((sum, l) => sum + (l.estimated_employees ?? 0), 0);
+    const byStatus: Record<string, number> = {};
+    for (const l of selectedLeads) {
+      const s = l.status || 'new';
+      byStatus[s] = (byStatus[s] ?? 0) + 1;
+    }
+    return {
+      count: selectedLeads.length,
+      totalEmp,
+      projectedSavings: totalEmp * 681,
+      byStatus,
+    };
+  }, [selectedLeads]);
+
+  // --- Saved lists ---
+  const saveCurrentSelection = () => {
+    if (selectedIds.size === 0) return;
+    const name = window.prompt(`Name this list (${selectedIds.size} leads):`, `Route ${new Date().toLocaleDateString()}`);
+    if (!name?.trim()) return;
+    const next: SavedList[] = [
+      { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name: name.trim(), ids: [...selectedIds], createdAt: new Date().toISOString() },
+      ...savedLists,
+    ];
+    setSavedLists(next);
+    persistSavedLists(next);
+    toast.success(`Saved "${name.trim()}" with ${selectedIds.size} leads`);
+  };
+
+  const loadSavedList = (list: SavedList) => {
+    setSelectedIds(new Set(list.ids));
+    setShowSavedListsMenu(false);
+    toast.success(`Loaded "${list.name}" (${list.ids.length} leads)`);
+  };
+
+  const deleteSavedList = (id: string) => {
+    const next = savedLists.filter((l) => l.id !== id);
+    setSavedLists(next);
+    persistSavedLists(next);
+  };
 
   const onRectangleSelect = useCallback(
     (bounds: google.maps.LatLngBounds) => {
@@ -385,6 +523,16 @@ export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsM
         )}
       </div>
 
+      {/* Search match badge (only when searching) */}
+      {searchQuery.trim() && (
+        <div className="absolute top-14 left-3 z-10 flex items-center gap-1.5 bg-white/95 backdrop-blur-md border border-gray-200 rounded-full px-3 py-1 text-[11px] shadow-md text-gray-700">
+          <Search className="w-3 h-3 text-cyan-600" />
+          {searchMatches.length === 0
+            ? <span>No matches for &ldquo;{searchQuery}&rdquo;</span>
+            : <span><strong>{searchMatches.length}</strong> match{searchMatches.length === 1 ? '' : 'es'} for &ldquo;{searchQuery}&rdquo;</span>}
+        </div>
+      )}
+
       {/* Select-on-map toggle */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
         <button
@@ -416,6 +564,29 @@ export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsM
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          {/* Stats summary */}
+          <div className="mb-2 bg-slate-50 border border-slate-200 rounded-md p-2 text-[11px] text-gray-700 space-y-0.5">
+            <div className="flex justify-between"><span>Employees</span><strong className="text-gray-900">{stats.totalEmp.toLocaleString()}</strong></div>
+            <div className="flex justify-between"><span>Projected savings</span><strong className="text-emerald-700">${stats.projectedSavings.toLocaleString()}/yr</strong></div>
+            {Object.keys(stats.byStatus).length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-1">
+                {Object.entries(stats.byStatus).map(([s, n]) => {
+                  const c = statusColor(s);
+                  return (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px]"
+                      style={{ backgroundColor: c.background + '22', color: c.background }}
+                    >
+                      {s} {n}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           <button
             type="button"
             onClick={() => {
@@ -429,6 +600,14 @@ export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsM
             {selectedLeads.length > 10 && (
               <span className="text-[10px] opacity-80 ml-1">(first 10)</span>
             )}
+          </button>
+          <button
+            type="button"
+            onClick={saveCurrentSelection}
+            className="w-full flex items-center justify-center gap-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 rounded-md px-3 py-1.5 text-xs mb-2"
+          >
+            <BookmarkPlus className="w-3.5 h-3.5" />
+            Save as list…
           </button>
           <div className="mb-1.5">
             <label className="text-[10px] text-gray-500 uppercase tracking-wide font-semibold">Set status</label>
@@ -476,6 +655,100 @@ export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsM
               <Loader2 className="w-3 h-3 animate-spin" /> Updating…
             </div>
           )}
+        </div>
+      )}
+
+      {/* Saved lists overlay (bottom-left) */}
+      <div className="absolute bottom-3 left-3 z-10">
+        <button
+          type="button"
+          onClick={() => setShowSavedListsMenu((v) => !v)}
+          className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border border-gray-200 rounded-lg px-3 py-2 text-xs shadow-md text-gray-700 hover:bg-gray-50"
+        >
+          <ListIcon className="w-3.5 h-3.5 text-cyan-600" />
+          Saved lists
+          <span className="text-[10px] text-gray-400">({savedLists.length})</span>
+        </button>
+        {showSavedListsMenu && (
+          <div className="absolute bottom-full mb-2 left-0 min-w-[240px] max-w-[320px] bg-white border border-gray-200 rounded-lg shadow-lg p-2 max-h-[320px] overflow-y-auto">
+            {savedLists.length === 0 ? (
+              <div className="text-[11px] text-gray-500 px-2 py-3 text-center">
+                No saved lists yet. Select leads → &ldquo;Save as list&rdquo;.
+              </div>
+            ) : (
+              savedLists.map((list) => (
+                <div key={list.id} className="group flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => loadSavedList(list)}
+                    className="flex-1 text-left"
+                  >
+                    <div className="font-medium text-gray-900">{list.name}</div>
+                    <div className="text-[10px] text-gray-500">{list.ids.length} leads · {new Date(list.createdAt).toLocaleDateString()}</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteSavedList(list.id)}
+                    aria-label={`Delete list ${list.name}`}
+                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 p-1"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Visible-area side panel (toggled from MapTab) */}
+      {sidePanelOpen && (
+        <div className="absolute top-3 right-3 z-10 bg-white/95 backdrop-blur-md border border-gray-200 rounded-lg shadow-lg w-[280px] max-h-[calc(100%-1.5rem)] flex flex-col text-xs">
+          <div className="px-3 py-2 border-b border-gray-200 flex items-center justify-between">
+            <span className="font-semibold text-gray-800">Visible on map</span>
+            <span className="text-[10px] text-gray-500">{visibleLeads.length} leads</span>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {visibleLeads.length === 0 ? (
+              <div className="text-[11px] text-gray-500 px-3 py-6 text-center">
+                Drag/zoom the map to load leads here.
+              </div>
+            ) : (
+              visibleLeads.slice(0, 200).map((l) => {
+                const c = leadCoords(l);
+                const isSel = selectedIds.has(l.id);
+                const bnd = bandFor(l.estimated_employees);
+                return (
+                  <button
+                    key={l.id}
+                    type="button"
+                    onClick={() => {
+                      if (c && mapInstance) mapInstance.panTo(c);
+                      setPicked(l);
+                    }}
+                    className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-cyan-50 ${isSel ? 'bg-blue-50' : ''}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium text-gray-900 truncate">{l.company_name || '—'}</span>
+                      <span
+                        className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: bnd.color.background }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-gray-500 mt-0.5">
+                      <span>{l.company_city || '—'}{l.company_state ? `, ${l.company_state}` : ''}</span>
+                      <span>{l.estimated_employees ? `~${Number(l.estimated_employees).toLocaleString()} emp` : '—'}</span>
+                    </div>
+                  </button>
+                );
+              })
+            )}
+            {visibleLeads.length > 200 && (
+              <div className="text-[10px] text-gray-400 px-3 py-2 text-center">
+                Showing first 200. Zoom in to narrow.
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -533,6 +806,8 @@ export default function LeadsMap({ filters = {}, colorBy = 'employees' }: LeadsM
             onSelect={onRectangleSelect}
             onDone={() => setSelectMode(false)}
           />
+
+          <MapBootstrap onMap={setMapInstance} onBounds={setViewportBounds} />
 
           {picked && pickedCoords && (
             <InfoWindow
