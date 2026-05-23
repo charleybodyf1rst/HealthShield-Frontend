@@ -3,13 +3,13 @@
 /**
  * Client-side PDF export from a DOM element.
  *
- * Uses html2canvas-pro (maintained fork of html2canvas) which supports modern
- * CSS color functions — lab(), oklab(), oklch(), color() — that Tailwind 4
- * emits natively. The original html2pdf.js bundles old html2canvas which
- * throws "Attempting to parse an unsupported color function" on these styles.
+ * Uses modern-screenshot, which embeds the cloned DOM into an SVG
+ * <foreignObject> and rasterizes it. The BROWSER renders the DOM — the
+ * library does no CSS interpretation — so Tailwind 4 (CSS variables,
+ * cascade layers, oklch/lab) renders identically to what's on screen.
  *
- * Both html2canvas-pro and jspdf are lazy-imported so the initial bundle
- * doesn't pay the cost — only loaded when the user clicks an "PDF" button.
+ * Both modern-screenshot and jspdf are lazy-imported so the initial
+ * bundle doesn't pay the cost — only loaded when the user clicks "PDF".
  */
 
 export interface ExportPdfOptions {
@@ -36,17 +36,14 @@ export async function exportToPdf(opts: ExportPdfOptions): Promise<void> {
   const el = opts.element;
   if (!el) throw new Error('exportToPdf: target element is null');
 
-  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-    import('html2canvas-pro'),
+  const [{ domToCanvas }, { jsPDF }] = await Promise.all([
+    import('modern-screenshot'),
     import('jspdf'),
   ]);
 
-  // Render the element to a high-DPI canvas. html2canvas-pro handles
-  // lab/oklab/oklch/color() natively, unlike the older html2canvas.
-  const canvas = await html2canvas(el, {
+  // Render via SVG foreignObject — preserves Tailwind 4 styling 1:1
+  const canvas = await domToCanvas(el, {
     scale: 2,
-    useCORS: true,
-    logging: false,
     backgroundColor: '#ffffff',
   });
 
@@ -61,12 +58,10 @@ export async function exportToPdf(opts: ExportPdfOptions): Promise<void> {
 
   const pdf = new jsPDF({ unit: 'in', format, orientation, compress: true });
 
-  // Scale canvas full width to the printable content width
   const imgWidth = contentWidth;
   const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
   if (imgHeight <= contentHeight) {
-    // Fits on one page
     pdf.addImage(
       canvas.toDataURL('image/jpeg', 0.95),
       'JPEG',
@@ -78,7 +73,6 @@ export async function exportToPdf(opts: ExportPdfOptions): Promise<void> {
       'FAST',
     );
   } else {
-    // Multi-page: slice the canvas into page-sized chunks
     const pageHeightPx = (canvas.width * contentHeight) / contentWidth;
     let yOffsetPx = 0;
     let isFirstPage = true;
