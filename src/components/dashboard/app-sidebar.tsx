@@ -30,6 +30,7 @@ import {
   Map as MapIcon,
   Megaphone,
   MessageSquare,
+  Network,
   Phone,
   RefreshCw,
   Settings,
@@ -117,6 +118,11 @@ const mainNavItems = [
     title: 'HR Events',
     href: '/dashboard/hr-events',
     icon: CalendarDays,
+  },
+  {
+    title: 'Business Networking',
+    href: '/dashboard/business-networking',
+    icon: Network,
   },
   {
     title: 'Insurance Broker Leads',

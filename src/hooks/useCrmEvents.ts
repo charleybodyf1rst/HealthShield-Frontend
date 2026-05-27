@@ -71,10 +71,13 @@ function paramsFromFilters(filters: CrmEventFilters): Record<string, string> {
 }
 
 /**
- * Fetches upcoming HR events (default: next 180 days).
+ * Fetches upcoming events (default: next 180 days, hr-event tag).
  * Backed by GET /api/v1/crm/events/upcoming.
+ *
+ * @param withinDays - lookback window in days
+ * @param tag - filter by a tag (e.g. 'hr-event', 'business-networking'); pass 'any' to skip filtering
  */
-export function useUpcomingCrmEvents(withinDays: number = 180) {
+export function useUpcomingCrmEvents(withinDays: number = 180, tag: string = 'hr-event') {
   const [events, setEvents] = useState<CrmEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | undefined>(undefined);
@@ -87,7 +90,10 @@ export function useUpcomingCrmEvents(withinDays: number = 180) {
     setIsLoading(true);
     setError(undefined);
     api
-      .get<UpcomingResponse>('/api/v1/crm/events/upcoming', { within_days: String(withinDays) })
+      .get<UpcomingResponse>('/api/v1/crm/events/upcoming', {
+        within_days: String(withinDays),
+        tag,
+      })
       .then((res) => {
         if (!cancelled) setEvents(res.events ?? []);
       })
@@ -100,7 +106,7 @@ export function useUpcomingCrmEvents(withinDays: number = 180) {
     return () => {
       cancelled = true;
     };
-  }, [withinDays, reloadKey]);
+  }, [withinDays, tag, reloadKey]);
 
   return { events, isLoading, error, reload };
 }

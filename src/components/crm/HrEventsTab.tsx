@@ -38,10 +38,20 @@ const TYPE_COLORS: Record<string, string> = {
   workshop: 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30',
   webinar: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30',
   chapter_meeting: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+  networking_mixer: 'bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30',
 };
 
-export function HrEventsTab() {
-  const { events, isLoading, error, reload } = useUpcomingCrmEvents(180);
+interface HrEventsTabProps {
+  /** Backend tag filter. Defaults to 'hr-event'; pass 'business-networking' etc. */
+  tag?: string;
+  /** Lookback window in days; defaults to 180. */
+  withinDays?: number;
+  /** Label for the budget metric in the header. */
+  budgetLabel?: string;
+}
+
+export function HrEventsTab({ tag = 'hr-event', withinDays = 180, budgetLabel = 'Total must-attend booth budget' }: HrEventsTabProps = {}) {
+  const { events, isLoading, error, reload } = useUpcomingCrmEvents(withinDays, tag);
   const [cityFilter, setCityFilter] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<string | null>(null);
   const [hidePast, setHidePast] = useState(true);
@@ -112,7 +122,7 @@ export function HrEventsTab() {
           <span className="text-white/50">Events in window:</span>{' '}
           <strong className="text-white">{filtered.length}</strong>
           <span className="text-white/30 mx-2">·</span>
-          <span className="text-white/50">Total must-attend booth budget:</span>{' '}
+          <span className="text-white/50">{budgetLabel}:</span>{' '}
           <strong className="text-white">${totalBoothCost.toLocaleString()}</strong>
         </div>
         <div className="flex items-center gap-2">
