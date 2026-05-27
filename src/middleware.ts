@@ -113,7 +113,7 @@ export function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com",
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'https://systemsf1rst-backend-887571186773.us-central1.run.app'} wss://${process.env.NEXT_PUBLIC_REVERB_HOST || 'systemsf1rst-reverb-887571186773.us-central1.run.app'} https://storage.googleapis.com https://*.sentry.io https://maps.googleapis.com https://maps.gstatic.com`,
+      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'https://systemsf1rst-backend-887571186773.us-central1.run.app'} wss://${process.env.NEXT_PUBLIC_REVERB_HOST || 'systemsf1rst-reverb-887571186773.us-central1.run.app'} ${process.env.NEXT_PUBLIC_PDF_RENDERER_URL || 'https://pdf-renderer-go6eof7d6a-uc.a.run.app'} https://storage.googleapis.com https://*.sentry.io https://maps.googleapis.com https://maps.gstatic.com`,
       "frame-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",
