@@ -319,7 +319,7 @@ export default function BusinessCardsPage() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="e.g. jonathan@systemsf1rst.com"
+                placeholder="e.g. jonathan@bodyf1rst.com"
               />
             </div>
             <div className="grid gap-1.5">
