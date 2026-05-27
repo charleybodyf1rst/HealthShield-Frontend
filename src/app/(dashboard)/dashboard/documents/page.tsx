@@ -145,7 +145,7 @@ const documents: Document[] = [
     description: 'B1 Corporate Wellness presentation site — Where Prevention Meets Performance. Interactive demo and discovery.',
     category: 'Websites',
     type: 'link',
-    url: 'https://b1-corporate-wellness.web.app',
+    url: 'https://bodyf1rst-corporate-wellness.web.app/',
     icon: 'link',
   },
   {

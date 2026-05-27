@@ -41,7 +41,7 @@ const HOW_IT_WORKS: Array<{ title: string; desc: string }> = [
 
 const LEARN_MORE_LINKS: Array<{ label: string; href: string }> = [
   { label: 'bodyf1rst.com',                          href: 'https://bodyf1rst.com' },
-  { label: 'B1 Corporate Wellness',                  href: 'https://b1-corporate-wellness-app.web.app' },
+  { label: 'B1 Corporate Wellness',                  href: 'https://bodyf1rst-corporate-wellness.web.app/' },
   { label: 'HealthShield Page',                      href: 'https://healthshield.ai' },
   { label: 'SilverPoint Health Overview (Video)',    href: 'https://www.youtube.com/results?search_query=silverpoint+health+overview' },
   { label: 'HealthShield Explainer (Video)',         href: 'https://www.youtube.com/results?search_query=healthshield+explainer' },
