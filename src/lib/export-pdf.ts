@@ -52,7 +52,9 @@ export async function exportToPdf(opts: ExportPdfOptions): Promise<void> {
   const baseHref = `${window.location.origin}/`;
   const orientation = opts.orientation ?? 'portrait';
   const format = (opts.format ?? 'letter') === 'a4' ? 'A4' : 'Letter';
-  const margin = opts.margin ?? 0.4;
+  // 0.15in margins keep Letter content area above Tailwind's md: breakpoint (768px).
+  // With 0.4in margins the content area was 739px and md:grid-cols-2 collapsed.
+  const margin = opts.margin ?? 0.15;
 
   // Build the standalone document
   const html = `<!doctype html>
