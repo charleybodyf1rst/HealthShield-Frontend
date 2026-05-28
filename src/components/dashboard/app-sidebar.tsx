@@ -7,6 +7,7 @@ import {
   BarChart3,
   Bot,
   Briefcase,
+  Calculator,
   Calendar,
   CalendarDays,
   CheckSquare,
@@ -113,6 +114,26 @@ const mainNavItems = [
     title: 'HR Staffing Pipeline',
     href: '/dashboard/hr-staffing-pipeline',
     icon: Handshake,
+  },
+  {
+    title: 'Payroll Leads',
+    href: '/dashboard/payroll-leads',
+    icon: DollarSign,
+  },
+  {
+    title: 'Payroll Pipeline',
+    href: '/dashboard/payroll-pipeline',
+    icon: DollarSign,
+  },
+  {
+    title: 'Accounting Leads',
+    href: '/dashboard/accounting-leads',
+    icon: Calculator,
+  },
+  {
+    title: 'Accounting Pipeline',
+    href: '/dashboard/accounting-pipeline',
+    icon: Calculator,
   },
   {
     title: 'HR Events',
