@@ -128,6 +128,16 @@ const documents: Document[] = [
     url: '/dashboard/documents/call-scripts',
     icon: 'template',
   },
+  {
+    id: '20',
+    name: 'HealthShield Tax Savings Guide',
+    description: 'Re-themed BodyF1RST employer deck. Covers IRS Section 125 + 213(d) compliance, employee paycheck math ($429/yr bonus), employer payroll savings ($681/yr per employee), benefits suite, 8-week implementation timeline, and full tax-code reference. Generated from /tax-savings on the corporate wellness site — single source of truth.',
+    category: 'Sales Collateral',
+    type: 'pdf',
+    url: '/documents/healthshield-tax-savings-guide.pdf',
+    icon: 'pdf',
+    download: true,
+  },
 
   // Websites
   {
