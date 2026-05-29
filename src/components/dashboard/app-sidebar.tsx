@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -12,6 +12,7 @@ import {
   CalendarDays,
   CheckSquare,
   ChevronDown,
+  ChevronRight,
   Bell,
   ClipboardList,
   CreditCard,
@@ -54,6 +55,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
@@ -69,7 +73,12 @@ import { useAuthStore, useUser } from '@/stores/auth-store';
 import { useInboxStore } from '@/stores/communications-store';
 import { cn } from '@/lib/utils';
 
-const mainNavItems = [
+// Each entry is either a flat link or a collapsible group with `children`.
+type NavLeaf = { title: string; href: string; icon: React.ElementType };
+type NavGroup = { title: string; icon: React.ElementType; children: NavLeaf[] };
+type NavEntry = NavLeaf | NavGroup;
+
+const mainNavItems: NavEntry[] = [
   {
     title: 'Dashboard',
     href: '/dashboard',
@@ -77,114 +86,44 @@ const mainNavItems = [
   },
   {
     title: 'Leads',
-    href: '/dashboard/leads',
     icon: UserPlus,
+    children: [
+      { title: 'All Leads', href: '/dashboard/leads', icon: UserPlus },
+      { title: 'Primed Leads', href: '/dashboard/primed-leads', icon: Sparkles },
+      { title: 'Personal Leads', href: '/dashboard/personal-leads', icon: Heart },
+      { title: 'HR Staffing Leads', href: '/dashboard/hr-staffing-leads', icon: Handshake },
+      { title: 'Payroll Leads', href: '/dashboard/payroll-leads', icon: DollarSign },
+      { title: 'Accounting Leads', href: '/dashboard/accounting-leads', icon: Calculator },
+      { title: 'Insurance Broker Leads', href: '/dashboard/insurance-broker-leads', icon: Briefcase },
+    ],
   },
   {
-    title: 'Pipeline',
-    href: '/dashboard/pipeline',
+    title: 'Pipelines',
     icon: GitBranch,
+    children: [
+      { title: 'All Pipeline', href: '/dashboard/pipeline', icon: GitBranch },
+      { title: 'Primed Pipeline', href: '/dashboard/primed-pipeline', icon: Sparkles },
+      { title: 'Personal Pipeline', href: '/dashboard/personal-pipeline', icon: Heart },
+      { title: 'HR Staffing Pipeline', href: '/dashboard/hr-staffing-pipeline', icon: Handshake },
+      { title: 'Payroll Pipeline', href: '/dashboard/payroll-pipeline', icon: DollarSign },
+      { title: 'Accounting Pipeline', href: '/dashboard/accounting-pipeline', icon: Calculator },
+      { title: 'Insurance Broker Pipeline', href: '/dashboard/insurance-broker-pipeline', icon: Briefcase },
+    ],
   },
   {
-    title: 'Primed Leads',
-    href: '/dashboard/primed-leads',
-    icon: Sparkles,
-  },
-  {
-    title: 'Primed Pipeline',
-    href: '/dashboard/primed-pipeline',
-    icon: Sparkles,
-  },
-  {
-    title: 'Personal Leads',
-    href: '/dashboard/personal-leads',
-    icon: Heart,
-  },
-  {
-    title: 'Personal Pipeline',
-    href: '/dashboard/personal-pipeline',
-    icon: Heart,
-  },
-  {
-    title: 'HR Staffing Leads',
-    href: '/dashboard/hr-staffing-leads',
-    icon: Handshake,
-  },
-  {
-    title: 'HR Staffing Pipeline',
-    href: '/dashboard/hr-staffing-pipeline',
-    icon: Handshake,
-  },
-  {
-    title: 'Payroll Leads',
-    href: '/dashboard/payroll-leads',
-    icon: DollarSign,
-  },
-  {
-    title: 'Payroll Pipeline',
-    href: '/dashboard/payroll-pipeline',
-    icon: DollarSign,
-  },
-  {
-    title: 'Accounting Leads',
-    href: '/dashboard/accounting-leads',
-    icon: Calculator,
-  },
-  {
-    title: 'Accounting Pipeline',
-    href: '/dashboard/accounting-pipeline',
-    icon: Calculator,
-  },
-  {
-    title: 'HR Events',
-    href: '/dashboard/hr-events',
+    title: 'Events',
     icon: CalendarDays,
+    children: [
+      { title: 'HR Events', href: '/dashboard/hr-events', icon: CalendarDays },
+      { title: 'Business Networking', href: '/dashboard/business-networking', icon: Network },
+    ],
   },
-  {
-    title: 'Business Networking',
-    href: '/dashboard/business-networking',
-    icon: Network,
-  },
-  {
-    title: 'Insurance Broker Leads',
-    href: '/dashboard/insurance-broker-leads',
-    icon: Briefcase,
-  },
-  {
-    title: 'Insurance Broker Pipeline',
-    href: '/dashboard/insurance-broker-pipeline',
-    icon: Briefcase,
-  },
-  {
-    title: 'Referral Agreement',
-    href: '/dashboard/referral-agreement',
-    icon: FileSignature,
-  },
-  {
-    title: 'Map',
-    href: '/dashboard/map',
-    icon: MapIcon,
-  },
-  {
-    title: 'Policyholders',
-    href: '/dashboard/contacts',
-    icon: Users,
-  },
-  {
-    title: 'Calendar',
-    href: '/dashboard/calendar',
-    icon: Calendar,
-  },
-  {
-    title: 'Tasks',
-    href: '/dashboard/tasks',
-    icon: CheckSquare,
-  },
-  {
-    title: 'Business Cards',
-    href: '/dashboard/business-cards',
-    icon: CreditCard,
-  },
+  { title: 'Map', href: '/dashboard/map', icon: MapIcon },
+  { title: 'Policyholders', href: '/dashboard/contacts', icon: Users },
+  { title: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
+  { title: 'Tasks', href: '/dashboard/tasks', icon: CheckSquare },
+  { title: 'Business Cards', href: '/dashboard/business-cards', icon: CreditCard },
+  { title: 'Referral Agreement', href: '/dashboard/referral-agreement', icon: FileSignature },
 ];
 
 const insuranceItems = [
@@ -351,13 +290,69 @@ export function AppSidebar() {
     return pathname.startsWith(href);
   };
 
+  // Collapsible state for grouped nav items. Auto-open whichever group contains
+  // the active route so deep links land with the right group expanded.
+  const initialOpenGroups = useMemo(() => {
+    const open: Record<string, boolean> = {};
+    for (const entry of mainNavItems) {
+      if ('children' in entry) {
+        open[entry.title] = entry.children.some((c) => isActive(c.href));
+      }
+    }
+    return open;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(initialOpenGroups);
+  // Re-sync auto-open when route changes (e.g. user clicks a link inside the group).
+  useEffect(() => {
+    setOpenGroups((prev) => ({ ...prev, ...initialOpenGroups }));
+  }, [initialOpenGroups]);
+  const toggleGroup = (title: string) =>
+    setOpenGroups((prev) => ({ ...prev, [title]: !prev[title] }));
+
   const renderNavItem = (item: {
     title: string;
-    href: string;
+    href?: string;
     icon: React.ElementType;
     badge?: string;
     badgeKey?: string;
+    children?: NavLeaf[];
   }) => {
+    // Collapsible group with sub-items
+    if (item.children && item.children.length > 0) {
+      const isOpen = !!openGroups[item.title];
+      const anyChildActive = item.children.some((c) => isActive(c.href));
+      const Chevron = isOpen ? ChevronDown : ChevronRight;
+      return (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton
+            onClick={() => toggleGroup(item.title)}
+            isActive={anyChildActive && !isOpen}
+            tooltip={item.title}
+          >
+            <item.icon className="h-4 w-4" />
+            <span>{item.title}</span>
+            <Chevron className="ml-auto h-4 w-4 transition-transform" />
+          </SidebarMenuButton>
+          {isOpen && (
+            <SidebarMenuSub>
+              {item.children.map((child) => (
+                <SidebarMenuSubItem key={child.href}>
+                  <SidebarMenuSubButton asChild isActive={isActive(child.href)}>
+                    <Link href={child.href}>
+                      <child.icon className="h-4 w-4" />
+                      <span>{child.title}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          )}
+        </SidebarMenuItem>
+      );
+    }
+
+    if (!item.href) return null;
     const active = isActive(item.href);
     return (
       <SidebarMenuItem key={item.href}>
