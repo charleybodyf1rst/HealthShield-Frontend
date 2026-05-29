@@ -27,6 +27,8 @@ BodyF1RST operates an AI-powered health and wellness benefits program sold to em
 
 3.1 **Referral Fee.** For each Referred Client, BodyF1RST will pay Partner a referral fee equal to **ten percent (10%) of Net Revenue** collected by BodyF1RST from the Referred Client during the **first twelve (12) months** after that Referred Client's subscription goes live (the "**Commission Window**").
 
+3.1A **Cash Basis — Referral Fees Earned Only After Customer Pays.** Referral fees are calculated on a **cash basis only**. No referral fee is earned, owed, or payable to Partner until BodyF1RST has actually **received cleared payment** from the Referred Client on the underlying invoice. Invoices that are billed but unpaid (including invoices that are past due, in dispute, or in collections) generate **no referral fee** until and unless the Referred Client's payment is received and clears. If a Referred Client pays a partial amount on an invoice, the referral fee is owed only on the portion actually collected.
+
 3.2 **"Net Revenue"** means gross subscription fees actually collected by BodyF1RST from the Referred Client, less (a) refunds, (b) credits, (c) chargebacks, and (d) taxes collected on behalf of taxing authorities. It does not include amounts paid by the Referred Client for one-time implementation services, professional services, or third-party pass-through fees.
 
 3.3 **Payment schedule.** Referral fees are calculated on a calendar-quarter basis and paid **quarterly in arrears** within thirty (30) days of the close of each calendar quarter in which Net Revenue was collected.

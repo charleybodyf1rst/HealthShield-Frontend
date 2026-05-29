@@ -171,7 +171,7 @@ const documents: Document[] = [
   {
     id: '24',
     name: 'Sales Representative Agreement',
-    description: 'Commission-only 1099 sales rep agreement. 10% commission on Net Revenue, paid after a 60-day sales-cycle qualification window. Commissions end the month engagement terminates (final check ~90 days post-termination). 90-day clawback on refunds/chargebacks. 12-month post-engagement non-compete in the employee benefits industry with 3× liquidated damages and injunctive relief. Fill in rep details, copy / PDF / print, send for signature.',
+    description: 'Commission-only 1099 sales rep agreement. 10% commission on Net Revenue — CASH BASIS ONLY (no commission earned until BodyF1RST has actually collected payment on the invoice). 60-day sales-cycle qualification window before commissions begin. Commissions end the month engagement terminates (final check ~90 days post-termination). 90-day clawback on refunds/chargebacks. 12-month post-engagement non-compete in the employee benefits industry with 3× liquidated damages and injunctive relief. Fill in rep details, copy / PDF / print, send for signature.',
     category: 'Sales Collateral',
     type: 'template',
     url: '/dashboard/sales-rep-agreement',

@@ -85,11 +85,12 @@ export default function SalesRepAgreementPage() {
             Sales Representative Agreement
           </h1>
           <p className="text-sm text-white/50 mt-1 max-w-2xl">
-            Commission-only 1099 sales rep agreement. 10% of Net Revenue, paid after a
-            60-day qualification window, ending the month engagement terminates.
-            90-day clawback. 12-month post-engagement non-compete in the employee
-            benefits industry with 3× liquidated damages. Fill in rep details, then
-            Print / Save as PDF.
+            Commission-only 1099 sales rep agreement. 10% of Net Revenue,
+            <strong className="text-white/70"> paid on a cash basis only after the customer pays the invoice</strong>,
+            and only after a 60-day qualification window. Commissions end the month
+            engagement terminates. 90-day clawback. 12-month post-engagement
+            non-compete in the employee benefits industry with 3× liquidated
+            damages. Fill in rep details, then Print / Save as PDF.
           </p>
         </div>
         <DocumentActions
