@@ -77,6 +77,23 @@ const statusColors: Record<string, string> = {
   lost: 'bg-red-500/10 text-red-500 border-red-500/20',
 };
 
+// Enriched company insights extracted via the backend /admin/enrich-leads flow.
+// Stored in crm_leads.custom_fields.enrichment.
+interface EnrichmentData {
+  source?: string;
+  source_url?: string;
+  enriched_at?: string;
+  description?: string | null;
+  industries_served?: string[] | null;
+  services_offered?: string[] | null;
+  specialties?: string[] | null;
+  estimated_employees_range?: string | null;
+  estimated_employees?: number | null;
+  founded_year?: number | null;
+  geographic_coverage?: string[] | null;
+  confidence?: number | null;
+}
+
 // Default empty lead (shown while loading)
 const emptyLead: Lead = {
   id: '0',
@@ -96,6 +113,8 @@ export default function LeadDetailClient() {
   const { fetchLead, updateLead } = useHealthShieldCrmStore();
   const authUser = useAuthStore((s) => s.user);
   const [lead, setLead] = useState<Lead>(emptyLead);
+  const [enrichment, setEnrichment] = useState<EnrichmentData | null>(null);
+  const [reEnriching, setReEnriching] = useState(false);
   const [activities, setActivities] = useState<LeadActivity[]>([]);
   const [newNote, setNewNote] = useState('');
   const [loading, setLoading] = useState(true);
@@ -151,6 +170,8 @@ export default function LeadDetailClient() {
           createdAt: raw.createdAt || data.createdAt,
           updatedAt: raw.updatedAt || data.updatedAt,
         });
+        const cf = (raw.customFields ?? raw.custom_fields) as { enrichment?: EnrichmentData } | undefined;
+        setEnrichment(cf?.enrichment ?? null);
         // Map interactions to activities
         if (data.interactions?.length) {
           setActivities(
@@ -242,6 +263,26 @@ export default function LeadDetailClient() {
     loadLead();
     loadTasksAndActivities();
   }, [loadLead, loadTasksAndActivities]);
+
+  const handleReEnrich = async () => {
+    if (!lead.id || lead.id === '0') return;
+    setReEnriching(true);
+    try {
+      await api.post('/api/admin/enrich-leads', {
+        lead_id: Number(lead.id),
+        batch_size: 1,
+        force: true,
+      });
+      toast.success('Re-enrichment started');
+      // Pull fresh data with a small delay to let the backend persist
+      await new Promise((r) => setTimeout(r, 1500));
+      await loadLead();
+    } catch {
+      toast.error('Re-enrichment failed');
+    } finally {
+      setReEnriching(false);
+    }
+  };
 
   const handleStatusChange = async (newStatus: string) => {
     setLead((prev) => ({ ...prev, status: newStatus as Lead['status'] }));
@@ -1065,6 +1106,100 @@ export default function LeadDetailClient() {
                         {lead.website}
                       </a>
                     </div>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Company Insights (enriched via website scrape + Claude) */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <CardTitle className="text-sm font-medium">Company Insights</CardTitle>
+              <button
+                type="button"
+                onClick={handleReEnrich}
+                disabled={reEnriching}
+                className="text-xs text-blue-500 hover:underline disabled:opacity-50"
+              >
+                {reEnriching ? 'Enriching…' : (enrichment ? 'Re-enrich' : 'Enrich now')}
+              </button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {!enrichment ? (
+                <p className="text-xs text-muted-foreground">
+                  No insights yet. Click &quot;Enrich now&quot; to fetch details from the firm&apos;s website.
+                </p>
+              ) : (
+                <>
+                  {enrichment.description && (
+                    <p className="text-sm leading-relaxed">{enrichment.description}</p>
+                  )}
+                  {enrichment.industries_served && enrichment.industries_served.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Industries served</p>
+                      <div className="flex flex-wrap gap-1">
+                        {enrichment.industries_served.map((i) => (
+                          <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-500 border border-cyan-500/20">
+                            {i}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {enrichment.services_offered && enrichment.services_offered.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Services</p>
+                      <div className="flex flex-wrap gap-1">
+                        {enrichment.services_offered.map((s) => (
+                          <span key={s} className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {enrichment.specialties && enrichment.specialties.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Specialties</p>
+                      <div className="flex flex-wrap gap-1">
+                        {enrichment.specialties.map((s) => (
+                          <span key={s} className="text-xs px-2 py-0.5 rounded-full bg-fuchsia-500/10 text-fuchsia-500 border border-fuchsia-500/20">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    {(enrichment.estimated_employees_range || enrichment.estimated_employees) && (
+                      <div>
+                        <p className="text-muted-foreground">Est. employees</p>
+                        <p className="font-medium">
+                          {enrichment.estimated_employees_range
+                            ?? enrichment.estimated_employees?.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    {enrichment.founded_year && (
+                      <div>
+                        <p className="text-muted-foreground">Founded</p>
+                        <p className="font-medium">{enrichment.founded_year}</p>
+                      </div>
+                    )}
+                    {enrichment.geographic_coverage && enrichment.geographic_coverage.length > 0 && (
+                      <div className="col-span-2">
+                        <p className="text-muted-foreground">Coverage</p>
+                        <p className="font-medium">{enrichment.geographic_coverage.join(', ')}</p>
+                      </div>
+                    )}
+                  </div>
+                  {(enrichment.source_url || enrichment.enriched_at) && (
+                    <p className="text-[10px] text-muted-foreground/70 pt-2 border-t">
+                      Sourced from {enrichment.source_url || 'website'}
+                      {enrichment.enriched_at && ` · ${new Date(enrichment.enriched_at).toLocaleDateString()}`}
+                      {typeof enrichment.confidence === 'number' && ` · confidence ${Math.round(enrichment.confidence * 100)}%`}
+                    </p>
                   )}
                 </>
               )}

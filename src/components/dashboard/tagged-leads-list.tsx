@@ -62,9 +62,15 @@ interface RawLead {
   deal_value?: number | string | null;
   status?: string | null;
   tags?: string[] | null;
+  custom_fields?: { enrichment?: { industries_served?: string[] | null } } | null;
+  customFields?: { enrichment?: { industries_served?: string[] | null } } | null;
 }
 
-function rawToLead(raw: RawLead): Lead {
+type EnrichedLead = Lead & { industriesServed?: string[] };
+
+function rawToLead(raw: RawLead): EnrichedLead {
+  const cf = raw.customFields ?? raw.custom_fields ?? null;
+  const industries = cf?.enrichment?.industries_served || undefined;
   return {
     id: String(raw.id),
     firstName: raw.contact_first_name || '',
@@ -80,6 +86,7 @@ function rawToLead(raw: RawLead): Lead {
     status: (raw.status as Lead['status']) || 'new',
     source: 'b2b_prospect' as Lead['source'],
     tags: Array.isArray(raw.tags) ? raw.tags : undefined,
+    industriesServed: Array.isArray(industries) ? industries : undefined,
     createdAt: '',
     updatedAt: '',
   };
@@ -136,7 +143,7 @@ export function TaggedLeadsList({
   emptyTitle = 'No leads here yet',
   emptySubtitle,
 }: TaggedLeadsListProps) {
-  const [leads, setLeads] = useState<Lead[]>([]);
+  const [leads, setLeads] = useState<EnrichedLead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { filters, setFilters, filtered, reset, industries, statuses, activeCount } = useLeadFilters(leads);
 
@@ -298,7 +305,27 @@ export function TaggedLeadsList({
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 pr-4 text-white/60">{lead.industry || '—'}</td>
+                        <td className="py-3 pr-4 text-white/60">
+                          {lead.industriesServed && lead.industriesServed.length > 0 ? (
+                            <div className="flex flex-wrap gap-1 max-w-[220px]">
+                              {lead.industriesServed.slice(0, 3).map((i) => (
+                                <span
+                                  key={i}
+                                  className="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
+                                >
+                                  {i}
+                                </span>
+                              ))}
+                              {lead.industriesServed.length > 3 && (
+                                <span className="text-[10px] text-white/40">
+                                  +{lead.industriesServed.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            lead.industry || '—'
+                          )}
+                        </td>
                         <td className="py-3 pr-4">
                           <span
                             className={`inline-flex text-xs px-2 py-0.5 rounded-full border ${statusBadgeStyles[lead.status] || 'bg-white/10 text-white/60 border-white/10'}`}
