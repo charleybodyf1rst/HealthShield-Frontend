@@ -138,6 +138,16 @@ const documents: Document[] = [
     icon: 'pdf',
     download: true,
   },
+  {
+    id: '21',
+    name: 'HealthShield Benefits Sheet',
+    description: 'One-page leave-behind in BodyF1RST dark/flame theme. Employer Incentives (Savings & Cost Control, Simple Administration, Talent Advantage) + Employee Benefits (RN Coaching, Personal Health Dashboard, Virtual Care, Pharmacy Care, HealthShield+). Tech & Health Partners credits at the bottom. Sourced from /healthshield → Benefits Sheet section.',
+    category: 'Sales Collateral',
+    type: 'pdf',
+    url: '/documents/healthshield-benefits-sheet.pdf',
+    icon: 'pdf',
+    download: true,
+  },
 
   // Websites
   {
